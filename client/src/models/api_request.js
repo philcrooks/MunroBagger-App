@@ -10,7 +10,7 @@ ApiRequest.prototype._makeRequest = function(httpVerb, url, expected, callback, 
   request.onload = function() {
     let errorStatus = (expected.indexOf(this.status) === -1);
     let content = ((this.status === 204) || errorStatus ) ? null : JSON.parse(this.responseText);
-    // console.log(httpVerb, "request to", url, "returned status", this.status)
+    console.log(httpVerb, "request to", url, "returned status", this.status)
     // if (content) console.log("Content: " + this.responseText);
     callback(this.status, content);
   };

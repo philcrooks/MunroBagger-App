@@ -1,5 +1,5 @@
 const React = require('react');
-const passwordOK = require('../utility.js').passwordOK;
+const passwordOK = require('../../utility.js').passwordOK;
 
 const UserSignUp = React.createClass({
 

@@ -1,5 +1,5 @@
 var React = require('react');
-const Utility = require('../utility.js')
+const Utility = require('../../utility.js')
 
 const UserChangePassword = React.createClass ({
 
