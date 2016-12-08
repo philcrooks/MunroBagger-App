@@ -21,7 +21,7 @@ const UserLogin = React.createClass({
   },
 
   shouldComponentUpdate: function(nextProps, nextState){
-    return nextState.openDialog;
+    return this.state.openDialog || nextState.openDialog;
   },
 
   updateEmail: function(event) {
