@@ -1,3 +1,5 @@
+var compassBearing = require('../utility').compassBearing;
+
 function Pin (map, mtnView) {
   // this._id = mtnView.id;
   this._mtnView = mtnView;
@@ -18,12 +20,15 @@ function Pin (map, mtnView) {
 
 Pin.prototype.changeForecast = function(dayNum) {
   let sunnyForecast = (this._forecasts.day[dayNum].code <= 3)
+  this._dayNum = dayNum;
   if (this._mountSunny !== sunnyForecast) {
     this._mountSunny = sunnyForecast
     this._marker.setMap(null);
     this._resetMarker();
   }
-  this._dayNum = dayNum;
+  else {
+    if (this._hasFocus) this._openInfoWindow();
+  }
 }
 
 Pin.prototype.changeBaggedState = function(bagged) {
@@ -48,10 +53,10 @@ Pin.prototype._resetMarker = function() {
     map: this._map,
     icon: { url: this._generateIcon(), scaledSize: new google.maps.Size(19, 19) }
   });
+  if (this._hasFocus) this._openInfoWindow();
   google.maps.event.addListener(this._marker, 'click', function(){
     this._markerCallback(this._mtnView);
   }.bind(this));
-  if (this._hasFocus) this._openInfoWindow();
 }
 
 Pin.prototype.createMarker = function(callback) {
@@ -61,14 +66,29 @@ Pin.prototype.createMarker = function(callback) {
 
 Pin.prototype._openInfoWindow = function(){
   if (this._userClosedInfoWin) return;
+  const forecast = this._forecasts.day[this._dayNum];
   const infoWindow = new google.maps.InfoWindow({
-      content: this._mtnView.detail.name
+      content:
+        "<h6>" + this._mtnView.detail.name + "</h6>" +
+        "<div class='flex-grid'>\
+          <div class='grid-item'>Weather:</div>\
+          <div class='grid-item'>" + forecast.description + "</div>\
+          <div class='grid-item'>Temperature:</div>\
+          <div class='grid-item'>High of " + forecast.temperature.max + "&deg;C</div>\
+          <div class='grid-item'>Wind:</div>\
+          <div class='grid-item'>" + forecast.wind.speed + "mph " + compassBearing(forecast.wind.direction) + "</div>\
+        </div>\
+        <button class='mdl-button' style='float: right'>\
+          More Info\
+        </button>",
+      maxWidth: 240
   });
   infoWindow.open(this._map, this._marker);
   google.maps.event.addListener(infoWindow,'closeclick',function(){
     this._userClosedInfoWin = true;
     this._infoWindow = null;
   }.bind(this));
+  if (this._infoWindow) this._infoWindow.close();
   this._infoWindow = infoWindow;
 };
 

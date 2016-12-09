@@ -19,6 +19,14 @@ const MountainDrawer = React.createClass({
 		}
 	},
 
+	shouldComponentUpdate: function(nextProps, nextState){
+    // return a boolean value
+    if (!this.props.mountainViews && nextProps.mountainViews) return true;
+    if (this.state.searchString.length > 0 && nextState.searchString.length === 0 ) return true;
+    const drawer = document.getElementsByClassName('mdl-layout__drawer')[0];
+  	return(drawer.classList.contains('is-visible'));
+	},
+
 	updateSearch: function(event) {
 		let input = event.target.value
     this.setState({searchString: input});
@@ -47,7 +55,9 @@ const MountainDrawer = React.createClass({
 	},
 
 	render: function() {
-		console.log(this.props.mountainViews)
+
+		console.log("rendering drawer")
+
 		let list = this.state.searchResults;
 		if (list) {
 		  list = list.map(function(mtn,index) {

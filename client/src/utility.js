@@ -32,8 +32,15 @@ var passwordOK = function(password) {
   return true;
 };
 
+var compassBearing = function(direction) {
+  const directions = { N: "North", E: "East", S: "South", W: "West" }
+  if (direction.length == 1) return directions[direction]
+  return direction;
+};
+
 module.exports = {
   mountainSearch: mountainSearch,
   upCase: upCase,
-  passwordOK: passwordOK
+  passwordOK: passwordOK,
+  compassBearing: compassBearing
 }

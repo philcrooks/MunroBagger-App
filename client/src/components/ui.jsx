@@ -1,5 +1,5 @@
 const React = require('react');
-import { Layout, Header, HeaderRow, HeaderTabs, Textfield, Menu, MenuItem, IconButton, Tab, Content } from 'react-mdl';
+import { Layout, Header, HeaderRow, HeaderTabs, Footer, FooterSection, Textfield, Menu, MenuItem, IconButton, Icon, FABButton, Tab, Content } from 'react-mdl';
 const Scotland = require('./map')
 
 const Filter = require('./filter');
@@ -175,7 +175,7 @@ const UI = React.createClass({
   },
 
   onMountainSelected: function(mtnView) {
-    this.logAndSetState({focusMountain: mtnView})
+    // this.logAndSetState({focusMountain: mtnView})
     this.mapObj.openInfoWindowForMountain(mtnView.pin);
   },
 

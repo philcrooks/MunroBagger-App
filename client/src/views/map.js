@@ -17,7 +17,7 @@ var MapObject = function(container) {
       position: google.maps.ControlPosition.LEFT_BOTTOM
     },
     zoomControlOptions: {
-      position: google.maps.ControlPosition.LEFT_CENTER
+      position: google.maps.ControlPosition.RIGHT_BOTTOM
     }
   });
   this._keepCenter = google.maps.event.addDomListener(window, "resize", function() {
