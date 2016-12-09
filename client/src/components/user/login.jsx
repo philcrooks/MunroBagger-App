@@ -1,13 +1,11 @@
 const React = require('react');
 import { Dialog, DialogTitle, DialogContent, DialogActions, Textfield, Button } from 'react-mdl';
 
-const ApiRequest = require('../../models/api_request')
-
 const UserLogin = React.createClass({
 
   getInitialState: function() {
     return {
-      openDialog: this.props.willDisplay,
+      openDialog: false,
       email: "",
       password: "",
       loginFailed: false
@@ -32,7 +30,7 @@ const UserLogin = React.createClass({
     this.setState({password: event.target.value})
   },
 
-  requestLogin: function() {
+  clickLogin: function() {
     this.props.user.login(this.state.email, this.state.password, function(success){
       if (success) {
         this.setState({openDialog: false});
@@ -42,6 +40,11 @@ const UserLogin = React.createClass({
         this.setState({email: "", password: "", loginFailed: true})
       }
     }.bind(this))
+  },
+
+  clickClose: function() {
+    this.setState({openDialog: false});
+    this.props.onCompleted(false, null);
   },
 
   clickRegister: function() {
@@ -56,7 +59,17 @@ const UserLogin = React.createClass({
 
   render: function(){
 
-    let errorStyle = (this.state.loginFailed) ? "block" : "none";
+    var message;
+    if (this.state.loginFailed) {
+      message = (
+        <p>Failed to log in. <span className="user-link" onClick={this.clickPasswordReset}>Reset password?</span></p>
+      );
+    }
+    else {
+      message = (
+        <p>Do you need to <span className="user-link" onClick={this.clickRegister}>register?</span></p>
+      )
+    }
 
     return (
       <Dialog open={this.state.openDialog}>
@@ -66,30 +79,26 @@ const UserLogin = React.createClass({
             required={true}
             onChange={this.updateEmail}
             label="Email..."
-            style={{width: '200px'}}
+            style={{width: '230px'}}
             value={this.state.email}
           />
           <Textfield
             required={true}
             onChange={this.updatePassword}
             label="Password..."
-            style={{width: '200px'}}
+            style={{width: '230px'}}
             type="password"
             value={this.state.password}
           />
-          <p style={{display: errorStyle}}>
-            Those details don't match our records, please try again.
-          </p>
         </DialogContent>
-        <DialogActions fullWidth>
-          <Button type='button' onClick={this.requestLogin}>Login</Button>
-          <Button type='button' onClick={this.clickRegister}>Register</Button>
-          <p className="user-link" onClick={this.clickPasswordReset}>Forgot your password?</p>
+        <DialogActions>
+          <Button type='button' onClick={this.clickClose}>Close</Button>
+          <Button type='button' onClick={this.clickLogin}>Login</Button>
+          {message}
         </DialogActions>
       </Dialog>
     )
   }
 })
-
 
 module.exports = UserLogin;
