@@ -236,7 +236,7 @@ const UI = React.createClass({
 
     return (
       <div>
-        <Layout fixedHeader>
+        <Layout fixedHeader fixedDrawer>
           <Header scroll>
             <HeaderRow title="Munro Bagger">
               <IconButton name="more_vert" id="menu-top-right" />
