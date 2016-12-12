@@ -2,7 +2,7 @@ config = {
   entry: "./src/app.js",
   output: {
     filename: "bundle.js",
-    path: "../www"
+    path: "../www/js"
   },
   resolve: {
     extensions: ['', '.js', '.jsx']

@@ -64,26 +64,62 @@ Pin.prototype.createMarker = function(callback) {
   this._resetMarker()
 };
 
+Pin.prototype._createInfoWindow = function(mtnName) {
+  let outerSpan = document.creatElement("span");
+  outerSpan.classList.add("mdl-chip", "mdl-chip--contact", "mdl-chip--deletable");
+  outerSpan.style.backgroundColor = "white";
+
+  let iconSpan = document.creatElement("span");
+  iconSpan.classList.add("mdl-chip__contact", "mdl-color--indigo", "mdl-color-text--white");
+  iconSpan.style.fontFamily = "baskerville";
+  iconSpan.style.fontWeight = "bold";
+  iconSpan.style.fontStyle = "italic";
+  iconSpan.textContent = "i";
+  outerSpan.addChild(iconSpan);
+
+  let textSpan = document.creatElement("span");
+  textSpan.classList.add("mdl-chip__text");
+  textSpan.textContent = mtnName;
+  outerSpan.addChild(textSpan);
+
+  let closer = document.creatElement("span");
+  closer.classList.add("mdl-chip__text");
+
+  let icon = document.creatElement("i");
+  icon.classList = "material-icons";
+  icon.textContent = "cancel";
+  closer.addChild(icon);
+  outerSpan.addChild(closer);
+
+  return outerSpan;
+}
+
 Pin.prototype._openInfoWindow = function(){
   if (this._userClosedInfoWin) return;
   const forecast = this._forecasts.day[this._dayNum];
-  const infoWindow = new google.maps.InfoWindow({
-      content:
-        "<h6>" + this._mtnView.detail.name + "</h6>" +
-        "<div class='flex-grid'>\
-          <div class='grid-item'>Weather:</div>\
-          <div class='grid-item'>" + forecast.description + "</div>\
-          <div class='grid-item'>Temperature:</div>\
-          <div class='grid-item'>High of " + forecast.temperature.max + "&deg;C</div>\
-          <div class='grid-item'>Wind:</div>\
-          <div class='grid-item'>" + forecast.wind.speed + "mph " + compassBearing(forecast.wind.direction) + "</div>\
-        </div>\
-        <button class='mdl-button' style='float: right'>\
-          More Info\
-        </button>",
-      maxWidth: 240
-  });
+  const infoBoxOpts = {
+    disableAutoPan: false,
+    maxWidth: 0,
+    pixelOffset: new google.maps.Size(0, 0),
+    zIndex: null,
+    boxStyle: {
+      padding: "0px 0px 0px 0px",
+      width: "252px",
+      height: "40px"
+    },
+    closeBoxURL : "",
+    infoBoxClearance: new google.maps.Size(1, 1),
+    isHidden: false,
+    pane: "floatPane",
+    enableEventPropagation: false,
+    content: "<span style='background-color: white' class='mdl-chip mdl-chip--contact mdl-chip--deletable'>\
+      <span style='font-family: baskerville; font-weight: bold; font-style: italic' class='mdl-chip__contact mdl-color--indigo mdl-color-text--white'>i</span>\
+      <span class='mdl-chip__text'>" + this._mtnView.detail.name + "</span>\
+      <a class='mdl-chip__action'><i class='material-icons'>cancel</i></a></span>"
+  };
+  const infoWindow = new InfoBox(infoBoxOpts);
   infoWindow.open(this._map, this._marker);
+  this._map.panTo(infoWindow.getPosition());
   google.maps.event.addListener(infoWindow,'closeclick',function(){
     this._userClosedInfoWin = true;
     this._infoWindow = null;

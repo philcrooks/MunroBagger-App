@@ -113,6 +113,12 @@ button {
     top: 0;
 }
 
+.mountain-info {
+  margin: 10px 0 0 0;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 #weather-buttons {
     position: fixed;
     left: 0;
