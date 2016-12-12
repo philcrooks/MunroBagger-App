@@ -106,7 +106,7 @@ Pin.prototype.clearFocus = function() {
 }
 
 Pin.prototype._generateIcon = function(){
-  var base = "/public/images/";
+  var base = "./img/";
   var fileName = base + "mntn-";
   if (this._loggedIn) {
     if (!this._mountBagged) fileName += "not-";
