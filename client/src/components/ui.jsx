@@ -240,7 +240,7 @@ const UI = React.createClass({
           <Header scroll>
             <HeaderRow title="Munro Bagger">
               <IconButton name="more_vert" id="menu-top-right" />
-              <Menu target="menu-top-right" align="right" ripple>
+              <Menu target="menu-top-right" align="right">
                   {login}
                   <MenuItem onClick={this.setSignUpForm} {...enabledOut}>Register</MenuItem>
                   <MenuItem onClick={this.setChangePasswordForm} {...enabledIn}>Change Password</MenuItem>
@@ -248,7 +248,7 @@ const UI = React.createClass({
                   <MenuItem onClick={this.setAboutForm}>About</MenuItem>
               </Menu>
             </HeaderRow>
-            <HeaderTabs ripple activeTab={this.state.dayNum} onChange={this.onForecastDaySelected}>
+            <HeaderTabs activeTab={this.state.dayNum} onChange={this.onForecastDaySelected}>
               <Tab>Today</Tab>
               <Tab>Tomorrow</Tab>
               <Tab>Day After</Tab>

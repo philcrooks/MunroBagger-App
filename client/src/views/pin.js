@@ -1,4 +1,4 @@
-var compassBearing = require('../utility').compassBearing;
+var InfoBox = require('./infobox');
 
 function Pin (map, mtnView) {
   // this._id = mtnView.id;
@@ -99,13 +99,12 @@ Pin.prototype._openInfoWindow = function(){
   const forecast = this._forecasts.day[this._dayNum];
   const infoBoxOpts = {
     disableAutoPan: false,
-    maxWidth: 0,
-    pixelOffset: new google.maps.Size(0, 0),
+    alignMiddle: true,
+    alignBottom: true,
+    pixelOffset: new google.maps.Size(0, -15),
     zIndex: null,
     boxStyle: {
-      padding: "0px 0px 0px 0px",
-      width: "252px",
-      height: "40px"
+      padding: "0px 0px 0px 0px"
     },
     closeBoxURL : "",
     infoBoxClearance: new google.maps.Size(1, 1),
@@ -114,12 +113,12 @@ Pin.prototype._openInfoWindow = function(){
     enableEventPropagation: false,
     content: "<span style='background-color: white' class='mdl-chip mdl-chip--contact mdl-chip--deletable'>\
       <span style='font-family: baskerville; font-weight: bold; font-style: italic' class='mdl-chip__contact mdl-color--indigo mdl-color-text--white'>i</span>\
-      <span class='mdl-chip__text'>" + this._mtnView.detail.name + "</span>\
+      <span style='font-weight: bold;' class='mdl-chip__text'>" + this._mtnView.detail.name + "</span>\
       <a class='mdl-chip__action'><i class='material-icons'>cancel</i></a></span>"
   };
   const infoWindow = new InfoBox(infoBoxOpts);
   infoWindow.open(this._map, this._marker);
-  this._map.panTo(infoWindow.getPosition());
+  // this._map.panTo(infoWindow.getPosition());
   google.maps.event.addListener(infoWindow,'closeclick',function(){
     this._userClosedInfoWin = true;
     this._infoWindow = null;

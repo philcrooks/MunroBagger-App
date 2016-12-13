@@ -1,5 +1,4 @@
 var Pin = require('./pin');
-var search = require('../utility').mountainSearch;
 
 var MapObject = function(container) {
   const ne = new google.maps.LatLng(59.073548704841784, 2.1691826171875164);
