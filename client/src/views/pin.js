@@ -64,39 +64,38 @@ Pin.prototype.createMarker = function(callback) {
   this._resetMarker()
 };
 
-Pin.prototype._createInfoWindow = function(mtnName) {
-  let outerSpan = document.creatElement("span");
+Pin.prototype._createInfoWindow = function(infoCallback, closeCallback) {
+  let outerSpan = document.createElement("span");
   outerSpan.classList.add("mdl-chip", "mdl-chip--contact", "mdl-chip--deletable");
   outerSpan.style.backgroundColor = "white";
+  outerSpan.style.padding = "3px";
 
-  let iconSpan = document.creatElement("span");
+  let iconSpan = document.createElement("span");
   iconSpan.classList.add("mdl-chip__contact", "mdl-color--indigo", "mdl-color-text--white");
   iconSpan.style.fontFamily = "baskerville";
   iconSpan.style.fontWeight = "bold";
   iconSpan.style.fontStyle = "italic";
   iconSpan.textContent = "i";
-  outerSpan.addChild(iconSpan);
+  iconSpan.onclick = infoCallback;
+  outerSpan.appendChild(iconSpan);
 
-  let textSpan = document.creatElement("span");
+  let textSpan = document.createElement("span");
   textSpan.classList.add("mdl-chip__text");
-  textSpan.textContent = mtnName;
-  outerSpan.addChild(textSpan);
+  textSpan.style.fontWeight = "bold";
+  textSpan.textContent = this._mtnView.name;
+  textSpan.onclick = infoCallback
+  outerSpan.appendChild(textSpan);
 
-  let closer = document.creatElement("span");
-  closer.classList.add("mdl-chip__text");
+  let closer = document.createElement("span");
+  closer.classList.add("mdl-chip__action");
+  closer.onclick = closeCallback;
 
-  let icon = document.creatElement("i");
-  icon.classList = "material-icons";
+  let icon = document.createElement("i");
+  icon.classList.add("material-icons");
   icon.textContent = "cancel";
-  closer.addChild(icon);
-  outerSpan.addChild(closer);
+  closer.appendChild(icon);
+  outerSpan.appendChild(closer);
 
-  return outerSpan;
-}
-
-Pin.prototype._openInfoWindow = function(){
-  if (this._userClosedInfoWin) return;
-  const forecast = this._forecasts.day[this._dayNum];
   const infoBoxOpts = {
     disableAutoPan: false,
     alignMiddle: true,
@@ -104,25 +103,36 @@ Pin.prototype._openInfoWindow = function(){
     pixelOffset: new google.maps.Size(0, -24),
     zIndex: null,
     boxStyle: {
-      padding: "0px 0px 0px 0px"
+      padding: "0px"
     },
     closeBoxURL : "",
-    infoBoxClearance: new google.maps.Size(1, 1),
+    infoBoxClearance: new google.maps.Size(5, 5),
     isHidden: false,
     pane: "floatPane",
     enableEventPropagation: false,
-    content: "<span style='background-color: white' class='mdl-chip mdl-chip--contact mdl-chip--deletable'>\
-      <span style='font-family: baskerville; font-weight: bold; font-style: italic' class='mdl-chip__contact mdl-color--indigo mdl-color-text--white'>i</span>\
-      <span style='font-weight: bold;' class='mdl-chip__text'>" + this._mtnView.detail.name + "</span>\
-      <a class='mdl-chip__action'><i class='material-icons'>cancel</i></a></span>"
+    content: outerSpan
   };
-  const infoWindow = new InfoBox(infoBoxOpts);
+
+  return new InfoBox(infoBoxOpts);
+}
+
+Pin.prototype._closeInfoWindow = function(event) {
+  event.stopPropagation();
+  this._infoWindow.close();
+  this._infoWindow = null;
+  this._userClosedInfoWin = true;
+}
+
+Pin.prototype._moreInfo = function(event) {
+  // event.stopPropagation(); 
+}
+
+Pin.prototype._openInfoWindow = function(){
+  if (this._userClosedInfoWin) return;
+
+  const forecast = this._forecasts.day[this._dayNum];
+  const infoWindow = this._createInfoWindow(this._moreInfo.bind(this), this._closeInfoWindow.bind(this));
   infoWindow.open(this._map, this._marker);
-  // this._map.panTo(infoWindow.getPosition());
-  google.maps.event.addListener(infoWindow,'closeclick',function(){
-    this._userClosedInfoWin = true;
-    this._infoWindow = null;
-  }.bind(this));
   if (this._infoWindow) this._infoWindow.close();
   this._infoWindow = infoWindow;
 };
