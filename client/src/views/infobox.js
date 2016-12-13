@@ -157,6 +157,7 @@ InfoBox.prototype.createInfoBoxDiv_ = function () {
   if (!this.div_) {
 
     this.div_ = document.createElement("div");
+    this.div_.style.position = "relative";
 
     this.setBoxStyle_();
 
@@ -486,12 +487,25 @@ InfoBox.prototype.draw = function () {
     halfWidth = halfWidth / 2;
   }
 
+  var arrow = document.createElement("div");
+  arrow.style.width = "0";
+  arrow.style.height = "0";
+  arrow.style.borderLeft = "6px solid transparent";
+  arrow.style.borderRight = "6px solid transparent";
+  arrow.style.borderTop = "12px solid white";
+  arrow.style.position = "absolute";
+  if (this.alignMiddle_) {
+    arrow.style.left = (halfWidth - 6) + "px";
+  }
+
   var pixPosition = this.getProjection().fromLatLngToDivPixel(this.position_);
 
   this.div_.style.left = (pixPosition.x + this.pixelOffset_.width - halfWidth) + "px";
 
   if (this.alignBottom_) {
     this.div_.style.bottom = -(pixPosition.y + this.pixelOffset_.height) + "px";
+    arrow.style.bottom = "-10px";
+    this.div_.appendChild(arrow);
   } else {
     this.div_.style.top = (pixPosition.y + this.pixelOffset_.height) + "px";
   }

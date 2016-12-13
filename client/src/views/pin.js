@@ -51,7 +51,7 @@ Pin.prototype._resetMarker = function() {
   this._marker =  new google.maps.Marker({
     position: this._mtnView.detail.latLng,
     map: this._map,
-    icon: { url: this._generateIcon(), scaledSize: new google.maps.Size(19, 19) }
+    icon: { url: this._generateIcon(), scaledSize: new google.maps.Size(17, 20) }
   });
   if (this._hasFocus) this._openInfoWindow();
   google.maps.event.addListener(this._marker, 'click', function(){
@@ -101,7 +101,7 @@ Pin.prototype._openInfoWindow = function(){
     disableAutoPan: false,
     alignMiddle: true,
     alignBottom: true,
-    pixelOffset: new google.maps.Size(0, -15),
+    pixelOffset: new google.maps.Size(0, -24),
     zIndex: null,
     boxStyle: {
       padding: "0px 0px 0px 0px"
