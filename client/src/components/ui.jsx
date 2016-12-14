@@ -1,5 +1,5 @@
 const React = require('react');
-import { Layout, Header, HeaderRow, HeaderTabs, Footer, FooterSection, Textfield, Menu, MenuItem, IconButton, Icon, FABButton, Tab, Content } from 'react-mdl';
+import { Layout, Header, HeaderRow, HeaderTabs, Footer, FooterSection, Textfield, Menu, MenuItem, IconButton, Icon, FABButton, Tab, Content, Spinner } from 'react-mdl';
 const Scotland = require('./map')
 
 const Filter = require('./filter');
@@ -43,11 +43,11 @@ const UI = React.createClass({
   componentDidMount: function() {
     let mtnsView = new MountainsView();
     mtnsView.all(function() {
-      this.logAndSetState({mountainViews: mtnsView});
       let mtns = mtnsView.mountains;
       for (let i = 0; i < mtns.length; i++) {
         this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested);
       }
+      this.logAndSetState({mountainViews: mtnsView});
     }.bind(this))
   },
 
@@ -231,6 +231,15 @@ const UI = React.createClass({
       )
     }
 
+    let spinner = null;
+    if (!this.state.mountainViews) {
+      spinner = (
+        <div style={{position:'absolute', width: '32px', height: '32px', top: '50%', left: '50%', margin: '-16px 0 0 -16px'}}>
+          <Spinner singleColor />
+        </div>
+      )
+    }
+
     var enabledIn, enabledOut, login;
     if (this.state.userLoggedIn) {
       enabledIn = {}
@@ -242,6 +251,7 @@ const UI = React.createClass({
       enabledIn = {'disabled': 'disabled'}
       login = <MenuItem onClick={this.setLoginForm}>Login</MenuItem>
     }
+
     return (
       <div>
         <Layout fixedHeader fixedDrawer>
@@ -267,6 +277,7 @@ const UI = React.createClass({
             onSelection={this.onMountainSelected} />
           <Content>
             <Scotland mapLoaded={this.onMapLoaded}/>
+            {spinner}
             {mountain}
             <Login
               user={this.state.user}
