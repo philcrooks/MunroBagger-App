@@ -46,7 +46,7 @@ const UI = React.createClass({
       this.logAndSetState({mountainViews: mtnsView});
       let mtns = mtnsView.mountains;
       for (let i = 0; i < mtns.length; i++) {
-        this.mapObj.addPin(mtns[i], this.onMountainSelected);
+        this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested);
       }
     }.bind(this))
   },
@@ -175,8 +175,16 @@ const UI = React.createClass({
   },
 
   onMountainSelected: function(mtnView) {
-    // this.logAndSetState({focusMountain: mtnView})
     this.mapObj.openInfoWindowForMountain(mtnView.pin);
+    if (this.state.focusMountain) this.onInfoRequested(mtnView);
+  },
+
+  onInfoRequested: function(mtnView) {
+    this.logAndSetState({focusMountain: mtnView})
+  },
+
+  onInfoClosed: function() {
+    this.logAndSetState({focusMountain: null})
   },
 
   //
@@ -213,6 +221,7 @@ const UI = React.createClass({
     if (this.state.focusMountain) {
       mountain = (
         <MountainDetail
+          onCompleted={this.onInfoClosed}
           focusMount={this.state.focusMountain}
           dayNum={this.state.dayNum}
           bagged={this.requestBaggedStatusChange}
@@ -233,7 +242,6 @@ const UI = React.createClass({
       enabledIn = {'disabled': 'disabled'}
       login = <MenuItem onClick={this.setLoginForm}>Login</MenuItem>
     }
-
     return (
       <div>
         <Layout fixedHeader fixedDrawer>

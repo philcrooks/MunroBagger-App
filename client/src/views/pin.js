@@ -11,6 +11,7 @@ function Pin (map, mtnView) {
   this._mountSunny = (this._forecasts.day[0].code <= 3)
   this._marker = null;
   this._markerCallback = null;
+  this._infoCallback = null;
   this._hasFocus = false;
   this._userClosedInfoWin = false;
   this._infoWindow = null;
@@ -59,8 +60,9 @@ Pin.prototype._resetMarker = function() {
   }.bind(this));
 }
 
-Pin.prototype.createMarker = function(callback) {
-  this._markerCallback = callback;
+Pin.prototype.createMarker = function(markerCallback, infoCallback) {
+  this._markerCallback = markerCallback;
+  this._infoCallback = infoCallback;
   this._resetMarker()
 };
 
@@ -68,7 +70,8 @@ Pin.prototype._createInfoWindow = function(infoCallback, closeCallback) {
   let outerSpan = document.createElement("span");
   outerSpan.classList.add("mdl-chip", "mdl-chip--contact", "mdl-chip--deletable");
   outerSpan.style.backgroundColor = "white";
-  outerSpan.style.padding = "3px";
+  outerSpan.style.cursor = "pointer"
+  outerSpan.style.padding = "1px";
 
   let iconSpan = document.createElement("span");
   iconSpan.classList.add("mdl-chip__contact", "mdl-color--indigo", "mdl-color-text--white");
@@ -123,8 +126,8 @@ Pin.prototype._closeInfoWindow = function(event) {
   this._userClosedInfoWin = true;
 }
 
-Pin.prototype._moreInfo = function(event) {
-  // event.stopPropagation(); 
+Pin.prototype._moreInfo = function() {
+  this._infoCallback(this._mtnView);
 }
 
 Pin.prototype._openInfoWindow = function(){
