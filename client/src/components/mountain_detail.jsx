@@ -5,14 +5,20 @@ import { Button, Card, CardTitle, CardText, CardActions } from 'react-mdl';
 // const DatePicker = require('react-datepicker');
 // const moment = require('moment');
 const MountDetailBagged = require('./mountain_detail_bagged');
+const dayOfWeek = require('../utility').dayOfWeek;
 
 // require('react-datepicker/dist/react-datepicker.css');
 
 const MountDetail = React.createClass({
 
-  formatDay: function(dayNum) {
-    const days = ["Today", "Tomorrow", "the Day After"];
-    return days[dayNum];
+  formatDay: function() {
+    const day = this.props.baseDate.getDay();
+    let days = ["Today", "Tomorrow", dayOfWeek((day+2)%7, false)];
+    if (this.props.baseDate.toDateString() !== new Date().toDateString()) {
+      days[0] = dayOfWeek(day, false);
+      days[1] = ayOfWeek((day+1)%7, false);
+    }
+    return days[this.props.dayNum];
   },
 
   formatDirection: function(direction) {
@@ -39,9 +45,8 @@ const MountDetail = React.createClass({
 
   render: function() {
 
-    const dayNum = this.props.dayNum;
     const detail = this.props.focusMount.detail;
-    const forecast = detail.forecasts.day[dayNum];
+    const forecast = detail.forecasts.day[this.props.dayNum];
 
     let bagged = null;
     if (this.props.userLoggedIn) {
@@ -70,7 +75,7 @@ const MountDetail = React.createClass({
             <div className="grid-item">Region:</div>
             <div className="grid-item">{detail.region}</div>
           </div>
-          <div className="cond-title"><h6 style={{color: 'black'}}>Conditions {this.formatDay(this.props.dayNum)}</h6></div>
+          <div className="cond-title"><h6 style={{color: 'black'}}>Conditions for {this.formatDay()}</h6></div>
           <div className="flex-grid">
             <div className="grid-item">Weather:</div>
             <div className="grid-item">{forecast.description}</div>

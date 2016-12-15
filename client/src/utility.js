@@ -38,9 +38,16 @@ var compassBearing = function(direction) {
   return direction;
 };
 
+var dayOfWeek = function(dayNum, shortForm) {
+  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  if (shortForm) return days[dayNum].substring(0, 3);
+  return days[dayNum];
+};
+
 module.exports = {
   mountainSearch: mountainSearch,
   upCase: upCase,
   passwordOK: passwordOK,
-  compassBearing: compassBearing
+  compassBearing: compassBearing,
+  dayOfWeek: dayOfWeek
 }

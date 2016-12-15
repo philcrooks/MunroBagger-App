@@ -14,6 +14,7 @@ const About = require('./about');
 
 const MountainsView = require('../views/mountains_view');
 const User = require('../models/user');
+const dayOfWeek = require('../utility').dayOfWeek;
 
 const UI = React.createClass({
 
@@ -23,6 +24,7 @@ const UI = React.createClass({
 
     return {
       dayNum:           0,
+      baseDate:         null,
       focusMountain:    null,
       focusMountBagged: null,
       checkboxDisabled: false,
@@ -44,10 +46,11 @@ const UI = React.createClass({
     let mtnsView = new MountainsView();
     mtnsView.all(function() {
       let mtns = mtnsView.mountains;
+      let baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
       for (let i = 0; i < mtns.length; i++) {
         this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested);
       }
-      this.logAndSetState({mountainViews: mtnsView});
+      this.logAndSetState({mountainViews: mtnsView, baseDate: baseDate});
     }.bind(this))
   },
 
@@ -217,6 +220,10 @@ const UI = React.createClass({
 
     console.log("Rendering UI");
 
+    const baseDate = (this.state.baseDate) ? this.state.baseDate : new Date();
+    const day = baseDate.getDay();
+    const days = [dayOfWeek(day, true), dayOfWeek((day+1)%7, true), dayOfWeek((day+2)%7, true)];
+
     let mountain = null;
     if (this.state.focusMountain) {
       mountain = (
@@ -224,6 +231,7 @@ const UI = React.createClass({
           onCompleted={this.onInfoClosed}
           focusMount={this.state.focusMountain}
           dayNum={this.state.dayNum}
+          baseDate={baseDate}
           bagged={this.requestBaggedStatusChange}
           disabled={this.state.checkboxDisabled}
           date={this.setDate}
@@ -267,9 +275,9 @@ const UI = React.createClass({
               </Menu>
             </HeaderRow>
             <HeaderTabs activeTab={this.state.dayNum} onChange={this.onForecastDaySelected}>
-              <Tab>Today</Tab>
-              <Tab>Tomorrow</Tab>
-              <Tab>Day After</Tab>
+              <Tab>{days[0]}</Tab>
+              <Tab>{days[1]}</Tab>
+              <Tab>{days[2]}</Tab>
             </HeaderTabs>
           </Header>
           <MountainDrawer
