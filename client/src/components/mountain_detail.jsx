@@ -70,10 +70,6 @@ const MountDetail = React.createClass({
             <div className="grid-item">{detail.height}m</div>
             <div className="grid-item">OS Grid Ref:</div>
             <div className="grid-item">{detail.gridRef.toString()}</div>
-            <div className="grid-item">Lat/Long:</div>
-            <div className="grid-item">{detail.latLng.lat}°, {detail.latLng.lng}°</div>
-            <div className="grid-item">Region:</div>
-            <div className="grid-item">{detail.region}</div>
           </div>
           <div className="cond-title"><h6 style={{color: 'black'}}>Conditions for {this.formatDay()}</h6></div>
           <div className="flex-grid">
