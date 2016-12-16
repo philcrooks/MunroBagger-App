@@ -16,7 +16,7 @@ const MountDetail = React.createClass({
     let days = ["Today", "Tomorrow", dayOfWeek((day+2)%7, false)];
     if (this.props.baseDate.toDateString() !== new Date().toDateString()) {
       days[0] = dayOfWeek(day, false);
-      days[1] = ayOfWeek((day+1)%7, false);
+      days[1] = dayOfWeek((day+1)%7, false);
     }
     return days[this.props.dayNum];
   },
@@ -59,7 +59,7 @@ const MountDetail = React.createClass({
     }
 
     return (
-      <Card shadow={6} style={{width: '320px', height: '430px', margin: '10px auto'}}>
+      <Card shadow={6} style={{position: 'absolute', width: '100%', height: '100%'}}>
         <CardTitle expand style={{display: 'block', background: '#3E4EB8', color: '#fff'}}>
           <h5 style={{margin: '5px 0px'}}>{detail.name}</h5>
           <p style={{margin: '0px'}}>({detail.meaning})</p>

@@ -6,6 +6,7 @@ var MapObject = function(container) {
 
   this._map = new google.maps.Map(container, {
     center: new google.maps.LatLng(57.450861,-1.604004),
+    // center: new google.maps.LatLng(57.280857,-4.505912),
     zoom: this._scaleZoom(),
     minZoom: this._scaleZoom(),
     mapTypeId: 'terrain',
@@ -19,17 +20,16 @@ var MapObject = function(container) {
       position: google.maps.ControlPosition.RIGHT_BOTTOM
     }
   });
-  this._keepCenter = google.maps.event.addDomListener(window, "resize", function() {
-    var center = this._map.getCenter();
-    google.maps.event.trigger(this._map, "resize");
-    this._map.setCenter(center);
-  }.bind(this));
+  // this._keepCenter = google.maps.event.addDomListener(window, "resize", function() {
+  //   var center = this._map.getCenter();
+  //   google.maps.event.trigger(this._map, "resize");
+  //   this._map.setCenter(center);
+  // }.bind(this));
   this._bounds = new google.maps.LatLngBounds(sw, ne);
   this._map.fitBounds(this._bounds);
   this._prevFocus = null;
   this._allPins = [];
   this._preventPan();
-  this._width = this._getBrowserWidth();
 };
 
 MapObject.prototype._scaleZoom = function(){
@@ -91,27 +91,18 @@ MapObject.prototype.changeForecast = function(dayNum) {
   for (let i = 0; i < this._allPins.length; i++) {
     this._allPins[i].changeForecast(dayNum);
   }
-  // for (let pin of this._allPins) {
-  //   pin.changeForecast(dayNum);
-  // }
 }
 
 MapObject.prototype.userLoggedIn = function(mountainViews) {
   for (let i = 0; i < mountainViews.length; i++) {
     mountainViews[i].pin.userLoggedIn(mountainViews[i].bagged);
   }
-  // for (let mtnView of mountainViews) {
-  //   mtnView.pin.userLoggedIn(mtnView.bagged);
-  // }
 }
 
 MapObject.prototype.userLoggedOut = function() {
   for (let i = 0; i < this._allPins.length; i++) {
     this._allPins[i].userLoggedOut();
   }
-  // for (let pin of this._allPins) {
-  //   pin.userLoggedOut();
-  // }
 }
 
 module.exports = MapObject;

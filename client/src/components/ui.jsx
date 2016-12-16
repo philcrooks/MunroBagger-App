@@ -2,7 +2,6 @@ const React = require('react');
 import { Layout, Header, HeaderRow, HeaderTabs, Footer, FooterSection, Textfield, Menu, MenuItem, IconButton, Icon, FABButton, Tab, Content, Spinner } from 'react-mdl';
 const Scotland = require('./map')
 
-const Filter = require('./filter');
 const Welcome = require('./welcome');
 const MountainDetail = require('./mountain_detail');
 const MountainDrawer = require('./mountain_drawer')
@@ -220,9 +219,12 @@ const UI = React.createClass({
 
     console.log("Rendering UI");
 
+    let days = ["Today", "Tomorrow", "Day After"];
     const baseDate = (this.state.baseDate) ? this.state.baseDate : new Date();
-    const day = baseDate.getDay();
-    const days = [dayOfWeek(day, true), dayOfWeek((day+1)%7, true), dayOfWeek((day+2)%7, true)];
+    if (baseDate.toDateString() !== new Date().toDateString()) {
+      const day = baseDate.getDay();
+      days = [dayOfWeek(day, true), dayOfWeek((day+1)%7, true), dayOfWeek((day+1)%7, true)];
+    }
 
     let mountain = null;
     if (this.state.focusMountain) {
@@ -265,6 +267,13 @@ const UI = React.createClass({
         <Layout fixedHeader fixedDrawer>
           <Header scroll>
             <HeaderRow title="Munro Bagger">
+              <Textfield
+                value=""
+                onChange={() => {}}
+                label="Search"
+                expandable
+                expandableIcon="search"
+              />
               <IconButton name="more_vert" id="menu-top-right" />
               <Menu target="menu-top-right" align="right">
                   {login}
