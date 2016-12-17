@@ -5,11 +5,13 @@ const Scotland = require('./map')
 const Welcome = require('./welcome');
 const MountainDetail = require('./mountain_detail');
 const MountainDrawer = require('./mountain_drawer')
+const MountainSnackbar = require('./mountain_snackbar')
 const Login = require('./user/login');
 const Registration = require('./user/registration');
 const UserNewPassword = require('./user/user_new_password');
 const UserChangePassword = require('./user/user_change_password');
 const About = require('./about');
+const Search = require('./search');
 
 const MountainsView = require('../views/mountains_view');
 const User = require('../models/user');
@@ -46,15 +48,14 @@ const UI = React.createClass({
     mtnsView.all(function() {
       let mtns = mtnsView.mountains;
       let baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
+      this.logAndSetState({mountainViews: mtnsView, baseDate: baseDate});
       for (let i = 0; i < mtns.length; i++) {
         this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested);
       }
-      this.logAndSetState({mountainViews: mtnsView, baseDate: baseDate});
     }.bind(this))
   },
 
   selectedAction(action) {
-    console.log("comparing", action, "with", this.state.action )
     return (action === this.state.action);
   },
 
@@ -178,7 +179,10 @@ const UI = React.createClass({
 
   onMountainSelected: function(mtnView) {
     this.mapObj.openInfoWindowForMountain(mtnView.pin);
-    if (this.state.focusMountain) this.onInfoRequested(mtnView);
+    if (this.state.focusMountain)
+      this.logAndSetState({focusMountain: mtnView});
+    else
+      this.logAndSetState({action: 'snackbar'});
   },
 
   onInfoRequested: function(mtnView) {
@@ -218,6 +222,7 @@ const UI = React.createClass({
   render: function() {
 
     console.log("Rendering UI");
+    if (this.state.action) console.log("Action:", this.state.action)
 
     let days = ["Today", "Tomorrow", "Day After"];
     const baseDate = (this.state.baseDate) ? this.state.baseDate : new Date();
@@ -267,13 +272,9 @@ const UI = React.createClass({
         <Layout fixedHeader fixedDrawer>
           <Header scroll>
             <HeaderRow title="Munro Bagger">
-              <Textfield
-                value=""
-                onChange={() => {}}
-                label="Search"
-                expandable
-                expandableIcon="search"
-              />
+              <Search
+                mountainViews={this.state.mountainViews}
+                onSelection={this.onMountainSelected} />
               <IconButton name="more_vert" id="menu-top-right" />
               <Menu target="menu-top-right" align="right">
                   {login}
@@ -296,6 +297,9 @@ const UI = React.createClass({
             <Scotland mapLoaded={this.onMapLoaded}/>
             {spinner}
             {mountain}
+            <MountainSnackbar
+              willDisplay={this.selectedAction('snackbar')}
+              onCompleted={this.onCompleted}/>
             <Login
               user={this.state.user}
               willDisplay={this.selectedAction('login')}
