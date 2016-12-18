@@ -20,13 +20,14 @@ const MountainSnackbar = React.createClass({
   },
 
   handleTimeoutSnackbar: function() {
+    console.log("Snackbar timeout")
     this.setState({ snackbarActive: false });
-    this.props.onCompleted(null);
+    this.props.onCompleted();
   },
 
   handleClickActionSnackbar: function() {
     this.setState({ snackbarActive: false, hideForever: true });
-    this.props.onCompleted(null);
+    this.props.onCompleted();
   },
 
   render: function() {
@@ -38,7 +39,7 @@ const MountainSnackbar = React.createClass({
         onClick={this.handleClickActionSnackbar}
         onTimeout={this.handleTimeoutSnackbar}
         action="Got it">
-        Click <span className="infoIcon">i</span>for more information.
+        Click <span className="info-icon">i</span>for more information.
       </Snackbar>
     )
   }

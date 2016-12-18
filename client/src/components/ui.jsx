@@ -165,6 +165,7 @@ const UI = React.createClass({
   },
 
   onCompleted: function(nextAction) {
+    if (!nextAction) nextAction = null;
     this.logAndSetState({action: nextAction});
   },
 
@@ -182,15 +183,15 @@ const UI = React.createClass({
     if (this.state.focusMountain)
       this.logAndSetState({focusMountain: mtnView});
     else
-      this.logAndSetState({action: 'snackbar'});
+      this.logAndSetState({focusMountain: mtnView, action: 'snackbar'});
   },
 
   onInfoRequested: function(mtnView) {
-    this.logAndSetState({focusMountain: mtnView})
+    this.logAndSetState({focusMountain: mtnView, action: 'mountain'})
   },
 
   onInfoClosed: function() {
-    this.logAndSetState({focusMountain: null})
+    this.logAndSetState({action: null})
   },
 
   //
@@ -229,21 +230,6 @@ const UI = React.createClass({
     if (baseDate.toDateString() !== new Date().toDateString()) {
       const day = baseDate.getDay();
       days = [dayOfWeek(day, true), dayOfWeek((day+1)%7, true), dayOfWeek((day+1)%7, true)];
-    }
-
-    let mountain = null;
-    if (this.state.focusMountain) {
-      mountain = (
-        <MountainDetail
-          onCompleted={this.onInfoClosed}
-          focusMount={this.state.focusMountain}
-          dayNum={this.state.dayNum}
-          baseDate={baseDate}
-          bagged={this.requestBaggedStatusChange}
-          disabled={this.state.checkboxDisabled}
-          date={this.setDate}
-          userLoggedIn={this.state.userLoggedIn} />
-      )
     }
 
     let spinner = null;
@@ -296,7 +282,14 @@ const UI = React.createClass({
           <Content>
             <Scotland mapLoaded={this.onMapLoaded}/>
             {spinner}
-            {mountain}
+            <MountainDetail
+              willDisplay={this.selectedAction('mountain')}
+              onCompleted={this.onInfoClosed}
+              onSave={this.requestBaggedStatusChange}
+              mountain={this.state.focusMountain}
+              dayNum={this.state.dayNum}
+              baseDate={baseDate}
+              userLoggedIn={this.state.userLoggedIn} />
             <MountainSnackbar
               willDisplay={this.selectedAction('snackbar')}
               onCompleted={this.onCompleted}/>

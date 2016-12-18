@@ -504,7 +504,7 @@ InfoBox.prototype.draw = function () {
 
   if (this.alignBottom_) {
     this.div_.style.bottom = -(pixPosition.y + this.pixelOffset_.height) + "px";
-    arrow.style.bottom = "-10px";
+    arrow.style.bottom = "-9px";
     this.div_.appendChild(arrow);
   } else {
     this.div_.style.top = (pixPosition.y + this.pixelOffset_.height) + "px";

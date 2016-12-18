@@ -11,6 +11,20 @@ const dayOfWeek = require('../utility').dayOfWeek;
 
 const MountDetail = React.createClass({
 
+  getInitialState: function() {
+    return({ visible: false })
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    if (nextProps.willDisplay) this.setState({ visible: true })
+  },
+
+  shouldComponentUpdate: function(nextProps, nextState) {
+    return (this.props.mountain !== nextProps.mountain) ||
+      (this.props.dayNum !== nextProps.dayNum) ||
+      (this.state.visible !== nextState.visible);
+  },
+
   formatDay: function() {
     const day = this.props.baseDate.getDay();
     let days = ["Today", "Tomorrow", dayOfWeek((day+2)%7, false)];
@@ -28,6 +42,7 @@ const MountDetail = React.createClass({
   },
 
   clickClose: function() {
+    this.setState({visible: false})
     this.props.onCompleted();
   },
 
@@ -45,7 +60,11 @@ const MountDetail = React.createClass({
 
   render: function() {
 
-    const detail = this.props.focusMount.detail;
+    if (!this.props.mountain) {
+      return(<div className='mountain'></div>);
+    }
+
+    const detail = this.props.mountain.detail;
     const forecast = detail.forecasts.day[this.props.dayNum];
 
     let bagged = null;
@@ -58,12 +77,13 @@ const MountDetail = React.createClass({
       )
     }
 
+    let classes = (this.state.visible) ? "mountain is-visible" : "mountain";
     return (
-      <Card shadow={6} style={{position: 'absolute', width: '100%', height: '100%'}}>
-        <CardTitle expand style={{display: 'block', background: '#3E4EB8', color: '#fff'}}>
+      <div className={classes}>
+        <div className='mountain-title'>
           <h5 style={{margin: '5px 0px'}}>{detail.name}</h5>
           <p style={{margin: '0px'}}>({detail.meaning})</p>
-        </CardTitle>
+        </div>
         <CardText>
           <div className="flex-grid">
             <div className="grid-item">Height:</div>
@@ -91,7 +111,7 @@ const MountDetail = React.createClass({
           {bagged}
           <Button type='button' onClick={this.clickClose}>Close</Button>
         </CardActions>
-      </Card>
+      </div>
     )
 
   }

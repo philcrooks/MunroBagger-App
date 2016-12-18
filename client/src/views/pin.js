@@ -1,4 +1,4 @@
-var InfoBox = require('./infobox');
+// var InfoBox = require('./infobox');
 
 function Pin (map, mtnView, hidden) {
   // this._id = mtnView.id;
@@ -80,58 +80,59 @@ Pin.prototype.createMarker = function(markerCallback, infoCallback) {
   this._resetMarker();
 };
 
-Pin.prototype._createInfoWindow = function(infoCallback, closeCallback) {
+Pin.prototype._createInfoContent = function(infoCallback, closeCallback) {
   let outerSpan = document.createElement("span");
-  outerSpan.classList.add("mdl-chip", "mdl-chip--contact", "mdl-chip--deletable");
-  outerSpan.style.backgroundColor = "white";
-  outerSpan.style.cursor = "pointer"
-  outerSpan.style.padding = "1px";
+  outerSpan.classList.add("info-box");
 
   let iconSpan = document.createElement("span");
-  iconSpan.classList.add("mdl-chip__contact", "mdl-color--indigo", "mdl-color-text--white");
-  iconSpan.style.fontFamily = "baskerville";
-  iconSpan.style.fontWeight = "bold";
-  iconSpan.style.fontStyle = "italic";
+  iconSpan.classList.add("info-icon");
+  iconSpan.style.cursor = 'pointer';
   iconSpan.textContent = "i";
   iconSpan.onclick = infoCallback;
   outerSpan.appendChild(iconSpan);
 
   let textSpan = document.createElement("span");
-  textSpan.classList.add("mdl-chip__text");
-  textSpan.style.fontWeight = "bold";
+  textSpan.classList.add("info-text");
+  textSpan.style.cursor = 'pointer';
   textSpan.textContent = this._mtnView.name;
   textSpan.onclick = infoCallback
   outerSpan.appendChild(textSpan);
 
-  let closer = document.createElement("span");
-  closer.classList.add("mdl-chip__action");
-  closer.onclick = closeCallback;
+  // if (closeCallback) {
+  //   let closer = document.createElement("span");
+  //   closer.classList.add("info-closer");
+  //   closer.onclick = closeCallback;
 
-  let icon = document.createElement("i");
-  icon.classList.add("material-icons");
-  icon.textContent = "cancel";
-  closer.appendChild(icon);
-  outerSpan.appendChild(closer);
+  //   let icon = document.createElement("i");
+  //   icon.classList.add("material-icons");
+  //   icon.textContent = "cancel";
+  //   closer.appendChild(icon);
+  //   outerSpan.appendChild(closer);
+  // }
 
-  const infoBoxOpts = {
-    disableAutoPan: false,
-    alignMiddle: true,
-    alignBottom: true,
-    pixelOffset: new google.maps.Size(0, -24),
-    zIndex: null,
-    boxStyle: {
-      padding: "0px"
-    },
-    closeBoxURL : "",
-    infoBoxClearance: new google.maps.Size(5, 5),
-    isHidden: false,
-    pane: "floatPane",
-    enableEventPropagation: false,
-    content: outerSpan
-  };
-
-  return new InfoBox(infoBoxOpts);
+  return outerSpan;
 }
+
+// Pin.prototype._createInfoWindow = function(content) {
+//   const infoBoxOpts = {
+//     disableAutoPan: false,
+//     alignMiddle: true,
+//     alignBottom: true,
+//     pixelOffset: new google.maps.Size(0, -24),
+//     zIndex: null,
+//     boxStyle: {
+//       padding: "0px"
+//     },
+//     closeBoxURL : "",
+//     infoBoxClearance: new google.maps.Size(5, 5),
+//     isHidden: false,
+//     pane: "floatPane",
+//     enableEventPropagation: false,
+//     content: content
+//   };
+
+//   return new InfoBox(infoBoxOpts);
+// }
 
 Pin.prototype._closeInfoWindow = function(event) {
   event.stopPropagation();
@@ -147,8 +148,16 @@ Pin.prototype._moreInfo = function() {
 Pin.prototype._openInfoWindow = function(){
   if (this._userClosedInfoWin) return;
 
-  const forecast = this._forecasts.day[this._dayNum];
-  const infoWindow = this._createInfoWindow(this._moreInfo.bind(this), this._closeInfoWindow.bind(this));
+  // const content = this._createInfoContent(this._moreInfo.bind(this), this._closeInfoWindow.bind(this));
+  const content = this._createInfoContent(this._moreInfo.bind(this));
+  // const infoWindow = this._createInfoWindow(content);
+  const infoWindow = new google.maps.InfoWindow({
+      content: content
+  });
+  google.maps.event.addListener(infoWindow,'closeclick',function(){
+    this._userClosedInfoWin = true;
+    this._infoWindow = null;
+  }.bind(this));
   infoWindow.open(this._map, this._marker);
   if (this._infoWindow) this._infoWindow.close();
   this._infoWindow = infoWindow;

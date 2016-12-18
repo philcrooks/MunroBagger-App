@@ -34,7 +34,23 @@ ul {
     padding: 0;
 }
 
-.infoIcon {
+.info-box {
+  height: 32px;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  line-height: 32px;
+  padding: 4px 4px 0 0;
+  border: 0;
+  border-radius: 4px;
+  background-color: #dedede;
+  display: inline-block;
+  color: rgba(0,0,0, 0.87);
+  margin: 2px 0;
+  font-size: 0;
+  white-space: nowrap;
+  background-color: white;
+}
+
+.info-icon {
   height: 32px;
   width: 32px;
   border-radius: 16px;
@@ -43,7 +59,7 @@ ul {
   margin-right: 8px;
   overflow: hidden;
   text-align: center;
-  font-size: 18px;
+  font-size: 22px;
   line-height: 32px;
   font-style: italic;
   font-weight: bold;
@@ -52,22 +68,120 @@ ul {
   background-color: rgb(63,81,181);
 }
 
+.info-text {
+  font-size: 13px;
+  font-weight: bold;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+.mountain {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  font-size: 16px;
+  font-weight: 400;
+  min-height: 200px;
+  overflow: hidden;
+  width: 300px;
+  z-index: 1;
+  position: absolute;
+  background: rgb(255,255,255);
+  border-radius: 2px;
+  margin-top: 20px;
+  right: 0%;
+  box-sizing: border-box;
+  -webkit-transform: translateX(100%);
+          transform: translateX(100%);
+  -webkit-transform-style: preserve-3d;
+          transform-style: preserve-3d;
+  will-change: transform;
+  transition-duration: 0.2s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-property: -webkit-transform;
+  transition-property: transform;
+  transition-property: transform, -webkit-transform;
+}
+
+.mountain.is-visible {
+  -webkit-transform: translateX(calc(100% - 320px));
+          transform: translateX(calc(100% - 320px));
+}
+
+.mountain-title {
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  background-color: #3E4EB8;
+  color: #fff;
+  display: block;
+  -webkit-justify-content: stretch;
+      -ms-flex-pack: stretch;
+          justify-content: stretch;
+  line-height: normal;
+  padding: 16px 16px;
+  -webkit-perspective-origin: 165px 56px;
+          perspective-origin: 165px 56px;
+  -webkit-transform-origin: 165px 56px;
+          transform-origin: 165px 56px;
+  box-sizing: border-box;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+          flex-grow: 1;
+}
+.mountain-title.mountain-border {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.mountain-supporting-text {
+  color: rgba(0,0,0, 0.54);
+  font-size: 1rem;
+  line-height: 18px;
+  overflow: hidden;
+  padding: 16px 16px;
+  width: 90%;
+}
+
+.mountain-actions {
+  font-size: 16px;
+  line-height: normal;
+  width: 100%;
+  background-color: transparent;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.mountain-actions.mountain-border {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+
+
+/*.info-closer {
+  height: 24px;
+  width: 24px;
+  background: transparent;
+  opacity: 0.54;
+  display: inline-block;
+  cursor: pointer;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0;
+  margin: 0 0 0 12px;
+  font-size: 13px;
+  text-decoration: none;
+  color: rgba(0,0,0, 0.87);
+  border: none;
+  outline: none;
+  overflow: hidden;
+  cursor: pointer;
+}*/
+
 .formElement {
   margin-top: 12px;
-}
-
-#infoBox input {
-  padding-left: 5px;
-  height: 24px;
-  width: 200px;
-  border-style: solid;
-  border-color: initial;
-  border-image: initial;
-}
-
-#infoBox input[type="checkbox"] {
-  width: 20px;
-  margin: 0;
 }
 
 p.small {
@@ -129,27 +243,6 @@ button {
   cursor: pointer;
 }
 
-#weather-buttons {
-    position: fixed;
-    left: 0;
-    width: 95px;
-    z-index: 1;
-    padding: 10px;
-}
-
-#weather-buttons h3 {
-  margin-bottom: 8px;
-  color:#456F99;
-  text-align: center;
-}
-
-
-#weather-buttons button {
-    display: block;
-    width: 100%;
-    margin-bottom: 8px;
-}
-
 input[type="submit"]:hover,
 button:hover,
 .active {
@@ -193,15 +286,6 @@ textarea:focus, input:focus, button:focus {
     z-index: 1;
 }
 
-#search {
-/*    position: fixed;
-    right: 40px;
-    top: 110px;
-    width: 380px;
-    height: 28px;
-    z-index: 5;*/
-}
-
 #menu {
   position: fixed;
   right: 40px;
@@ -210,16 +294,6 @@ textarea:focus, input:focus, button:focus {
   z-index: 1;
 }
 
-#infoBox {
-    position: fixed;
-    right: 40px;
-    top: 165px;
-    width: 314px;
-    padding: 30px 30px 20px 30px;
-    border: 3px solid #fff;
-    background: #A5CEFD;
-    z-index: 1;
-}
 
 .flex-grid {
   margin: 4px 0 10px;
@@ -237,10 +311,6 @@ textarea:focus, input:focus, button:focus {
 
 .icon {
   height: 18px;
-}
-
-#infoBox button {
-    margin-top: 10px;
 }
 
 /*-------- auto suggest -------*/
@@ -301,27 +371,6 @@ textarea:focus, input:focus, button:focus {
       right: 20px;
       width: 330px;
   }
-
-  #search {
-      position: fixed;
-      right: 20px;
-      top: 110px;
-      width: 330px;
-      height: 28px;
-      z-index: 5;
-  }
-
-  #infoBox {
-      position: fixed;
-      right: 20px;
-      top: 150px;
-      width: 294px;
-      padding: 15px 15px 15px 15px;
-      border: 3px solid #fff;
-      background: #A5CEFD;
-      z-index: 1;
-  }
-
 }
 
 @media screen and (orientation:portrait) {
@@ -380,37 +429,6 @@ textarea:focus, input:focus, button:focus {
 
   .react-autosuggest__container--open .react-autosuggest__suggestions-container {
     width: 88%;
-  }
-
-  #weather-buttons h4 {
-    margin-bottom: 5px;
-  }
-
-  #weather-buttons {
-      position: fixed;
-      top: 120px;
-      left: 10px;
-      padding: 0;
-      /*left: 0;
-      width: 95px;
-      z-index: 1;
-      padding: 10px; */
-  }
-
-  #infoBox {
-      position: static;
-      width: 50%;
-      padding: 15px 15px 5px 15px;
-      float: right;
-      margin: 10px;
-      border: 2px solid #fff;
-      /*right: 40px;
-      top: 180px;
-      width: 314px;
-      padding: 30px 30px 20px 30px;
-      border: 3px solid #fff;
-      background: #A5CEFD;
-      z-index: 1;*/
   }
 
 }
