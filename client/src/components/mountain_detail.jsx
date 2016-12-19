@@ -66,6 +66,18 @@ const MountDetail = React.createClass({
 
     const detail = this.props.mountain.detail;
     const forecast = detail.forecasts.day[this.props.dayNum];
+    let name = detail.name;
+    if (name.includes(",") || name.includes("(")) {
+      let newName = "";
+      for(let i = 0; i < name.length; i++) {
+        let character = name.charAt(i);
+        if ((character === " ") && (name.charAt(i-1) !== " ") && (name.charAt(i-1) !== ",") && (name.charAt(i+1) !== "(")) {
+          character = "\xa0";
+        }
+        newName += character;
+      }
+      name = newName;
+    }
 
     let bagged = null;
     if (this.props.userLoggedIn) {
@@ -81,7 +93,7 @@ const MountDetail = React.createClass({
     return (
       <div className={classes}>
         <div className='mountain-title'>
-          <h5 style={{margin: '5px 0px'}}>{detail.name}</h5>
+          <h5 style={{margin: '5px 0px'}}>{name}</h5>
           <p style={{margin: '0px'}}>({detail.meaning})</p>
         </div>
         <CardText>
