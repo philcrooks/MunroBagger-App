@@ -92,23 +92,37 @@ ul {
   background: rgb(255,255,255);
   border-radius: 2px;
   margin-top: 20px;
-  right: 0%;
   box-sizing: border-box;
-  -webkit-transform: translateX(100%);
-          transform: translateX(100%);
   -webkit-transform-style: preserve-3d;
           transform-style: preserve-3d;
   will-change: transform;
-  transition-duration: 0.2s;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-property: -webkit-transform;
   transition-property: transform;
   transition-property: transform, -webkit-transform;
 }
 
+@media screen and (max-width: 800px) {
+  .mountain {
+    left: calc(50% - 150px);
+    transition-duration: 0.3s;
+    -webkit-transform: translateX(550px);
+            transform: translateX(550px);
+  }
+}
+
+@media screen and (min-width: 801px) {
+  .mountain {
+    left: calc(100% - 320px);
+    transition-duration: 0.2s;
+    -webkit-transform: translateX(320px);
+            transform: translateX(320px);
+  }
+}
+
 .mountain.is-visible {
-  -webkit-transform: translateX(calc(100% - 320px));
-          transform: translateX(calc(100% - 320px));
+  -webkit-transform: translateX(0);
+          transform: translateX(0);
 }
 
 .mountain-title {

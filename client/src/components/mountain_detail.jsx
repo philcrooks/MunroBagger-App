@@ -1,6 +1,6 @@
 const React = require('react');
 
-import { Button, Card, CardTitle, CardText, CardActions } from 'react-mdl';
+import { FABButton, Icon, Card, CardTitle, CardText, CardActions } from 'react-mdl';
 
 // const DatePicker = require('react-datepicker');
 // const moment = require('moment');
@@ -109,7 +109,7 @@ const MountDetail = React.createClass({
         </CardText>
         <CardActions border style={{borderColor: 'rgba(255, 255, 255, 0.2)', display: 'flex', boxSizing: 'border-box', alignItems: 'center', color: '#fff'}}>
           {bagged}
-          <Button type='button' onClick={this.clickClose}>Close</Button>
+          <FABButton mini onClick={this.clickClose}><Icon name="arrow_forward" /></FABButton>
         </CardActions>
       </div>
     )

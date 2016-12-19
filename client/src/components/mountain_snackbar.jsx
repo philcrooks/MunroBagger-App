@@ -5,28 +5,28 @@ const MountainSnackbar = React.createClass({
   getInitialState: function() {
     return(
       {
-        snackbarActive: this.props.willDisplay,
+        active: false,
         hideForever: false
       }
     );
   },
 
   shouldComponentUpdate: function(nextProps, nextState) {
-    return (nextProps.willDisplay && !this.state.hideForever);
+    return (this.state.active || (this.state.active !== nextState.active));
   },
 
   componentWillReceiveProps: function(nextProps) {
-    this.setState({snackbarActive: nextProps.willDisplay});
+    if (!this.state.active && !this.state.hideForever && nextProps.willDisplay) this.setState({active: true});
   },
 
   handleTimeoutSnackbar: function() {
     console.log("Snackbar timeout")
-    this.setState({ snackbarActive: false });
+    this.setState({ active: false });
     this.props.onCompleted();
   },
 
   handleClickActionSnackbar: function() {
-    this.setState({ snackbarActive: false, hideForever: true });
+    this.setState({ active: false, hideForever: true });
     this.props.onCompleted();
   },
 
@@ -35,7 +35,7 @@ const MountainSnackbar = React.createClass({
 
     return (
       <Snackbar
-        active={this.state.snackbarActive}
+        active={this.state.active}
         onClick={this.handleClickActionSnackbar}
         onTimeout={this.handleTimeoutSnackbar}
         action="Got it">

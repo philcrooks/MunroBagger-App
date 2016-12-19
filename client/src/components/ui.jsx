@@ -27,14 +27,11 @@ const UI = React.createClass({
       dayNum:           0,
       baseDate:         null,
       focusMountain:    null,
-      focusMountBagged: null,
-      checkboxDisabled: false,
+      showingMountain:  false,
       action:           null,
       user:             new User(),
       userLoggedIn:     false,
-      mountainViews:    null,
-      resetEmailExists:  true,
-      signupEmailExists: false
+      mountainViews:    null
     }
   },
 
@@ -180,18 +177,18 @@ const UI = React.createClass({
 
   onMountainSelected: function(mtnView) {
     this.mapObj.openInfoWindowForMountain(mtnView.pin);
-    if (this.state.focusMountain)
+    if (this.state.showingMountain)
       this.logAndSetState({focusMountain: mtnView});
     else
       this.logAndSetState({focusMountain: mtnView, action: 'snackbar'});
   },
 
   onInfoRequested: function(mtnView) {
-    this.logAndSetState({focusMountain: mtnView, action: 'mountain'})
+    this.logAndSetState({focusMountain: mtnView, showingMountain: true, action: 'mountain'})
   },
 
   onInfoClosed: function() {
-    this.logAndSetState({action: null})
+    this.logAndSetState({showingMountain: false, action: null})
   },
 
   //
@@ -229,7 +226,7 @@ const UI = React.createClass({
     const baseDate = (this.state.baseDate) ? this.state.baseDate : new Date();
     if (baseDate.toDateString() !== new Date().toDateString()) {
       const day = baseDate.getDay();
-      days = [dayOfWeek(day, true), dayOfWeek((day+1)%7, true), dayOfWeek((day+1)%7, true)];
+      days = [dayOfWeek(day, true), dayOfWeek((day+1)%7, true), dayOfWeek((day+2)%7, true)];
     }
 
     let spinner = null;
