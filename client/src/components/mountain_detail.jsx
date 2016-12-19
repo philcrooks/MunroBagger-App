@@ -1,6 +1,6 @@
 const React = require('react');
 
-import { FABButton, Icon, Card, CardTitle, CardText, CardActions } from 'react-mdl';
+import { FABButton, Icon } from 'react-mdl';
 
 // const DatePicker = require('react-datepicker');
 // const moment = require('moment');
@@ -66,13 +66,18 @@ const MountDetail = React.createClass({
 
     const detail = this.props.mountain.detail;
     const forecast = detail.forecasts.day[this.props.dayNum];
+
+    // Make sure long names break at the most appropriate point
     let name = detail.name;
     if (name.includes(",") || name.includes("(")) {
       let newName = "";
       for(let i = 0; i < name.length; i++) {
         let character = name.charAt(i);
-        if ((character === " ") && (name.charAt(i-1) !== " ") && (name.charAt(i-1) !== ",") && (name.charAt(i+1) !== "(")) {
-          character = "\xa0";
+        if ((character === " ") &&
+          (name.charAt(i-1) !== " ") &&
+          (name.charAt(i-1) !== ",") &&
+          (name.charAt(i+1) !== "(")) {
+            character = "\xa0"; // Non-breaking space
         }
         newName += character;
       }
@@ -93,17 +98,17 @@ const MountDetail = React.createClass({
     return (
       <div className={classes}>
         <div className='mountain-title'>
-          <h5 style={{margin: '5px 0px'}}>{name}</h5>
-          <p style={{margin: '0px'}}>({detail.meaning})</p>
-        </div>
-        <CardText>
+          <h1>{name}</h1>
+          <p>{detail.meaning}</p>
           <div className="flex-grid">
             <div className="grid-item">Height:</div>
             <div className="grid-item">{detail.height}m</div>
             <div className="grid-item">OS Grid Ref:</div>
             <div className="grid-item">{detail.gridRef.toString()}</div>
           </div>
-          <div className="cond-title"><h6 style={{color: 'black'}}>Conditions for {this.formatDay()}</h6></div>
+        </div>
+        <div className='mountain-supporting-text'>
+          <div className="cond-title">Conditions for {this.formatDay()}</div>
           <div className="flex-grid">
             <div className="grid-item">Weather:</div>
             <div className="grid-item">{forecast.description}</div>
@@ -118,11 +123,12 @@ const MountDetail = React.createClass({
             <div className="grid-item"></div>
             <div className="grid-item">Gusts of {forecast.wind.gusting}mph</div>
           </div>
-        </CardText>
-        <CardActions border style={{borderColor: 'rgba(255, 255, 255, 0.2)', display: 'flex', boxSizing: 'border-box', alignItems: 'center', color: '#fff'}}>
+        </div>
+        <div className='mountain-actions'>
           {bagged}
+          <FABButton mini onClick={this.clickClose}><Icon name="save" /></FABButton>
           <FABButton mini onClick={this.clickClose}><Icon name="arrow_forward" /></FABButton>
-        </CardActions>
+        </div>
       </div>
     )
 

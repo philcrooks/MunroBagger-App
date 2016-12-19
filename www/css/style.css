@@ -126,26 +126,36 @@ ul {
 }
 
 .mountain-title {
-  -webkit-align-items: center;
-      -ms-flex-align: center;
-          align-items: center;
-  background-color: #3E4EB8;
-  color: #fff;
+  background-color: rgb(117,117,117);
+  color: white;
   display: block;
-  -webkit-justify-content: stretch;
-      -ms-flex-pack: stretch;
-          justify-content: stretch;
   line-height: normal;
   padding: 16px 16px;
-  -webkit-perspective-origin: 165px 56px;
-          perspective-origin: 165px 56px;
-  -webkit-transform-origin: 165px 56px;
-          transform-origin: 165px 56px;
-  box-sizing: border-box;
-  -webkit-flex-grow: 1;
-  -ms-flex-positive: 1;
-          flex-grow: 1;
 }
+
+.mountain-title h1 {
+  font-size: 18px;
+  padding: 0;
+  font-weight: bold;
+  margin: 0;
+}
+
+.mountain-title p {
+  font-size: 14px;
+  padding: 0;
+  margin: 0 0 5px 0;
+  font-style: italic;
+  line-height: normal;
+}
+
+.mountain-title .flex-grid {
+  font-size: 1rem;
+  line-height: 18px;
+  overflow: hidden;
+  width: 90%;
+  margin: 0;
+}
+
 .mountain-title.mountain-border {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
@@ -160,6 +170,10 @@ ul {
 }
 
 .mountain-actions {
+  border-color: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: right;
+  color: #fff;
   font-size: 16px;
   line-height: normal;
   width: 100%;
@@ -172,7 +186,11 @@ ul {
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-
+.cond-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 5px 0px;
+}
 
 /*.info-closer {
   height: 24px;
@@ -201,40 +219,6 @@ ul {
 p.small {
   margin: 0;
   font-size: 12px;
-}
-
-
-input, textarea, keygen, select, button {
-  color: #456F99;
-}
-::-webkit-input-placeholder {
-   color: #456F99;
-}
-:-moz-placeholder { /* Firefox 18- */
-   color: #456F99;
-}
-::-moz-placeholder {  /* Firefox 19+ */
-   color: #456F99;
-}
-:-ms-input-placeholder {
-   color: #456F99;
-}
-
-input {
-  box-sizing: border-box;
-}
-
-input[type="submit"],
-button {
-    font-family: 'Hammersmith One', sans-serif;
-    font-size: 16px;
-    color: #436E98;
-    background-color: #fff;
-    box-sizing: border-box;
-    padding: 3px 6px 2px;
-    border-width: 2px;
-    border-style: solid;
-    border-color: #436E98;
 }
 
 /*.page-content {
