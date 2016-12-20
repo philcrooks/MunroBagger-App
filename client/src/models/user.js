@@ -149,7 +149,7 @@ User.prototype.createUserMountain = function(mountainId) {
 }
 
 User.prototype.saveUserMountain = function(mountain, onCompleted) {
-  if (!mountain.isDirty()) callback(false);
+  if (!mountain.isDirty()) return;
   let url = baseURL + baggedRoute;
   let forExport = mountain.export();
 

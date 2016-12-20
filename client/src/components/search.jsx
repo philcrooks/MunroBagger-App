@@ -42,7 +42,6 @@ const Search = React.createClass({
 
   	return (
   		<Textfield
-  			style={{width: '100px'}}
         value={this.state.searchString}
         onChange={this.updateSearch}
         label="Search"

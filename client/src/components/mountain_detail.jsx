@@ -1,10 +1,9 @@
 const React = require('react');
 
-import { FABButton, Icon } from 'react-mdl';
+import { Checkbox, FABButton, Icon } from 'react-mdl';
 
 // const DatePicker = require('react-datepicker');
 // const moment = require('moment');
-const MountDetailBagged = require('./mountain_detail_bagged');
 const dayOfWeek = require('../utility').dayOfWeek;
 
 // require('react-datepicker/dist/react-datepicker.css');
@@ -12,17 +11,36 @@ const dayOfWeek = require('../utility').dayOfWeek;
 const MountDetail = React.createClass({
 
   getInitialState: function() {
-    return({ visible: false })
+
+    return({
+      visible: false,
+      saveEnabled: false,
+      baggedEnabled: false,
+      bagged: false
+    });
   },
 
   componentWillReceiveProps: function(nextProps) {
-    if (nextProps.willDisplay) this.setState({ visible: true })
+    if (nextProps.willDisplay) this.setState({visible: nextProps.willDisplay});
+    if ((this.props.mountain !== nextProps.mountain) ||
+       (this.props.userLoggedIn !== nextProps.userLoggedIn)) {
+      const bagged = (nextProps.mountain.bagged) ? true : false;
+      this.setState({
+        saveEnabled: false,
+        baggedEnabled: nextProps.userLoggedIn,
+        bagged: bagged
+      });
+    };
   },
 
   shouldComponentUpdate: function(nextProps, nextState) {
     return (this.props.mountain !== nextProps.mountain) ||
       (this.props.dayNum !== nextProps.dayNum) ||
-      (this.state.visible !== nextState.visible);
+      (this.props.userLoggedIn !== nextProps.userLoggedIn) ||
+      (this.state.visible !== nextState.visible) ||
+      (this.state.bagged !== nextState.bagged) ||
+      (this.state.saveEnabled !==  nextState.saveEnabled) ||
+      (this.state.baggedEnabled !== nextState.baggedEnabled);
   },
 
   formatDay: function() {
@@ -46,6 +64,28 @@ const MountDetail = React.createClass({
     this.props.onCompleted();
   },
 
+  clickSave: function() {
+    // This will only be called if save is enabled
+    // Save will only be enabled if the bagged status changes somehow
+    // The bagged status can only change if the user is logged in
+    let saveEnabled = false;
+    this.setState({baggedEnabled: false, saveEnabled: saveEnabled})
+    const mtn = this.props.mountain;
+    let status = this.state.bagged;
+    mtn.backup();
+    mtn.bagged = status;
+    mtn.pin.changeBaggedState(status);
+    mtn.save(function(success, returned) {
+      if (!success) {
+        status = !status;
+        saveEnabled = true;
+        mtn.pin.changeBaggedState(!status);
+        mtn.restore();
+      }
+      this.setState({baggedEnabled: true, saveEnabled: saveEnabled, bagged: status});
+    }.bind(this));
+  },
+
   handleDateChange: function(date) {
     this.setState({
       startDate: date
@@ -55,10 +95,12 @@ const MountDetail = React.createClass({
 
   handleBaggedChange: function(event) {
     let status = event.target.checked;
-    this.props.bagged(status)
+    this.setState({saveEnabled: this.props.mountain.bagged !== status, bagged: status})
   },
 
   render: function() {
+
+    console.log("Rendering MountainDetail");
 
     if (!this.props.mountain) {
       return(<div className='mountain'></div>);
@@ -66,6 +108,7 @@ const MountDetail = React.createClass({
 
     const detail = this.props.mountain.detail;
     const forecast = detail.forecasts.day[this.props.dayNum];
+    const saveOpts = (this.state.saveEnabled) ? {} : {disabled: "disabled"};
 
     // Make sure long names break at the most appropriate point
     let name = detail.name;
@@ -82,16 +125,6 @@ const MountDetail = React.createClass({
         newName += character;
       }
       name = newName;
-    }
-
-    let bagged = null;
-    if (this.props.userLoggedIn) {
-      bagged = (
-        <MountDetailBagged
-          focusMount={this.props.focusMount}
-          bagged={this.props.bagged}
-          disabled={this.props.disabled} />
-      )
     }
 
     let classes = (this.state.visible) ? "mountain is-visible" : "mountain";
@@ -123,10 +156,14 @@ const MountDetail = React.createClass({
             <div className="grid-item"></div>
             <div className="grid-item">Gusts of {forecast.wind.gusting}mph</div>
           </div>
+          <Checkbox
+            label="Bagged"
+            disabled={!this.state.baggedEnabled}
+            checked={this.state.bagged}
+            onChange={this.handleBaggedChange} />
         </div>
         <div className='mountain-actions'>
-          {bagged}
-          <FABButton mini onClick={this.clickClose}><Icon name="save" /></FABButton>
+          <FABButton mini {...saveOpts} onClick={this.clickSave}><Icon name="save" /></FABButton>
           <FABButton mini onClick={this.clickClose}><Icon name="arrow_forward" /></FABButton>
         </div>
       </div>

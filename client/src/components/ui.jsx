@@ -91,25 +91,6 @@ const UI = React.createClass({
     }.bind(this))
   },
 
-  requestBaggedStatusChange: function(status) {
-    this.logAndSetState({focusMountBagged: status, checkboxDisabled: true})
-    this.state.focusMountain.backup();
-    this.state.focusMountain.bagged = status;
-    this.state.focusMountain.pin.changeBaggedState(status);
-    this.state.focusMountain.save(function(success) {
-      if (!success) status = !status;
-      this.logAndSetState({checkboxDisabled: false, focusMountBagged: status}, function() {
-        console.log("Change state enable:", this.state.checkboxDisabled)
-      })
-
-      if (!success) {
-        // There was an error saving the data
-        this.state.focusMountain.pin.changeBaggedState(!status);
-        this.state.focusMountain.restore();
-      }
-    }.bind(this));
-  },
-
   setDate: function() {
     // Do something here with date
   },
@@ -153,10 +134,12 @@ const UI = React.createClass({
   onLoginCompleted: function(isLoggedIn, nextAction) {
     this.logAndSetState({action: nextAction});
     if (isLoggedIn) {
-      this.logAndSetState({userLoggedIn: true});
-      this.state.user.getInfo(function() {
-        this.state.mountainViews.userLogin(this.state.user);
-        this.mapObj.userLoggedIn(this.state.mountainViews.mountains)
+      this.state.user.getInfo(function(success, returned) {
+        if (success) {
+          this.state.mountainViews.userLogin(this.state.user);
+          this.mapObj.userLoggedIn(this.state.mountainViews.mountains);
+        }
+        this.logAndSetState({userLoggedIn: true});
       }.bind(this))
     }
   },
@@ -250,11 +233,13 @@ const UI = React.createClass({
       login = <MenuItem onClick={this.setLoginForm}>Login</MenuItem>
     }
 
+    let title = "Munro Bagger";
+
     return (
       <div>
         <Layout fixedHeader fixedDrawer>
           <Header scroll>
-            <HeaderRow title="Munro Bagger">
+            <HeaderRow title={title}>
               <Search
                 mountainViews={this.state.mountainViews}
                 onSelection={this.onMountainSelected} />
