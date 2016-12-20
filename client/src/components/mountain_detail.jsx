@@ -24,7 +24,7 @@ const MountDetail = React.createClass({
     if (nextProps.willDisplay) this.setState({visible: nextProps.willDisplay});
     if ((this.props.mountain !== nextProps.mountain) ||
        (this.props.userLoggedIn !== nextProps.userLoggedIn)) {
-      const bagged = (nextProps.mountain.bagged) ? true : false;
+      const bagged = (nextProps.mountain && nextProps.mountain.bagged) ? true : false;
       this.setState({
         saveEnabled: false,
         baggedEnabled: nextProps.userLoggedIn,

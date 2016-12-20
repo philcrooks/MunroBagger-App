@@ -4,7 +4,7 @@ const Scotland = require('./map')
 
 const Welcome = require('./welcome');
 const MountainDetail = require('./mountain_detail');
-const MountainDrawer = require('./mountain_drawer')
+const MBDrawer = require('./mb_drawer')
 const MountainSnackbar = require('./mountain_snackbar')
 const Login = require('./user/login');
 const Registration = require('./user/registration');
@@ -258,9 +258,9 @@ const UI = React.createClass({
               <Tab>{days[2]}</Tab>
             </HeaderTabs>
           </Header>
-          <MountainDrawer
-            mountainViews={this.state.mountainViews}
-            onSelection={this.onMountainSelected} />
+          <MBDrawer
+            map={this.mapObj}
+            userLoggedIn={this.state.userLoggedIn} />
           <Content>
             <Scotland mapLoaded={this.onMapLoaded}/>
             {spinner}

@@ -18,6 +18,7 @@ function Pin (map, mtnView, hidden) {
   this._hidden = (hidden) ? true : false;
 
   Object.defineProperty(this, "id", { get: function(){ return this._mtnView.id; } });
+  Object.defineProperty(this, "bagged", { get: function(){ return this._mountBagged; } });
   Object.defineProperty(this, "hidden", {
     get: function(){ return this._hidden; },
     set: function(hide){

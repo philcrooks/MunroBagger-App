@@ -105,4 +105,10 @@ MapObject.prototype.userLoggedOut = function() {
   }
 }
 
+MapObject.prototype.hidePins = function(hide, callback) {
+  for (let i = 0; i < this._allPins.length; i++) {
+    if (callback(this._allPins[i])) this._allPins[i].hidden = hide;
+  }
+}
+
 module.exports = MapObject;
