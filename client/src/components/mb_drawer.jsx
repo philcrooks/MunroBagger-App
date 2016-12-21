@@ -19,7 +19,10 @@ const MBDrawer = React.createClass({
 	},
 
 	shouldComponentUpdate: function(nextProps, nextState){
-    if (this.state.map != nextState.map) return true;
+    return (this.state.map != nextState.map) ||
+      (this.props.userLoggedIn !== nextProps.userLoggedIn) ||
+      (this.state.showClimbed !== nextState.showClimbed) ||
+      (this.state.showUnclimbed !== nextState.showUnclimbed);
     const drawer = document.getElementsByClassName('mdl-layout__drawer')[0];
   	return(drawer.classList.contains('is-visible'));
 	},
@@ -50,8 +53,21 @@ const MBDrawer = React.createClass({
 
 		return(
 			 <Drawer title="Munro Bagger">
-					<Checkbox label="Show climbed" checked={this.state.showClimbed} onChange={this.climbedChange}/>
-					<Checkbox label="Show unclimbed" checked={this.state.showUnclimbed} onChange={this.unclimbedChange}/>
+					<Checkbox
+						label="Show climbed"
+						checked={this.state.showClimbed}
+						disabled={!this.props.userLoggedIn}
+						onChange={this.climbedChange}/>
+					<Checkbox
+						label="Show unclimbed"
+						checked={this.state.showUnclimbed}
+						disabled={!this.props.userLoggedIn}
+						onChange={this.unclimbedChange}/>
+					<Checkbox
+						label="Sync. with server"
+						checked={true}
+						disabled={true}
+						onChange={function(){}}/>
 	     </Drawer>
 	  )
 	}

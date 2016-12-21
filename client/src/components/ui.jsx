@@ -66,8 +66,7 @@ const UI = React.createClass({
       if (!success) return;
       this.state.mountainViews.userLogout();
       this.mapObj.userLoggedOut();
-      this.logAndSetState({userLoggedIn: false});
-      this.logAndSetState({action: null});
+      this.logAndSetState({userLoggedIn: false, action: null});
     }.bind(this))
   },
 

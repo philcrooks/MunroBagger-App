@@ -6,7 +6,6 @@ function Pin (map, mtnView, hidden) {
   this._map = map;
   this._dayNum = 0;
   this._loggedIn = false;
-  this._mountBagged = mtnView.bagged;
   this._forecasts = mtnView.detail.forecasts;
   this._mountSunny = (this._forecasts.day[0].code <= 3)
   this._marker = null;
@@ -15,15 +14,15 @@ function Pin (map, mtnView, hidden) {
   this._hasFocus = false;
   this._userClosedInfoWin = false;
   this._infoWindow = null;
-  this._hidden = (hidden) ? true : false;
+  this._mtnView.hidden = (hidden) ? true : false;
 
   Object.defineProperty(this, "id", { get: function(){ return this._mtnView.id; } });
-  Object.defineProperty(this, "bagged", { get: function(){ return this._mountBagged; } });
+  Object.defineProperty(this, "bagged", { get: function(){ return this._mtnView.bagged; } });
   Object.defineProperty(this, "hidden", {
-    get: function(){ return this._hidden; },
+    get: function(){ return this._mtnView,hidden; },
     set: function(hide){
-      if (hide !== this._hidden) {
-        this._hidden = hide;
+      if (hide !== this._mtnView.hidden) {
+        this._mtnView.hidden = hide;
         if (hide)
           this._marker.setMap(null);
         else
@@ -46,8 +45,7 @@ Pin.prototype.changeForecast = function(dayNum) {
   }
 }
 
-Pin.prototype.changeBaggedState = function(bagged) {
-  this._mountBagged = bagged;
+Pin.prototype.changeBaggedState = function() {
   this._marker.setMap(null);
   this._resetMarker();
 }
@@ -63,7 +61,7 @@ Pin.prototype.userLoggedOut = function() {
 }
 
 Pin.prototype._resetMarker = function() {
-  if (this._hidden) return;
+  if (this.hidden) return;
   this._marker =  new google.maps.Marker({
     position: this._mtnView.detail.latLng,
     map: this._map,
@@ -136,7 +134,7 @@ Pin.prototype._createInfoContent = function(infoCallback, closeCallback) {
 // }
 
 Pin.prototype._closeInfoWindow = function(event) {
-  event.stopPropagation();
+  // event.stopPropagation();
   this._infoWindow.close();
   this._infoWindow = null;
   this._userClosedInfoWin = true;
@@ -181,7 +179,7 @@ Pin.prototype._generateIcon = function(){
   var base = "./img/";
   var fileName = base + "mntn-";
   if (this._loggedIn) {
-    if (!this._mountBagged) fileName += "not-";
+    if (!this.bagged) fileName += "not-";
     fileName += "bagged";
     if (this._mountSunny) fileName += "-sunny";
   }

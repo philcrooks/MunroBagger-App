@@ -5,6 +5,7 @@ var MountainView = function(mtn) {
   this._createStatus = null;
   this._saveStatus = null;
   this.pin = null;
+  this.hidden = false;
   this._backup = null;
   Object.defineProperty(this, "id", { get: function(){ return this._detail.id; } });
   Object.defineProperty(this, "name", { get: function(){ return this._detail.name; } });
@@ -15,6 +16,7 @@ var MountainView = function(mtn) {
     set: function(value) {
       if (!this._status) this._status = this._createStatus(this.id);
       this._status.bagged = value;
+      if (this.pin) this.pin.changeBaggedState();
     }
   });
   Object.defineProperty(this, "climbedOn", {
@@ -43,6 +45,7 @@ MountainView.prototype.backup = function() {
 
 MountainView.prototype.restore = function() {
   this._status.restore(this._backup);
+  if (this.pin) this.pin.changeBaggedState();
 }
 
 module.exports = MountainView;

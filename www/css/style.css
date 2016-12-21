@@ -198,6 +198,10 @@ ul {
   opacity: 0.87;
 }
 
+.mdl-layout__drawer {
+  padding: 0 10px;
+}
+
 /*.info-closer {
   height: 24px;
   width: 24px;

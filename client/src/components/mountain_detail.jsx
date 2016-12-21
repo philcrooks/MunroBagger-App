@@ -16,11 +16,13 @@ const MountDetail = React.createClass({
       visible: false,
       saveEnabled: false,
       baggedEnabled: false,
-      bagged: false
+      bagged: false,
+      updating: false
     });
   },
 
   componentWillReceiveProps: function(nextProps) {
+    if (this.state.updating) return;
     if (nextProps.willDisplay) this.setState({visible: nextProps.willDisplay});
     if ((this.props.mountain !== nextProps.mountain) ||
        (this.props.userLoggedIn !== nextProps.userLoggedIn)) {
@@ -34,6 +36,7 @@ const MountDetail = React.createClass({
   },
 
   shouldComponentUpdate: function(nextProps, nextState) {
+    if (this.state.updating) return false;
     return (this.props.mountain !== nextProps.mountain) ||
       (this.props.dayNum !== nextProps.dayNum) ||
       (this.props.userLoggedIn !== nextProps.userLoggedIn) ||
@@ -69,20 +72,18 @@ const MountDetail = React.createClass({
     // Save will only be enabled if the bagged status changes somehow
     // The bagged status can only change if the user is logged in
     let saveEnabled = false;
-    this.setState({baggedEnabled: false, saveEnabled: saveEnabled})
+    this.setState({baggedEnabled: false, saveEnabled: saveEnabled, updating: true})
     const mtn = this.props.mountain;
     let status = this.state.bagged;
     mtn.backup();
     mtn.bagged = status;
-    mtn.pin.changeBaggedState(status);
     mtn.save(function(success, returned) {
       if (!success) {
         status = !status;
         saveEnabled = true;
-        mtn.pin.changeBaggedState(!status);
         mtn.restore();
       }
-      this.setState({baggedEnabled: true, saveEnabled: saveEnabled, bagged: status});
+      this.setState({baggedEnabled: true, saveEnabled: saveEnabled, bagged: status, updating: false});
     }.bind(this));
   },
 
