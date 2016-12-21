@@ -26,6 +26,7 @@ const Search = React.createClass({
   componentDidUpdate: function(prevProps, prevState) {
   	if (!this.listenerAttached) {
   		let element = document.getElementById("expandingSearchField");
+  		// This will only work in Chrome which is fine for a Cordova app.
   		element.addEventListener('webkitTransitionEnd', function(event){
   			// Tell the UI to exapnd the title
   			if (event.propertyName === "max-width") {

@@ -219,6 +219,11 @@ ul {
     bottom: 0;
 }
 
+.textfield-holder .mdl-textfield__label {
+  color: white;
+  opacity: 0.5;
+}
+
 /*.info-closer {
   height: 24px;
   width: 24px;
