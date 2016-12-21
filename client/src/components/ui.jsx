@@ -31,7 +31,8 @@ const UI = React.createClass({
       action:           null,
       user:             new User(),
       userLoggedIn:     false,
-      mountainViews:    null
+      mountainViews:    null,
+      shrinkTitle:      false
     }
   },
 
@@ -173,6 +174,11 @@ const UI = React.createClass({
     this.logAndSetState({showingMountain: false, action: null})
   },
 
+  onSearchClicked: function(searchExpanding) {
+    // Only have to do this for a small screen
+    this.logAndSetState({shrinkTitle: searchExpanding});
+  },
+
   //
   // START OF THE INFOBOX COMPONENT SECTION
   // The InfoBox is a container that will hold the componenet returned by infoBoxComponents()
@@ -232,15 +238,17 @@ const UI = React.createClass({
       login = <MenuItem onClick={this.setLoginForm}>Login</MenuItem>
     }
 
-    let title = "Munro Bagger";
+    let title = (this.state.shrinkTitle) ? "MB" : "Munro Bagger";
 
     return (
       <div>
-        <Layout fixedHeader fixedDrawer>
+        <Layout fixedHeader>
           <Header scroll>
             <HeaderRow title={title}>
               <Search
+                shrunkTitle={this.state.shrinkTitle}
                 mountainViews={this.state.mountainViews}
+                onSearchClicked={this.onSearchClicked}
                 onSelection={this.onMountainSelected} />
               <IconButton name="more_vert" id="menu-top-right" />
               <Menu target="menu-top-right" align="right">
