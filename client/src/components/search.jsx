@@ -15,7 +15,10 @@ const Search = React.createClass({
   },
 
   componentWillReceiveProps: function(nextProps) {
-  	if (nextProps.shrunkTitle && !this.props.shrunkTitle) this.setState({expanded: true});
+  	if (nextProps.shrunkTitle && !this.props.shrunkTitle) {
+  		// Some mountains may be hidden, need to regenerate the results
+  		this.setState({expanded: true, searchResults: this.getSearchResults(this.state.searchString)});
+  	}
   },
 
   shouldComponentUpdate: function(nextProps, nextState) {
@@ -40,32 +43,28 @@ const Search = React.createClass({
   		element.addEventListener('blur', function(event) {
   			this.setState({expanded: false});
   		}.bind(this));
-  		// element = document.getElementById("searchResults");
-  		// element.addEventListener('touchstart', function(event){
-				// document.getElementById("searchField").blur();
-  		// }.bind(this));
-  		// element.addEventListener('touchend', function(event){
-				// document.getElementById("searchField").focus();
-  		// }.bind(this));
   		this.listenersAttached = true;
   	}
   },
 
-  updateSearch: function(event) {
-		let input = event.target.value
-    this.setState({searchString: input});
+  getSearchResults: function(text) {
+  	let list = [];
     if (this.props.mountainViews) {
-    	input = input.trim().toLowerCase();
-    	console.log(input);
-	    let list = [];
-	    if (input.length > 0) {
+    	text = text.trim().toLowerCase();
+	    if (text.length > 0) {
 	    	list = this.props.mountainViews.mountains;
 		    list = list.filter(function(mtn) {
-		      return (mtn.name.toLowerCase().includes(input) && !mtn.hidden);
+		      return (mtn.name.toLowerCase().includes(text) && !mtn.hidden);
 		    });
 		  }
-		  this.setState({searchResults: list});
     }
+    return list;
+	},
+
+  updateSearch: function(event) {
+		let input = event.target.value
+    let results = this.getSearchResults(input);
+		this.setState({searchString: input, searchResults: results});
 	},
 
 	itemSelected: function(index) {
