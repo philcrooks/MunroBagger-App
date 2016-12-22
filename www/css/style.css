@@ -102,7 +102,7 @@ ul {
   transition-property: transform, -webkit-transform;
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 750px) {
   .mountain {
     left: calc(50% - 150px);
     transition-duration: 0.3s;
@@ -111,7 +111,7 @@ ul {
   }
 }
 
-@media screen and (min-width: 801px) {
+@media screen and (min-width: 751px) {
   .mountain {
     left: calc(100% - 320px);
     transition-duration: 0.2s;
@@ -230,6 +230,7 @@ ul {
 
 .search-results {
   display: none;
+  padding: 0;
   position: absolute;
   z-index: 5;
   left: 0;
