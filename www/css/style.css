@@ -233,18 +233,30 @@ ul {
   position: absolute;
   z-index: 5;
   left: 0;
-  top: 64px;
-  width: 220px;
-  max-height: 500px;
-  opacity: 0.87;
+  top: 56px;
+  width: 240px;
+  max-height: 240px;
   background-color: white;
   overflow: auto;
+  border-top: solid #F06292 3px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
 
 .search-results.is-visible {
   display: block;
 }
 
+.search-results .mdl-list {
+  padding: 0;
+}
+
+.search-results .mdl-list__item {
+  font-size: 14px;
+  line-height: normal;
+  padding: 8px;
+  cursor: pointer;
+  min-height: 0;
+}
 /*.info-closer {
   height: 24px;
   width: 24px;

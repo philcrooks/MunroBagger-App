@@ -176,7 +176,7 @@ const UI = React.createClass({
 
   onSearchClicked: function(searchExpanding) {
     // Only have to do this for a small screen
-    this.logAndSetState({shrinkTitle: searchExpanding});
+    this.logAndSetState({shrinkTitle: searchExpanding, action: null});
   },
 
   //
@@ -243,7 +243,7 @@ const UI = React.createClass({
     return (
       <div>
         <Layout fixedHeader>
-          <Header scroll>
+          <Header>
             <HeaderRow title={title}>
               <Search
                 shrunkTitle={this.state.shrinkTitle}

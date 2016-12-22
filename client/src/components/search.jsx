@@ -4,7 +4,7 @@ import { Textfield, IconButton, List, ListItem, ListItemContent } from 'react-md
 const Search = React.createClass({
 
   getInitialState: function() {
-  	this.listenerAttached = false;
+  	this.listenersAttached = false;
 		return(
 			{
 				expanded: false,
@@ -24,7 +24,7 @@ const Search = React.createClass({
 	},
 
   componentDidUpdate: function(prevProps, prevState) {
-  	if (!this.listenerAttached) {
+  	if (!this.listenersAttached) {
   		let element = document.getElementById("expandingSearchField");
   		// This will only work in Chrome which is fine for a Cordova app.
   		element.addEventListener('webkitTransitionEnd', function(event){
@@ -36,7 +36,18 @@ const Search = React.createClass({
   					document.getElementById("searchField").focus();
   			}
   		}.bind(this));
-  		this.listenerAttached = true;
+  		element = document.getElementById("searchField");
+  		element.addEventListener('blur', function(event) {
+  			this.setState({expanded: false});
+  		}.bind(this));
+  		// element = document.getElementById("searchResults");
+  		// element.addEventListener('touchstart', function(event){
+				// document.getElementById("searchField").blur();
+  		// }.bind(this));
+  		// element.addEventListener('touchend', function(event){
+				// document.getElementById("searchField").focus();
+  		// }.bind(this));
+  		this.listenersAttached = true;
   	}
   },
 
@@ -45,7 +56,8 @@ const Search = React.createClass({
     this.setState({searchString: input});
     if (this.props.mountainViews) {
     	input = input.trim().toLowerCase();
-	    let list = null;
+    	console.log(input);
+	    let list = [];
 	    if (input.length > 0) {
 	    	list = this.props.mountainViews.mountains;
 		    list = list.filter(function(mtn) {
@@ -79,19 +91,20 @@ const Search = React.createClass({
   	console.log("Rendering Search");
 
   	let list = this.state.searchResults;
+  	let taggedList = null;
   	if (list.length > 0) {
 	  	list = list.map(function(item, index){
 	  		return(
-	  			<ListItem key={index} onClick={this.handler(index)}><ListItemContent>{item.name}</ListItemContent></ListItem>
+	  			<ListItem key={index} onMouseDown={this.handler(index)}><ListItemContent>{item.name}</ListItemContent></ListItem>
 	  		)
 	  	}.bind(this));
-	  	list = <List>{list}</List>;
+	  	taggedList = <List>{list}</List>;
 	  }
 
   	let searchClasses = "textfield-holder";
   	if (this.state.expanded) searchClasses += " is-expanded";
   	let resultClasses = "search-results";
-  	if (this.state.expanded) resultClasses += " is-visible";
+  	if (this.state.expanded && taggedList) resultClasses += " is-visible";
 
   	return (
   		<div className="search">
@@ -104,8 +117,8 @@ const Search = React.createClass({
 				    id="searchField"
 					/>
 				</div>
-				<div className={resultClasses}>
-					{list}
+				<div id="searchResults" className={resultClasses}>
+					{taggedList}
 				</div>
 			</div>
   	)
