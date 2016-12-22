@@ -202,6 +202,10 @@ ul {
   padding: 0 10px;
 }
 
+.search {
+  position: relative;
+}
+
 .textfield-holder {
   display: inline-block;
   position: relative;
@@ -212,16 +216,33 @@ ul {
 }
 
 .textfield-holder.is-expanded {
-    max-width: 180px;
+  max-width: 180px;
 }
 
 .textfield-holder:after {
-    bottom: 0;
+  bottom: 0;
 }
 
 .textfield-holder .mdl-textfield__label {
   color: white;
   opacity: 0.5;
+}
+
+.search-results {
+  display: none;
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  top: 64px;
+  width: 220px;
+  max-height: 500px;
+  opacity: 0.87;
+  background-color: white;
+  overflow: auto;
+}
+
+.search-results.is-visible {
+  display: block;
 }
 
 /*.info-closer {

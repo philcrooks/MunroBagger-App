@@ -1,5 +1,5 @@
 const React = require('react');
-import { Textfield, IconButton } from 'react-mdl';
+import { Textfield, IconButton, List, ListItem, ListItemContent } from 'react-mdl';
 
 const Search = React.createClass({
 
@@ -9,7 +9,7 @@ const Search = React.createClass({
 			{
 				expanded: false,
 				searchString: "",
-				searchResults: null
+				searchResults: []
 			}
 		)
   },
@@ -57,7 +57,7 @@ const Search = React.createClass({
 	},
 
 	itemSelected: function(index) {
-		this.setState({searchString: "", searchResults: this.props.mountainViews.mountains});
+		this.setState({searchString: "", searchResults: [], expanded: false});
 		this.props.onSelection(this.state.searchResults[index]);
 	},
 
@@ -78,19 +78,34 @@ const Search = React.createClass({
   render: function() {
   	console.log("Rendering Search");
 
-  	let classes = "textfield-holder";
-  	if (this.state.expanded) classes += " is-expanded";
+  	let list = this.state.searchResults;
+  	if (list.length > 0) {
+	  	list = list.map(function(item, index){
+	  		return(
+	  			<ListItem key={index} onClick={this.handler(index)}><ListItemContent>{item.name}</ListItemContent></ListItem>
+	  		)
+	  	}.bind(this));
+	  	list = <List>{list}</List>;
+	  }
+
+  	let searchClasses = "textfield-holder";
+  	if (this.state.expanded) searchClasses += " is-expanded";
+  	let resultClasses = "search-results";
+  	if (this.state.expanded) resultClasses += " is-visible";
 
   	return (
   		<div className="search">
   		  <IconButton name="search" onClick={this.onSearchClicked}/>
-  		  <div id="expandingSearchField" className={classes}>
+  		  <div id="expandingSearchField" className={searchClasses}>
 		  		<Textfield
 		        value={this.state.searchString}
 		        onChange={this.updateSearch}
 				    label="Search"
 				    id="searchField"
 					/>
+				</div>
+				<div className={resultClasses}>
+					{list}
 				</div>
 			</div>
   	)

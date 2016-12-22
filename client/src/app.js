@@ -8,6 +8,6 @@ function onDeviceReady() {
 }
 
 window.onload = function(){
-	// onDeviceReady();
-	document.addEventListener('deviceready', onDeviceReady, false);
+	onDeviceReady();
+	// document.addEventListener('deviceready', onDeviceReady, false);
 }
