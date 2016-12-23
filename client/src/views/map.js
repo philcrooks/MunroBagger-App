@@ -1,4 +1,5 @@
 var Pin = require('./pin');
+var getBrowserWidth = require('../utility').getBrowserWidth;
 
 var MapObject = function(container) {
   const ne = new google.maps.LatLng(59.073548704841784, 2.1691826171875164);
@@ -33,24 +34,10 @@ var MapObject = function(container) {
 };
 
 MapObject.prototype._scaleZoom = function(){
-    const width = this._getBrowserWidth();
+    const width = getBrowserWidth();
     if (width < 1500) return 7;
     if (width > 1501) return 8;
-  }
-
-MapObject.prototype._getBrowserWidth = function(){
-  if (self.innerWidth) {
-    return self.innerWidth;
-  }
-
-  if (document.documentElement && document.documentElement.clientWidth) {
-    return document.documentElement.clientWidth;
-  }
-
-  if (document.body) {
-    return document.body.clientWidth;
-  }
-};
+}
 
 MapObject.prototype._preventPan = function(){
   google.maps.event.addListener(this._map, 'dragend', function() {

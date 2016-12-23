@@ -68,6 +68,8 @@ const Search = React.createClass({
 	},
 
 	itemSelected: function(index) {
+		// Need the keyboard to disappear - blur the search field
+		document.getElementById("searchField").blur();
 		this.setState({searchString: "", searchResults: [], expanded: false});
 		this.props.onSelection(this.state.searchResults[index]);
 	},
@@ -100,15 +102,19 @@ const Search = React.createClass({
 	  	taggedList = <List>{list}</List>;
 	  }
 
-  	let searchClasses = "textfield-holder";
-  	if (this.state.expanded) searchClasses += " is-expanded";
+  	// let searchClasses = "textfield-holder";
+  	// if (this.state.expanded) searchClasses += " is-expanded";
   	let resultClasses = "search-results";
-  	if (this.state.expanded && taggedList) resultClasses += " is-visible";
+  	let searchWidth = "0";
+  	if (this.state.expanded) {
+  		if (taggedList) resultClasses += " is-visible";
+  		searchWidth = (this.props.availableWidth > 200) ? "200px" : this.props.availableWidth + "px";
+  	}
 
   	return (
   		<div className="search">
   		  <IconButton name="search" onClick={this.onSearchClicked}/>
-  		  <div id="expandingSearchField" className={searchClasses}>
+  		  <div id="expandingSearchField" className="textfield-holder" style={{maxWidth: searchWidth}}>
 		  		<Textfield
 		        value={this.state.searchString}
 		        onChange={this.updateSearch}

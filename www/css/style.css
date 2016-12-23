@@ -215,17 +215,22 @@ ul {
   max-width: 0px;
 }
 
-.textfield-holder.is-expanded {
+/*.textfield-holder.is-expanded {
   max-width: 180px;
-}
+}*/
 
 .textfield-holder:after {
   bottom: 0;
 }
 
 .textfield-holder .mdl-textfield__label {
+  margin-left: 5px;
   color: white;
   opacity: 0.5;
+}
+
+.textfield-holder .mdl-textfield__input {
+  margin-left: 5px;
 }
 
 .search-results {

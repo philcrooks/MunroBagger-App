@@ -44,10 +44,19 @@ var dayOfWeek = function(dayNum, shortForm) {
   return days[dayNum];
 };
 
+var getBrowserWidth = function(){
+  if (self.innerWidth) return self.innerWidth;
+  if (document.documentElement && document.documentElement.clientWidth) {
+    return document.documentElement.clientWidth;
+  }
+  if (document.body) return document.body.clientWidth;
+};
+
 module.exports = {
   mountainSearch: mountainSearch,
   upCase: upCase,
   passwordOK: passwordOK,
   compassBearing: compassBearing,
-  dayOfWeek: dayOfWeek
+  dayOfWeek: dayOfWeek,
+  getBrowserWidth: getBrowserWidth
 }

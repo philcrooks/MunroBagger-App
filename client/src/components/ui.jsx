@@ -16,6 +16,7 @@ const Search = require('./search');
 const MountainsView = require('../views/mountains_view');
 const User = require('../models/user');
 const dayOfWeek = require('../utility').dayOfWeek;
+const getBrowserWidth = require('../utility').getBrowserWidth;
 
 const UI = React.createClass({
 
@@ -238,7 +239,12 @@ const UI = React.createClass({
       login = <MenuItem onClick={this.setLoginForm}>Login</MenuItem>
     }
 
-    let title = (this.state.shrinkTitle) ? "MB" : "Munro Bagger";
+    let availableWidth = getBrowserWidth() - 260;
+    let title = "Munro Bagger";
+    if (this.state.shrinkTitle && availableWidth < 200) {
+      title = "MB";
+      availableWidth += 80;
+    }
 
     return (
       <div>
@@ -247,6 +253,7 @@ const UI = React.createClass({
             <HeaderRow title={title}>
               <Search
                 shrunkTitle={this.state.shrinkTitle}
+                availableWidth={availableWidth}
                 mountainViews={this.state.mountainViews}
                 onSearchClicked={this.onSearchClicked}
                 onSelection={this.onMountainSelected} />
