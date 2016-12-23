@@ -239,6 +239,7 @@ const UI = React.createClass({
       login = <MenuItem onClick={this.setLoginForm}>Login</MenuItem>
     }
 
+    // These width numbers are approximate
     let availableWidth = getBrowserWidth() - 260;
     let title = "Munro Bagger";
     if (this.state.shrinkTitle && availableWidth < 200) {
