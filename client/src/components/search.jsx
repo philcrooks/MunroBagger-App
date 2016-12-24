@@ -82,6 +82,7 @@ const Search = React.createClass({
 
 	onSearchClicked: function() {
 		if (this.state.expanded)
+			document.getElementById("searchField").blur();
 			this.setState({expanded: false});
 		else
 			// Tell the UI to clear some space for the search field

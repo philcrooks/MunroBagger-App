@@ -71,8 +71,7 @@ const MountDetail = React.createClass({
     // This will only be called if save is enabled
     // Save will only be enabled if the bagged status changes somehow
     // The bagged status can only change if the user is logged in
-    let saveEnabled = false;
-    this.setState({baggedEnabled: false, saveEnabled: saveEnabled, updating: true})
+    this.setState({baggedEnabled: false, saveEnabled: false, updating: true})
     const mtn = this.props.mountain;
     let status = this.state.bagged;
     mtn.backup();
@@ -80,10 +79,9 @@ const MountDetail = React.createClass({
     mtn.save(function(success, returned) {
       if (!success) {
         status = !status;
-        saveEnabled = true;
         mtn.restore();
       }
-      this.setState({baggedEnabled: true, saveEnabled: saveEnabled, bagged: status, updating: false});
+      this.setState({baggedEnabled: true, saveEnabled: true, bagged: status, updating: false});
     }.bind(this));
   },
 
