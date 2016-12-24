@@ -22,6 +22,7 @@ const MountDetail = React.createClass({
   },
 
   componentWillReceiveProps: function(nextProps) {
+    // Don't allow sate to change until save is completed
     if (this.state.updating) return;
     if (nextProps.willDisplay) this.setState({visible: nextProps.willDisplay});
     if ((this.props.mountain !== nextProps.mountain) ||
@@ -36,14 +37,14 @@ const MountDetail = React.createClass({
   },
 
   shouldComponentUpdate: function(nextProps, nextState) {
-    if (this.state.updating) return false;
-    return (this.props.mountain !== nextProps.mountain) ||
-      (this.props.dayNum !== nextProps.dayNum) ||
+    let should = (this.props.dayNum !== nextProps.dayNum) ||
       (this.props.userLoggedIn !== nextProps.userLoggedIn) ||
       (this.state.visible !== nextState.visible) ||
       (this.state.bagged !== nextState.bagged) ||
       (this.state.saveEnabled !==  nextState.saveEnabled) ||
       (this.state.baggedEnabled !== nextState.baggedEnabled);
+    should = should || ((this.props.mountain !== nextProps.mountain) && !this.state.updating);
+    return should;
   },
 
   formatDay: function() {
