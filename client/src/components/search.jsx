@@ -111,13 +111,13 @@ const Search = React.createClass({
   	let searchWidth = "0";
   	if (this.state.expanded) {
   		if (taggedList) resultClasses += " is-visible";
-  		searchWidth = (this.props.availableWidth > 200) ? "200px" : this.props.availableWidth + "px";
+  		searchWidth = (this.props.availableWidth > 200) ? 200 : this.props.availableWidth;
   	}
 
   	return (
   		<div className="search">
   		  <IconButton name="search" onClick={this.onSearchClicked}/>
-  		  <div id="expandingSearchField" className="textfield-holder" style={{maxWidth: searchWidth}}>
+  		  <div id="expandingSearchField" className="textfield-holder" style={{maxWidth: searchWidth + "px"}}>
 		  		<Textfield
 		        value={this.state.searchString}
 		        onChange={this.updateSearch}
@@ -125,7 +125,7 @@ const Search = React.createClass({
 				    id="searchField"
 					/>
 				</div>
-				<div id="searchResults" className={resultClasses}>
+				<div id="searchResults" className={resultClasses} style={{width: searchWidth + 70 + "px"}}>
 					{taggedList}
 				</div>
 			</div>

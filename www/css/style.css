@@ -212,7 +212,7 @@ ul {
   transition-duration: 0.2s;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-block;
-  max-width: 0px;
+/*  max-width: 0px;*/
 }
 
 /*.textfield-holder.is-expanded {
@@ -240,7 +240,7 @@ ul {
   z-index: 5;
   left: 0;
   top: 56px;
-  width: 240px;
+/*  width: 240px;*/
   max-height: 240px;
   background-color: white;
   overflow: auto;
