@@ -1,5 +1,6 @@
 const React = require('react');
 import { Textfield, IconButton, List, ListItem, ListItemContent } from 'react-mdl';
+const getBrowserHeight = require('../utility').getBrowserHeight;
 
 const Search = React.createClass({
 
@@ -23,7 +24,8 @@ const Search = React.createClass({
 
   shouldComponentUpdate: function(nextProps, nextState) {
 		return (this.state.expanded !== nextState.expanded) ||
-			(this.state.searchString !== nextState.searchString);
+			(this.state.searchString !== nextState.searchString) ||
+			(this.props.availableHeight !== nextProps.availableHeight);
 	},
 
   componentDidUpdate: function(prevProps, prevState) {
@@ -94,6 +96,8 @@ const Search = React.createClass({
   render: function() {
   	console.log("Rendering Search");
 
+  	// Cannot render a list of results before the keyboard has been allowed to pop-up
+
   	let list = this.state.searchResults;
   	let taggedList = null;
   	if (list.length > 0) {
@@ -113,6 +117,8 @@ const Search = React.createClass({
   		if (taggedList) resultClasses += " is-visible";
   		searchWidth = (this.props.availableWidth > 200) ? 200 : this.props.availableWidth;
   	}
+  	let searchHeight = this.props.availableHeight - 60;
+  	console.log("searchHeight", searchHeight);
 
   	return (
   		<div className="search">
@@ -125,7 +131,10 @@ const Search = React.createClass({
 				    id="searchField"
 					/>
 				</div>
-				<div id="searchResults" className={resultClasses} style={{width: searchWidth + 70 + "px"}}>
+				<div
+					id="searchResults"
+					className={resultClasses}
+					style={{width: searchWidth + 60 + "px", maxHeight: searchHeight + "px"}}>
 					{taggedList}
 				</div>
 			</div>

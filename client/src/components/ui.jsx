@@ -17,6 +17,7 @@ const MountainsView = require('../views/mountains_view');
 const User = require('../models/user');
 const dayOfWeek = require('../utility').dayOfWeek;
 const getBrowserWidth = require('../utility').getBrowserWidth;
+const getBrowserHeight = require('../utility').getBrowserHeight;
 
 const UI = React.createClass({
 
@@ -33,7 +34,9 @@ const UI = React.createClass({
       user:             new User(),
       userLoggedIn:     false,
       mountainViews:    null,
-      shrinkTitle:      false
+      shrinkTitle:      false,
+      availableWidth:   getBrowserWidth(),
+      availableHeight:  getBrowserHeight()
     }
   },
 
@@ -43,6 +46,10 @@ const UI = React.createClass({
   },
 
   componentDidMount: function() {
+    window.addEventListener("resize", function(){
+      // Will need to re-render now
+      this.logAndSetState({availableWidth: getBrowserWidth(), availableHeight: getBrowserHeight()});
+    }.bind(this), false);
     let mtnsView = new MountainsView();
     mtnsView.all(function() {
       let mtns = mtnsView.mountains;
@@ -240,7 +247,7 @@ const UI = React.createClass({
     }
 
     // These width numbers are approximate
-    let availableWidth = getBrowserWidth() - 260;
+    let availableWidth = this.state.availableWidth - 260;
     let title = "Munro Bagger";
     if (this.state.shrinkTitle && availableWidth < 200) {
       title = "MB";
@@ -255,6 +262,7 @@ const UI = React.createClass({
               <Search
                 shrunkTitle={this.state.shrinkTitle}
                 availableWidth={availableWidth}
+                availableHeight={this.state.availableHeight}
                 mountainViews={this.state.mountainViews}
                 onSearchClicked={this.onSearchClicked}
                 onSelection={this.onMountainSelected} />

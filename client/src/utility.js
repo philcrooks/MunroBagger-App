@@ -52,11 +52,19 @@ var getBrowserWidth = function(){
   if (document.body) return document.body.clientWidth;
 };
 
+var getBrowserHeight = function(){
+  var body = document.body;
+  var html = document.documentElement;
+
+  return Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+};
+
 module.exports = {
   mountainSearch: mountainSearch,
   upCase: upCase,
   passwordOK: passwordOK,
   compassBearing: compassBearing,
   dayOfWeek: dayOfWeek,
-  getBrowserWidth: getBrowserWidth
+  getBrowserWidth: getBrowserWidth,
+  getBrowserHeight: getBrowserHeight
 }
