@@ -8,11 +8,7 @@ html, body {
     height: 100%;
     margin: 0;
     background: #A5CEFD;
-}
-
-body {
-    font-family: 'Hammersmith One', sans-serif;
-    font-size: 16px;
+    overflow: hidden;
 }
 
 a {
@@ -241,7 +237,7 @@ ul {
   left: 0;
   top: 56px;
 /*  width: 240px;*/
-  max-height: 240px;
+  /*max-height: 240px;*/
   background-color: white;
   overflow: auto;
   border-top: solid #F06292 3px;

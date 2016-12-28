@@ -2,8 +2,8 @@ var Pin = require('./pin');
 var getBrowserWidth = require('../utility').getBrowserWidth;
 
 var MapObject = function(container) {
-  const ne = new google.maps.LatLng(59.073548704841784, 2.1691826171875164);
-  const sw = new google.maps.LatLng(55.59337026438907, -7.853101562500001);
+  // const NE = new google.maps.LatLng(59.073548704841784, 2.1691826171875164);
+  // const SW = new google.maps.LatLng(55.59337026438907, -7.853101562500001);
   const NE = new google.maps.LatLng(58.413113, -2.973622);
   const SW = new google.maps.LatLng(56.190284, -6.24162); 
 
@@ -34,8 +34,6 @@ var MapObject = function(container) {
   // this._map.fitBounds(this._bounds);
 
   this._bounds = new google.maps.LatLngBounds(SW, NE);
-  // this._bounds.extend(NE);
-  // this._bounds.extend(SW);
   this._map.setCenter(this._bounds.getCenter());
   this._map.fitBounds(this._bounds);
 

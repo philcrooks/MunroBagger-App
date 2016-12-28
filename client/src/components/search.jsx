@@ -1,5 +1,6 @@
 const React = require('react');
 import { Textfield, IconButton, List, ListItem, ListItemContent } from 'react-mdl';
+const getBrowserHeight = require('../utility').getBrowserHeight;
 
 const Search = React.createClass({
 
@@ -15,17 +16,23 @@ const Search = React.createClass({
 		)
   },
 
+  logAndSetState: function(state) {
+    console.log("Setting Search state:", state);
+    this.setState(state);
+  },
+
   componentWillReceiveProps: function(nextProps) {
   	if (nextProps.shrunkTitle && !this.props.shrunkTitle) {
   		// Some mountains may be hidden, need to regenerate the results
-  		this.setState({expanded: true, searchResults: this.getSearchResults(this.state.searchString)});
+  		this.logAndSetState({expanded: true, searchResultsVisible: false, searchResults: this.getSearchResults(this.state.searchString)});
   	}
   },
 
   shouldComponentUpdate: function(nextProps, nextState) {
 		return (this.state.expanded !== nextState.expanded) ||
 		  (this.state.searchResultsVisible !== nextState.searchResultsVisible) ||
-			(this.state.searchString !== nextState.searchString);
+			(this.state.searchString !== nextState.searchString) ||
+			(this.props.availableHeight !== nextProps.availableHeight);
 	},
 
   componentDidUpdate: function(prevProps, prevState) {
@@ -39,14 +46,15 @@ const Search = React.createClass({
   					this.props.onSearchClicked(false);
   				}
   				else {
-  					if (this.state.searchString !== "") this.setState({searchResultsVisible: true})
+  					if (this.state.searchString !== "") this.logAndSetState({searchResultsVisible: true})
+  					console.log("clientWidth", event.target.clientWidth);
   					document.getElementById("searchField").focus();
   				}
   			}
   		}.bind(this));
   		element = document.getElementById("searchField");
   		element.addEventListener('blur', function(event) {
-  			this.setState({expanded: false});
+  			this.logAndSetState({expanded: false});
   		}.bind(this));
   		this.listenersAttached = true;
   	}
@@ -69,13 +77,13 @@ const Search = React.createClass({
   updateSearch: function(event) {
 		let input = event.target.value
     let results = this.getSearchResults(input);
-		this.setState({searchString: input, searchResults: results, searchResultsVisible: true});
+		this.logAndSetState({searchString: input, searchResults: results, searchResultsVisible: true});
 	},
 
 	itemSelected: function(index) {
 		// Need the keyboard to disappear - blur the search field
 		document.getElementById("searchField").blur();
-		this.setState({searchString: "", searchResults: [], expanded: false});
+		this.logAndSetState({searchString: "", searchResults: [], expanded: false});
 		this.props.onSelection(this.state.searchResults[index]);
 	},
 
@@ -88,7 +96,7 @@ const Search = React.createClass({
 	onSearchClicked: function() {
 		if (this.state.expanded) {
 			document.getElementById("searchField").blur();
-			this.setState({expanded: false, searchResultsVisible: false});
+			this.logAndSetState({expanded: false, searchResultsVisible: false});
 		}
 		else {
 			// Tell the UI to clear some space for the search field
@@ -120,6 +128,8 @@ const Search = React.createClass({
   		if ((this.state.searchString.length > 0) && this.state.searchResultsVisible) resultClasses += " is-visible";
   		searchWidth = (this.props.availableWidth > 200) ? 200 : this.props.availableWidth;
   	}
+  	let searchHeight = this.props.availableHeight - 60;
+  	console.log("searchHeight", searchHeight, "classes", resultClasses);
 
   	return (
   		<div className="search">
@@ -132,7 +142,10 @@ const Search = React.createClass({
 				    id="searchField"
 					/>
 				</div>
-				<div id="searchResults" className={resultClasses} style={{width: searchWidth + 70 + "px"}}>
+				<div
+					id="searchResults"
+					className={resultClasses}
+					style={{width: searchWidth + 60 + "px", maxHeight: searchHeight + "px"}}>
 					{taggedList}
 				</div>
 			</div>
