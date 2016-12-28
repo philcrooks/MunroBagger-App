@@ -15,9 +15,7 @@
         },
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "scot.munrobagger.app"
-        }
-    },
-    "dependent_plugins": {
+        },
         "cordova-plugin-crosswalk-webview": {
             "XWALK_VERSION": "22+",
             "XWALK_LITEVERSION": "xwalk_core_library_canary:17+",
@@ -26,5 +24,6 @@
             "XWALK_MULTIPLEAPK": "true",
             "PACKAGE_NAME": "scot.munrobagger.app"
         }
-    }
+    },
+    "dependent_plugins": {}
 }
