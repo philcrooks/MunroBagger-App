@@ -10,8 +10,7 @@ const Search = React.createClass({
 			{
 				expanded: false,
 				searchString: "",
-				searchResults: [],
-				searchResultsVisible: false
+				searchResults: []
 			}
 		)
   },
@@ -24,13 +23,12 @@ const Search = React.createClass({
   componentWillReceiveProps: function(nextProps) {
   	if (nextProps.shrunkTitle && !this.props.shrunkTitle) {
   		// Some mountains may be hidden, need to regenerate the results
-  		this.logAndSetState({expanded: true, searchResultsVisible: false, searchResults: this.getSearchResults(this.state.searchString)});
+  		this.logAndSetState({expanded: true, searchString: "", searchResults: []});
   	}
   },
 
   shouldComponentUpdate: function(nextProps, nextState) {
 		return (this.state.expanded !== nextState.expanded) ||
-		  (this.state.searchResultsVisible !== nextState.searchResultsVisible) ||
 			(this.state.searchString !== nextState.searchString) ||
 			(this.props.availableHeight !== nextProps.availableHeight);
 	},
@@ -42,14 +40,10 @@ const Search = React.createClass({
   		element.addEventListener('webkitTransitionEnd', function(event){
   			// Tell the UI to exapnd the title
   			if (event.propertyName === "max-width") {
-  				if (event.target.clientWidth === 0) {
+  				if (event.target.clientWidth === 0)
   					this.props.onSearchClicked(false);
-  				}
-  				else {
-  					if (this.state.searchString !== "") this.logAndSetState({searchResultsVisible: true})
-  					console.log("clientWidth", event.target.clientWidth);
+  				else
   					document.getElementById("searchField").focus();
-  				}
   			}
   		}.bind(this));
   		element = document.getElementById("searchField");
@@ -77,13 +71,13 @@ const Search = React.createClass({
   updateSearch: function(event) {
 		let input = event.target.value
     let results = this.getSearchResults(input);
-		this.logAndSetState({searchString: input, searchResults: results, searchResultsVisible: true});
+		this.logAndSetState({searchString: input, searchResults: results});
 	},
 
 	itemSelected: function(index) {
 		// Need the keyboard to disappear - blur the search field
 		document.getElementById("searchField").blur();
-		this.logAndSetState({searchString: "", searchResults: [], expanded: false});
+		this.logAndSetState({expanded: false});
 		this.props.onSelection(this.state.searchResults[index]);
 	},
 
@@ -96,7 +90,7 @@ const Search = React.createClass({
 	onSearchClicked: function() {
 		if (this.state.expanded) {
 			document.getElementById("searchField").blur();
-			this.logAndSetState({expanded: false, searchResultsVisible: false});
+			this.logAndSetState({expanded: false});
 		}
 		else {
 			// Tell the UI to clear some space for the search field
@@ -108,24 +102,26 @@ const Search = React.createClass({
   	console.log("Rendering Search");
 
   	let taggedList = null;
-  	if (this.state.searchResultsVisible) {
-  		let list = this.state.searchResults;
-	  	if (list.length > 0) {
-		  	list = list.map(function(item, index){
-		  		return(
-		  			<ListItem key={index} onMouseDown={this.handler(index)}><ListItemContent>{item.name}</ListItemContent></ListItem>
-		  		)
-		  	}.bind(this));
-		  	taggedList = <List>{list}</List>;
-		  }
-	  }
+  	if (this.state.expanded) {
+	  	let list = this.state.searchResults;
+		  if (list.length > 0) {
+			  list = list.map(function(item, index){
+			  	return(
+			  		<ListItem key={index} onMouseDown={this.handler(index)}><ListItemContent>{item.name}</ListItemContent></ListItem>
+			  	)
+			  }.bind(this));
+			  taggedList = <List>{list}</List>;
+			}
+		}
 
   	// let searchClasses = "textfield-holder";
   	// if (this.state.expanded) searchClasses += " is-expanded";
   	let resultClasses = "search-results";
   	let searchWidth = "0";
+  	let searchString = ""; 
   	if (this.state.expanded) {
-  		if ((this.state.searchString.length > 0) && this.state.searchResultsVisible) resultClasses += " is-visible";
+  		searchString = this.state.searchString;
+  		if (taggedList) resultClasses += " is-visible";
   		searchWidth = (this.props.availableWidth > 200) ? 200 : this.props.availableWidth;
   	}
   	let searchHeight = this.props.availableHeight - 60;
@@ -136,7 +132,7 @@ const Search = React.createClass({
   		  <IconButton name="search" onClick={this.onSearchClicked}/>
   		  <div id="expandingSearchField" className="textfield-holder" style={{maxWidth: searchWidth + "px"}}>
 		  		<Textfield
-		        value={this.state.searchString}
+		        value={searchString}
 		        onChange={this.updateSearch}
 				    label="Search"
 				    id="searchField"
