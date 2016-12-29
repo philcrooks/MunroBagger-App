@@ -9,5 +9,8 @@ function onDeviceReady() {
 
 window.onload = function(){
 	// onDeviceReady();
-	document.addEventListener('deviceready', onDeviceReady, false);
+	if (window.cordova)
+		document.addEventListener('deviceready', onDeviceReady, false);
+	else
+		onDeviceReady();
 }
