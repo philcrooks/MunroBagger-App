@@ -65,7 +65,7 @@ Pin.prototype._resetMarker = function() {
   this._marker =  new google.maps.Marker({
     position: this._mtnView.detail.latLng,
     map: this._map,
-    icon: { url: this._generateIcon(), scaledSize: new google.maps.Size(17, 20) }
+    icon: { url: this._generateIcon(), scaledSize: new google.maps.Size(20, 23) }
   });
   if (this._hasFocus) this._openInfoWindow();
   google.maps.event.addListener(this._marker, 'click', function(){
