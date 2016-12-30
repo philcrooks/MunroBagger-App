@@ -46,9 +46,11 @@ const UI = React.createClass({
 
   componentDidMount: function() {
     window.addEventListener("resize", function(){
-      // Will need to re-render now
-      this.logAndSetState({availableWidth: getBrowserWidth(), availableHeight: getBrowserHeight()});
+      // Will need to re-render depending on the current action
+      if (this._resizeNeedsRender())
+        this.logAndSetState({availableWidth: getBrowserWidth(), availableHeight: getBrowserHeight()});
     }.bind(this), false);
+
     let mtnsView = new MountainsView();
     mtnsView.all(function() {
       let mtns = mtnsView.mountains;
@@ -69,6 +71,10 @@ const UI = React.createClass({
         }
       }
     }.bind(this))
+  },
+
+  _resizeNeedsRender() {
+    return (this.state.action === 'search');
   },
 
   selectedAction(action) {
@@ -194,7 +200,12 @@ const UI = React.createClass({
 
   onSearchClicked: function(searchExpanding) {
     // Only have to do this for a small screen
-    this.logAndSetState({shrinkTitle: searchExpanding, action: null});
+    var action;
+    if (searchExpanding)
+      action = 'search';
+    else
+      if (this.state.action === 'search') action = null;
+    this.logAndSetState({shrinkTitle: searchExpanding, action: action});
   },
 
   //

@@ -76,8 +76,8 @@ MapObject.prototype.openInfoWindowForMountain = function(mtnPin){
   this._prevFocus = mtnPin.setFocus()
 };
 
-MapObject.prototype.addPin = function(mountainView, onMarkerClicked, onInfoBoxClicked) {
-  let pin = new Pin(this._map, mountainView);
+MapObject.prototype.addPin = function(mountainView, onMarkerClicked, onInfoBoxClicked, loggedIn) {
+  let pin = new Pin(this._map, mountainView, loggedIn);
   pin.createMarker(onMarkerClicked, onInfoBoxClicked);
   this._allPins.push(pin);
   mountainView.pin = pin;
