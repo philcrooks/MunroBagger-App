@@ -1,11 +1,11 @@
 // var InfoBox = require('./infobox');
 
-function Pin (map, mtnView, hidden) {
+function Pin (map, mtnView, loggedIn, hidden) {
   // this._id = mtnView.id;
   this._mtnView = mtnView;
   this._map = map;
   this._dayNum = 0;
-  this._loggedIn = false;
+  this._loggedIn = (loggedIn) ? true : false;
   this._forecasts = mtnView.detail.forecasts;
   this._mountSunny = (this._forecasts.day[0].code <= 3)
   this._marker = null;

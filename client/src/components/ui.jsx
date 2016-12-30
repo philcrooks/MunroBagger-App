@@ -22,17 +22,16 @@ const getBrowserHeight = require('../utility').getBrowserHeight;
 const UI = React.createClass({
 
   getInitialState: function() {
-
     this.mapObj = null;
-
+    let user = new User();
     return {
       dayNum:           0,
       baseDate:         null,
       focusMountain:    null,
       showingMountain:  false,
       action:           null,
-      user:             new User(),
-      userLoggedIn:     false,
+      user:             user,
+      userLoggedIn:     user.loggedIn,
       mountainViews:    null,
       shrinkTitle:      false,
       availableWidth:   getBrowserWidth(),
@@ -55,8 +54,19 @@ const UI = React.createClass({
       let mtns = mtnsView.mountains;
       let baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
       this.logAndSetState({mountainViews: mtnsView, baseDate: baseDate});
-      for (let i = 0; i < mtns.length; i++) {
-        this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested);
+      if (this.state.userLoggedIn) {
+        // User still has a token from an earlier session
+        this.state.user.getInfo(function(success, returned) {
+          if (success) mtnsView.userLogin(this.state.user);
+          for (let i = 0; i < mtns.length; i++) {
+            this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested, true);
+          }
+        }.bind(this))
+      }
+      else {
+        for (let i = 0; i < mtns.length; i++) {
+          this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested, false);
+        }
       }
     }.bind(this))
   },

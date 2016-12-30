@@ -6,11 +6,13 @@ const baseURL = "http://www.munrobagger.scot/";
 // const baseURL = "http://192.168.1.124:3000/";
 const baggedRoute = "bagged_munros";
 const apiRequest = new ApiRequest();
+const tokenKey = "auth_token";
 
 const User = function() {
   this._mountains = [];
-  this._jwtoken = null;
+  this._jwtoken = this._retrieveToken();
   Object.defineProperty(this, "baggedList", { get: function(){ return this._mountains; } });
+  Object.defineProperty(this, "loggedIn", { get: function(){ return (this._jwtoken) ? true : false; } });
 }
 
 User.prototype._getMessage = function(status, request) {
@@ -74,7 +76,10 @@ User.prototype.register = function(email, password, onCompleted) {
   } };
   apiRequest.makePostRequest(url, params, null, function(status, result) {
     let success = (status === 201);
-    if(success) this._jwtoken = result.auth_token;
+    if(success) {
+      this._jwtoken = result.auth_token;
+      this._saveToken(this._jwtoken);
+    }
     onCompleted(success, this._getMessage(status, 'register'));
   }.bind(this));
 }
@@ -87,7 +92,10 @@ User.prototype.login = function(email, password, onCompleted) {
   } };
   apiRequest.makePostRequest(url, params, null, function(status, result) {
     let success = (status === 201);
-    if(success) this._jwtoken = result.auth_token;
+    if(success) {
+      this._jwtoken = result.auth_token;
+      this._saveToken(this._jwtoken);
+    }
     onCompleted(success, this._getMessage(status, 'login'));
   }.bind(this));
 }
@@ -99,6 +107,7 @@ User.prototype.logout = function(onCompleted) {
     if (success) {
       this._mountains = [];
       this._jwtoken = null;
+      this._removeToken();
     }
     onCompleted(success, this._getMessage(status, 'logout'));
   }.bind(this));
@@ -195,6 +204,31 @@ User.prototype.saveUserMountain = function(mountain, onCompleted) {
       onCompleted(success, this._getMessage(status, 'updateBagged'));
     }.bind(this));
   }
+}
+
+User.prototype._saveToken = function(token) {
+  if (token && window.cordova) {
+    // Don't save to local storage unless running in a Cordova app
+    // Local storage is not secure enough for a token when running is a browser.
+    // A Cordova app has sole access to storage so is more secure.
+    console.log("Saving token to store")
+    window.localStorage.setItem(tokenKey, token);
+  }
+}
+
+User.prototype._removeToken = function() {
+  if (window.cordova) {
+    // Don't save to local storage unless running in a Cordova app
+    // Local storage is not secure enough for a token when running is a browser.
+    // A Cordova app has sole access to storage so is more secure.
+    console.log("Removing token from store")
+    window.localStorage.removeItem(tokenKey);
+  }
+}
+
+User.prototype._retrieveToken = function() {
+  console.log("Retrieving token from store")
+  return window.localStorage.getItem(tokenKey);
 }
 
 module.exports = User;
