@@ -90,7 +90,7 @@ Mountains.prototype._retrieveFromStore = function() {
 Mountains.prototype._needUpdate = function() {
   const oneHour = 60 * 60 * 1000;
   let updatedAt = parseInt(window.localStorage.getItem(updateKey), 10);
-  console.log("Last updated at", updatedAt);
+  if (!isNaN(updatedAt)) console.log("Last updated", (Date.now() - updatedAt) / 60000, "minutes ago");
   return isNaN(updatedAt) || (Date.now() > updatedAt + oneHour);
 }
 

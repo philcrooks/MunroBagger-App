@@ -51,17 +51,16 @@ const UI = React.createClass({
   },
 
   componentDidMount: function() {
-    window.addEventListener("resize", function(){
-      // Will need to re-render depending on the current action
-      if (this.resizeNeedsRender())
-        this.logAndSetState({availableWidth: getBrowserWidth(), availableHeight: getBrowserHeight()});
-    }.bind(this), false);
+    // Now that the UI exists add listeners for events that change state
+    window.addEventListener("resize", this.onResize, false);
+    document.addEventListener("pause", this.onPause, false);
+    document.addEventListener("resume", this.onResume, false);
 
+    // Now the UI exists add the mountains
     let mtnsView = new MountainsView();
     mtnsView.all(function() {
       let mtns = mtnsView.mountains;
       this.baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
-      this.logAndSetState({mountainViews: mtnsView});
       this.updatedAt = Date.now();
       this.timeoutID = window.setTimeout(this.onTimeout, oneHour);
       if (this.state.userLoggedIn) {
@@ -78,6 +77,7 @@ const UI = React.createClass({
           this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested, false);
         }
       }
+      this.logAndSetState({mountainViews: mtnsView});
     }.bind(this))
   },
 
@@ -91,6 +91,8 @@ const UI = React.createClass({
 
   updateForecasts() {
     this.state.mountainViews.updateForecasts(function(){
+      let mtns = this.state.mountainViews.mountains;
+      this.baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
       // Change the forecast without changing the forecast day
       this.updatedAt = Date.now();
       this.mapObj.changeForecast(this.state.dayNum);
@@ -230,16 +232,24 @@ const UI = React.createClass({
   },
 
   onPause: function() {
-    window.clearTimeout(this.timeoutID);
+    console.log("App paused");
+    if (this.timeouID >= 0) window.clearTimeout(this.timeoutID);
   },
 
   onResume: function() {
-    let timeLeft = this.updateAt + oneHour - Date.now();
+    console.log("App resumed");
+    let timeLeft = this.updatedAt + oneHour - Date.now();
     if (timeLeft < oneMinute) {
       this.updateForecasts();
       timeLeft = oneHour;
     }
+    console.log("Setting timeout for", timeLeft / 60000, "minutes");
     this.timeoutID = window.setTimeout(this.onTimeout, timeLeft);
+  },
+
+  onResize: function() {
+    if (this.resizeNeedsRender())
+      this.logAndSetState({availableWidth: getBrowserWidth(), availableHeight: getBrowserHeight()});
   },
 
   //
