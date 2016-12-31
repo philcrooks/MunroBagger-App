@@ -234,10 +234,11 @@ const UI = React.createClass({
 
   onResume: function() {
     let timeLeft = this.updateAt + oneHour - Date.now();
-    if (timeLeft < oneMinute)
+    if (timeLeft < oneMinute) {
       this.updateForecasts();
-    else
-      this.timeoutID = window.setTimeout(this.onTimeout, timeLeft);
+      timeLeft = oneHour;
+    }
+    this.timeoutID = window.setTimeout(this.onTimeout, timeLeft);
   },
 
   //
