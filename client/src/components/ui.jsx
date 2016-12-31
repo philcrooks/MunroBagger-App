@@ -233,7 +233,7 @@ const UI = React.createClass({
 
   onPause: function() {
     console.log("App paused");
-    if (this.timeouID >= 0) window.clearTimeout(this.timeoutID);
+    if (this.timeoutID >= 0) window.clearTimeout(this.timeoutID);
   },
 
   onResume: function() {
