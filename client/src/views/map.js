@@ -9,17 +9,13 @@ var MapObject = function(container) {
 
 
   this._map = new google.maps.Map(container, {
+    disableDefaultUI: true,
     center: new google.maps.LatLng(57.450861,-1.604004),
     // center: new google.maps.LatLng(57.280857,-4.505912),
+    mapTypeId: 'terrain',
     zoom: this._scaleZoom(),
     minZoom: this._scaleZoom(),
-    mapTypeId: 'terrain',
-    clickableIcons: false,
-    streetViewControl: false,
-    mapTypeControl: false,
-    mapTypeControlOptions: {
-      position: google.maps.ControlPosition.LEFT_BOTTOM
-    },
+    zoomControl: true,
     zoomControlOptions: {
       position: google.maps.ControlPosition.RIGHT_BOTTOM
     }
