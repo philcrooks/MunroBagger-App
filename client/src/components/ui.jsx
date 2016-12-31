@@ -28,10 +28,11 @@ const UI = React.createClass({
     this.mapObj = null;
     this.updatedAt = 0;
     this.timeoutID = -1;
+    this.baseDate = null;
+
     let user = new User();
     return {
       dayNum:           0,
-      baseDate:         null,
       focusMountain:    null,
       showingMountain:  false,
       action:           null,
@@ -59,8 +60,8 @@ const UI = React.createClass({
     let mtnsView = new MountainsView();
     mtnsView.all(function() {
       let mtns = mtnsView.mountains;
-      let baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
-      this.logAndSetState({mountainViews: mtnsView, baseDate: baseDate});
+      this.baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
+      this.logAndSetState({mountainViews: mtnsView});
       this.updatedAt = Date.now();
       this.timeoutID = window.setTimeout(this.onTimeout, oneHour);
       if (this.state.userLoggedIn) {
@@ -273,7 +274,7 @@ const UI = React.createClass({
     if (this.state.action) console.log("Action:", this.state.action)
 
     let days = ["Today", "Tomorrow", "Day After"];
-    const baseDate = (this.state.baseDate) ? this.state.baseDate : new Date();
+    const baseDate = (this.baseDate) ? this.baseDate : new Date();
     if (baseDate.toDateString() !== new Date().toDateString()) {
       const day = baseDate.getDay();
       days = [dayOfWeek(day, true), dayOfWeek((day+1)%7, true), dayOfWeek((day+2)%7, true)];
