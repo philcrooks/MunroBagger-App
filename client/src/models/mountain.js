@@ -23,4 +23,8 @@ var Mountain = function(options){
   Object.defineProperty(this, "forecasts", { get: function(){ return this._forecasts; } });
 };
 
+Mountain.prototype.updateForecast = function(forecast) {
+  this._forecasts = new Forecasts(forecast.data);
+};
+
 module.exports = Mountain;

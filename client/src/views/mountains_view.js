@@ -3,12 +3,13 @@ var MountainView = require('./mountain_view');
 var search = require('../utility').mountainSearch;
 
 var MountainsView = function() {
+  this._mountainsModel = new Mountains();
   this.mountains = null;
   this._user = null;
 }
 
 MountainsView.prototype.all = function(onCompleted) {
-  new Mountains().all(function(mtns){
+  this._mountainsModel.all(function(mtns){
     this.mountains = mtns.map(function(mtn) {
       var mv = new MountainView(mtn);
       mv.createStatus = this.newBaggedRecord.bind(this);
@@ -16,6 +17,21 @@ MountainsView.prototype.all = function(onCompleted) {
       return mv;
     }.bind(this));
     onCompleted(this.mountains);
+  }.bind(this));
+}
+
+MountainsView.prototype.updateForecasts = function(onCompleted) {
+  console.log("Updating forecasts")
+  this._mountainsModel.fetchForecasts(function(forecasts){
+    if (forecasts) {
+      let length = this.mountains.length;
+      if ((this.mountains[0].id === forecasts[0].munro_id) && (length === forecasts.length)) {
+        for (let i = 0; i < length; i++) {
+          this.mountains[i].detail.updateForecast(forecasts[i]);
+        };
+      };
+    };
+    onCompleted();
   }.bind(this));
 }
 

@@ -47,7 +47,7 @@ const UI = React.createClass({
   componentDidMount: function() {
     window.addEventListener("resize", function(){
       // Will need to re-render depending on the current action
-      if (this._resizeNeedsRender())
+      if (this.resizeNeedsRender())
         this.logAndSetState({availableWidth: getBrowserWidth(), availableHeight: getBrowserHeight()});
     }.bind(this), false);
 
@@ -73,12 +73,19 @@ const UI = React.createClass({
     }.bind(this))
   },
 
-  _resizeNeedsRender() {
-    return (this.state.action === 'search');
-  },
-
   selectedAction(action) {
     return (action === this.state.action);
+  },
+
+  resizeNeedsRender() {
+    return (this.selectedAction('search'));
+  },
+
+  updateForecasts() {
+    this.state.mountainViews.updateForecasts(function(){
+      // Change the forecast without changing the forecast day
+      this.mapObj.changeForecast(this.state.dayNum);
+    }.bind(this))
   },
 
   //
