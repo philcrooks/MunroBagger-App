@@ -31,17 +31,21 @@ const UserLogin = React.createClass({
   },
 
   clickLogin: function() {
-    this.props.user.login(this.state.email.toLowerCase(), this.state.password, function(success){
-      if (success) {
-        console.log("Logged In")
-        this.setState({openDialog: false});
-        this.props.onCompleted(true, null);
-      }
-      else {
-        console.log("Failed to log in")
-        this.setState({email: "", password: "", loginFailed: true})
-      }
-    }.bind(this))
+    this.props.user.login(
+      this.state.email.toLowerCase(),
+      this.state.password,
+      function(success, returned){
+        if (success) {
+          console.log("Logged In")
+          this.setState({openDialog: false});
+          this.props.onCompleted(true, null);
+        }
+        else {
+          console.log("Failed to log in")
+          this.setState({email: "", password: "", loginFailed: true})
+        }
+      }.bind(this)
+    )
   },
 
   clickClose: function() {

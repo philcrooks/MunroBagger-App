@@ -18,14 +18,10 @@ Mountains.prototype.all = function(onCompleted) {
     if (this._needUpdate()) {
       // The forecasts are probably out of date and should be refreshed
       console.log("Updating Forecasts")
-      const url = baseURL + "forecasts";
-      const apiRequest = new ApiRequest();
-      apiRequest.makeGetRequest(url, null, function(status, receivedForecasts) {
-        this._updateForecasts(receivedForecasts);
-        this._saveToStore(this._mountains);
+      this.fetchForecasts(function(){
         mountains = this._makeMountains(this._mountains);
         onCompleted(mountains);
-      }.bind(this))
+      }.bind(this));
     }
     else {
       console.log("Using mountains as they are")
@@ -45,6 +41,16 @@ Mountains.prototype.all = function(onCompleted) {
     }.bind(this))
   }
 };
+
+Mountains.prototype.fetchForecasts = function(onCompleted) {
+  const url = baseURL + "forecasts";
+  const apiRequest = new ApiRequest();
+  apiRequest.makeGetRequest(url, null, function(status, receivedForecasts) {
+    this._updateForecasts(receivedForecasts);
+    this._saveToStore(this._mountains);
+    onCompleted(receivedForecasts);
+  }.bind(this))
+}
 
 Mountains.prototype._makeMountains = function(receivedMtns) {
   const mtns = [];
@@ -76,8 +82,9 @@ Mountains.prototype._saveToStore = function(mountains) {
 }
 
 Mountains.prototype._retrieveFromStore = function() {
-  console.log("Retrieving Mountains from store")
-  return JSON.parse(window.localStorage.getItem(mountainKey));
+  let mountains = JSON.parse(window.localStorage.getItem(mountainKey));
+  console.log("Retrieving Mountains from store", mountains)
+  return mountains;
 }
 
 Mountains.prototype._needUpdate = function() {
