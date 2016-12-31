@@ -19,10 +19,15 @@ const dayOfWeek = require('../utility').dayOfWeek;
 const getBrowserWidth = require('../utility').getBrowserWidth;
 const getBrowserHeight = require('../utility').getBrowserHeight;
 
+const oneMinute = 60 * 1000;
+const oneHour = 60 * oneMinute;
+
 const UI = React.createClass({
 
   getInitialState: function() {
     this.mapObj = null;
+    this.updatedAt = 0;
+    this.timeoutID = -1;
     let user = new User();
     return {
       dayNum:           0,
@@ -56,6 +61,8 @@ const UI = React.createClass({
       let mtns = mtnsView.mountains;
       let baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
       this.logAndSetState({mountainViews: mtnsView, baseDate: baseDate});
+      this.updatedAt = Date.now();
+      this.timeoutID = window.setTimeout(this.onTimeout, oneHour);
       if (this.state.userLoggedIn) {
         // User still has a token from an earlier session
         this.state.user.getInfo(function(success, returned) {
@@ -84,6 +91,7 @@ const UI = React.createClass({
   updateForecasts() {
     this.state.mountainViews.updateForecasts(function(){
       // Change the forecast without changing the forecast day
+      this.updatedAt = Date.now();
       this.mapObj.changeForecast(this.state.dayNum);
     }.bind(this))
   },
@@ -213,6 +221,23 @@ const UI = React.createClass({
     else
       if (this.state.action === 'search') action = null;
     this.logAndSetState({shrinkTitle: searchExpanding, action: action});
+  },
+
+  onTimeout: function() {
+    this.updateForecasts();
+    this.timeoutID = window.setTimeout(this.onTimeout, oneHour);
+  },
+
+  onPause: function() {
+    window.clearTimeout(this.timeoutID);
+  },
+
+  onResume: function() {
+    let timeLeft = this.updateAt + oneHour - Date.now();
+    if (timeLeft < oneMinute)
+      this.updateForecasts();
+    else
+      this.timeoutID = window.setTimeout(this.onTimeout, timeLeft);
   },
 
   //
