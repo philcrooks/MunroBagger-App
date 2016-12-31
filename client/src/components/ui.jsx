@@ -55,30 +55,6 @@ const UI = React.createClass({
     window.addEventListener("resize", this.onResize, false);
     document.addEventListener("pause", this.onPause, false);
     document.addEventListener("resume", this.onResume, false);
-
-    // Now the UI exists add the mountains
-    let mtnsView = new MountainsView();
-    mtnsView.all(function() {
-      let mtns = mtnsView.mountains;
-      this.baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
-      this.updatedAt = Date.now();
-      this.timeoutID = window.setTimeout(this.onTimeout, oneHour);
-      if (this.state.userLoggedIn) {
-        // User still has a token from an earlier session
-        this.state.user.getInfo(function(success, returned) {
-          if (success) mtnsView.userLogin(this.state.user);
-          for (let i = 0; i < mtns.length; i++) {
-            this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested, true);
-          }
-        }.bind(this))
-      }
-      else {
-        for (let i = 0; i < mtns.length; i++) {
-          this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested, false);
-        }
-      }
-      this.logAndSetState({mountainViews: mtnsView});
-    }.bind(this))
   },
 
   selectedAction(action) {
@@ -193,6 +169,30 @@ const UI = React.createClass({
 
   onMapLoaded: function(mapObj) {
     this.mapObj = mapObj;
+    
+    // Now the map exists add the mountains
+    let mtnsView = new MountainsView();
+    mtnsView.all(function() {
+      let mtns = mtnsView.mountains;
+      this.baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
+      this.updatedAt = Date.now();
+      this.timeoutID = window.setTimeout(this.onTimeout, oneHour);
+      if (this.state.userLoggedIn) {
+        // User still has a token from an earlier session
+        this.state.user.getInfo(function(success, returned) {
+          if (success) mtnsView.userLogin(this.state.user);
+          for (let i = 0; i < mtns.length; i++) {
+            this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested, true);
+          }
+        }.bind(this))
+      }
+      else {
+        for (let i = 0; i < mtns.length; i++) {
+          this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested, false);
+        }
+      }
+      this.logAndSetState({mountainViews: mtnsView});
+    }.bind(this))
   },
 
   onForecastDaySelected: function(dayNum) {
