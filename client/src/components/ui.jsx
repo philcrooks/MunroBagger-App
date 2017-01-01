@@ -55,6 +55,19 @@ const UI = React.createClass({
     window.addEventListener("resize", this.onResize, false);
     document.addEventListener("pause", this.onPause, false);
     document.addEventListener("resume", this.onResume, false);
+
+    // Get the mountain data
+    let mtnsView = new MountainsView();
+    mtnsView.all(function() {
+      console.log("Mountains loaded.")
+      const baseDate = new Date(mtnsView.mountains[0].detail.forecasts.dataDate.split("T")[0]);
+      // Allow for a change in date
+      if (!this.state.baseDate || (baseDate.getTime() !== this.state.baseDate.getTime())) this.setState({baseDate: baseDate});
+      this.updatedAt = Date.now();
+      this.timeoutID = window.setTimeout(this.onTimeout, oneHour);
+      if (this.mapObj) this.putMountainsOnMap(mtnsView);
+      this.logAndSetState({mountainViews: mtnsView});
+    }.bind(this))
   },
 
   selectedAction(action) {
@@ -66,7 +79,9 @@ const UI = React.createClass({
   },
 
   updateForecasts() {
+    console.log("Updating the forecasts")
     this.state.mountainViews.updateForecasts(function(){
+      console.log("Forecasts received")
       const mtns = this.state.mountainViews.mountains;
       const baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
       if (baseDate.getTime() !== this.state.baseDate.getTime()) this.setState({baseDate: baseDate});
@@ -75,6 +90,24 @@ const UI = React.createClass({
       // Change the forecast without changing the forecast dayNum
       this.mapObj.changeForecast(this.state.dayNum);
     }.bind(this))
+  },
+
+  putMountainsOnMap: function(mtnsView) {
+    const mtns = mtnsView.mountains;
+    if (this.state.userLoggedIn) {
+      // User still has a token from an earlier session
+      this.state.user.getInfo(function(success, returned) {
+        if (success) mtnsView.userLogin(this.state.user);
+        for (let i = 0; i < mtns.length; i++) {
+          this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested, true);
+        }
+      }.bind(this))
+    }
+    else {
+      for (let i = 0; i < mtns.length; i++) {
+        this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested, false);
+      }
+    }
   },
 
   //
@@ -170,33 +203,11 @@ const UI = React.createClass({
   },
 
   onMapLoaded: function(mapObj) {
+    console.log("Map loaded");
     this.mapObj = mapObj;
     
     // Now the map exists add the mountains
-    let mtnsView = new MountainsView();
-    mtnsView.all(function() {
-      const mtns = mtnsView.mountains;
-      const baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
-      // Allow for a change in date
-      if (!this.state.baseDate || (baseDate.getTime() !== this.state.baseDate.getTime())) this.setState({baseDate: baseDate});
-      this.updatedAt = Date.now();
-      this.timeoutID = window.setTimeout(this.onTimeout, oneHour);
-      if (this.state.userLoggedIn) {
-        // User still has a token from an earlier session
-        this.state.user.getInfo(function(success, returned) {
-          if (success) mtnsView.userLogin(this.state.user);
-          for (let i = 0; i < mtns.length; i++) {
-            this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested, true);
-          }
-        }.bind(this))
-      }
-      else {
-        for (let i = 0; i < mtns.length; i++) {
-          this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested, false);
-        }
-      }
-      this.logAndSetState({mountainViews: mtnsView});
-    }.bind(this))
+    if (this.state.mountainViews) this.putMountainsOnMap(this.state.mountainViews)
   },
 
   onForecastDaySelected: function(dayNum) {

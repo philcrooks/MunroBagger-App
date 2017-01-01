@@ -3,11 +3,11 @@
 function Pin (map, mtnView, loggedIn, hidden) {
   // this._id = mtnView.id;
   this._mtnView = mtnView;
+  this._mountain = mtnView.detail;
   this._map = map;
   this._dayNum = 0;
   this._loggedIn = (loggedIn) ? true : false;
-  this._forecasts = mtnView.detail.forecasts;
-  this._mountSunny = (this._forecasts.day[0].code <= 3)
+  this._mountSunny = (mtnView.detail.forecasts.day[0].code <= 3)
   this._marker = null;
   this._markerCallback = null;
   this._infoCallback = null;
@@ -33,7 +33,7 @@ function Pin (map, mtnView, loggedIn, hidden) {
 };
 
 Pin.prototype.changeForecast = function(dayNum) {
-  let sunnyForecast = (this._forecasts.day[dayNum].code <= 3)
+  let sunnyForecast = (this._mountain.forecasts.day[dayNum].code <= 3)
   this._dayNum = dayNum;
   if (this._mountSunny !== sunnyForecast) {
     this._mountSunny = sunnyForecast
@@ -63,7 +63,7 @@ Pin.prototype.userLoggedOut = function() {
 Pin.prototype._resetMarker = function() {
   if (this.hidden) return;
   this._marker =  new google.maps.Marker({
-    position: this._mtnView.detail.latLng,
+    position: this._mountain.latLng,
     map: this._map,
     icon: { url: this._generateIcon(), scaledSize: new google.maps.Size(20, 23) }
   });
