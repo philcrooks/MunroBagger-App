@@ -28,7 +28,6 @@ const UI = React.createClass({
     this.mapObj = null;
     this.updatedAt = 0;
     this.timeoutID = -1;
-    this.baseDate = null;
 
     let user = new User();
     return {
@@ -39,6 +38,7 @@ const UI = React.createClass({
       user:             user,
       userLoggedIn:     user.loggedIn,
       mountainViews:    null,
+      baseDate:         null,
       shrinkTitle:      false,
       availableWidth:   getBrowserWidth(),
       availableHeight:  getBrowserHeight()
@@ -67,10 +67,12 @@ const UI = React.createClass({
 
   updateForecasts() {
     this.state.mountainViews.updateForecasts(function(){
-      let mtns = this.state.mountainViews.mountains;
-      this.baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
-      // Change the forecast without changing the forecast day
+      const mtns = this.state.mountainViews.mountains;
+      const baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
+      if (baseDate.getTime() !== this.state.baseDate.getTime()) this.setState({baseDate: baseDate});
+      // Allow for a change in date
       this.updatedAt = Date.now();
+      // Change the forecast without changing the forecast dayNum
       this.mapObj.changeForecast(this.state.dayNum);
     }.bind(this))
   },
@@ -173,8 +175,10 @@ const UI = React.createClass({
     // Now the map exists add the mountains
     let mtnsView = new MountainsView();
     mtnsView.all(function() {
-      let mtns = mtnsView.mountains;
-      this.baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
+      const mtns = mtnsView.mountains;
+      const baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
+      // Allow for a change in date
+      if (!this.state.baseDate || (baseDate.getTime() !== this.state.baseDate.getTime())) this.setState({baseDate: baseDate});
       this.updatedAt = Date.now();
       this.timeoutID = window.setTimeout(this.onTimeout, oneHour);
       if (this.state.userLoggedIn) {
@@ -284,7 +288,7 @@ const UI = React.createClass({
     if (this.state.action) console.log("Action:", this.state.action)
 
     let days = ["Today", "Tomorrow", "Day After"];
-    const baseDate = (this.baseDate) ? this.baseDate : new Date();
+    const baseDate = (this.state.baseDate) ? this.state.baseDate : new Date();
     if (baseDate.toDateString() !== new Date().toDateString()) {
       const day = baseDate.getDay();
       days = [dayOfWeek(day, true), dayOfWeek((day+1)%7, true), dayOfWeek((day+2)%7, true)];
