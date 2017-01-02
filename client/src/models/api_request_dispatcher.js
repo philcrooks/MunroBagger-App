@@ -11,7 +11,7 @@ ApiRequestDispatcher.prototype.dispatch = function(request) {
 		this.queue.push(request);
 	else
 		request.send();
-	return connection !== Connection.NONE;
+	return connection === Connection.NONE;
 };
 
 ApiRequestDispatcher.prototype.online = function() {

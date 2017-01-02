@@ -348,7 +348,7 @@ const UI = React.createClass({
                 shrunkTitle={this.state.shrinkTitle}
                 availableWidth={availableWidth}
                 availableHeight={this.state.availableHeight}
-                mountainViews={this.state.mountainViews}
+                mountainViews={this.mountainViews}
                 onSearchClicked={this.onSearchClicked}
                 onSelection={this.onMountainSelected} />
               <IconButton name="more_vert" id="menu-top-right" />
