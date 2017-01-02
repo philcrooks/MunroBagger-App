@@ -110,6 +110,7 @@ const MountDetail = React.createClass({
     const detail = this.props.mountain.detail;
     const forecast = detail.forecasts.day[this.props.dayNum];
     const saveOpts = (this.state.saveEnabled) ? {} : {disabled: "disabled"};
+    const closeOpts = (this.state.updating) ? {disabled: "disabled"} : {};
 
     // Make sure long names break at the most appropriate point
     let name = detail.name;
@@ -165,7 +166,7 @@ const MountDetail = React.createClass({
         </div>
         <div className='mountain-actions'>
           <FABButton mini {...saveOpts} onClick={this.clickSave}><Icon name="save" /></FABButton>
-          <FABButton mini {...saveOpts} onClick={this.clickClose}><Icon name="arrow_forward" /></FABButton>
+          <FABButton mini {...closeOpts} onClick={this.clickClose}><Icon name="arrow_forward" /></FABButton>
         </div>
       </div>
     )
