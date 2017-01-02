@@ -1,17 +1,17 @@
 const React = require('react');
 import { Layout, Header, HeaderRow, HeaderTabs, Footer, FooterSection, Textfield, Menu, MenuItem, IconButton, Icon, FABButton, Tab, Content, Spinner } from 'react-mdl';
-const Scotland = require('./map')
+const Scotland = require('../components/map')
 
-const Welcome = require('./welcome');
-const MountainDetail = require('./mountain_detail');
-const MBDrawer = require('./mb_drawer')
-const MountainSnackbar = require('./mountain_snackbar')
-const Login = require('./user/login');
-const Registration = require('./user/registration');
-const UserNewPassword = require('./user/user_new_password');
-const UserChangePassword = require('./user/user_change_password');
-const About = require('./about');
-const Search = require('./search');
+const Welcome = require('../components/welcome');
+const MountainDetail = require('../components/mountain_detail');
+const MBDrawer = require('../components/mb_drawer')
+const MountainSnackbar = require('../components/mountain_snackbar')
+const Login = require('../components/user/login');
+const Registration = require('../components/user/registration');
+const UserNewPassword = require('../components/user/user_new_password');
+const UserChangePassword = require('../components/user/user_change_password');
+const About = require('../components/about');
+const Search = require('../components/search');
 
 const MountainsView = require('../views/mountains_view');
 const User = require('../models/user');
@@ -19,9 +19,6 @@ const dayOfWeek = require('../utility').dayOfWeek;
 const getBrowserWidth = require('../utility').getBrowserWidth;
 const getBrowserHeight = require('../utility').getBrowserHeight;
 const logger = require('../utility').logger;
-
-const oneMinute = 60 * 1000;
-const oneHour = 60 * oneMinute;
 
 const UI = React.createClass({
 

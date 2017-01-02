@@ -3,6 +3,7 @@ const ReactDOM = require('react-dom');
 const MapObject = require('../views/map')
 const getScript = require('../utility').getScript;
 const logger = require('../utility').logger;
+const mapKey = require('../keys').mapKey;
 
 const Map = React.createClass({
 
@@ -23,8 +24,8 @@ const Map = React.createClass({
 	},
 
 	loadMap: function(){
-		logger("Loading map");
-		getScript("https://maps.googleapis.com/maps/api/js", function() {
+		logger("Loading map using key", mapKey);
+		getScript("https://maps.googleapis.com/maps/api/js?key=" + mapKey, function() {
 			logger("API loaded")
 			document.removeEventListener("online", this.loadMap);
 			const node = ReactDOM.findDOMNode(this.refs.map);

@@ -1,6 +1,6 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
-const UI = require('./components/ui');
+const UI = require('./containers/ui');
 
 function onDeviceReady() {
   // Now safe to use device APIs

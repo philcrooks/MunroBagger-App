@@ -98,4 +98,4 @@ module.exports = {
   getBrowserHeight: getBrowserHeight,
   getScript: getScript,
   logger: logger
-}
+};

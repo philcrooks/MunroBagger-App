@@ -95,7 +95,7 @@ Mountains.prototype._saveToStore = function(mountains) {
   if (mountains) {
     logger("Saving Mountains")
     const timeStamp = this._getTimestamp(mountains);  // UTC time
-    this._nextUpdate = timeStamp + ((2.05 + (Math.random() / 6)) * 60 * 60 * 1000);
+    this._nextUpdate = timeStamp + ((2.05 + (Math.random() / 4)) * 60 * 60 * 1000);
     logger("Forecasts updated:", new Date(timeStamp).toISOString());
     logger("Refresh scheduled:", new Date(this._nextUpdate).toISOString());
     window.localStorage.setItem(updatedKey, timeStamp.toString());
