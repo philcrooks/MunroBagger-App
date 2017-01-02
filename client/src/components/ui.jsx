@@ -64,7 +64,7 @@ const UI = React.createClass({
       logger("Mountains loaded.")
       const baseDate = new Date(mtnsView.mountains[0].detail.forecasts.dataDate.split("T")[0]);
       // Allow for a change in date
-      if (!this.state.baseDate || (baseDate.getTime() !== this.state.baseDate.getTime())) this.setState({baseDate: baseDate});
+      if (!this.state.baseDate || (baseDate.getTime() !== this.state.baseDate.getTime())) this.logAndSetState({baseDate: baseDate});
       this.updatedAt = Date.now();
       this.timeoutID = window.setTimeout(this.onTimeout, oneHour);
       if (this.mapObj) this.putMountainsOnMap(mtnsView);
@@ -86,7 +86,7 @@ const UI = React.createClass({
       logger("Forecasts received")
       const mtns = this.state.mountainViews.mountains;
       const baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
-      if (baseDate.getTime() !== this.state.baseDate.getTime()) this.setState({baseDate: baseDate});
+      if (baseDate.getTime() !== this.state.baseDate.getTime()) this.logAndSetState({baseDate: baseDate});
       // Allow for a change in date
       this.updatedAt = Date.now();
       // Change the forecast without changing the forecast dayNum
@@ -96,7 +96,7 @@ const UI = React.createClass({
 
   putMountainsOnMap: function(mtnsView) {
     const mtns = mtnsView.mountains;
-    if (this.state.user.loggedIn) {
+    if (this.state.user.hasToken) {
       // User still has a token from an earlier session
       this.state.user.getInfo(function(success, returned) {
         if (success) mtnsView.userLogin(this.state.user);
@@ -262,7 +262,7 @@ const UI = React.createClass({
       this.updateForecasts();
       timeLeft = oneHour;
     }
-    logger("Setting timeout for", timeLeft / 60000, "minutes");
+    logger("Setting timeout for", Math.round(timeLeft / 600) / 100, "minutes");
     this.timeoutID = window.setTimeout(this.onTimeout, timeLeft);
   },
 

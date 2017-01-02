@@ -13,7 +13,7 @@ const User = function() {
   this._mountains = [];
   this._jwtoken = this._retrieveToken();
   Object.defineProperty(this, "baggedList", { get: function(){ return this._mountains; } });
-  Object.defineProperty(this, "loggedIn", { get: function(){ return (this._jwtoken) ? true : false; } });
+  Object.defineProperty(this, "hasToken", { get: function(){ return (this._jwtoken) ? true : false; } });
 }
 
 User.prototype._getMessage = function(status, request) {
