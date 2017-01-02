@@ -165,7 +165,7 @@ const MountDetail = React.createClass({
         </div>
         <div className='mountain-actions'>
           <FABButton mini {...saveOpts} onClick={this.clickSave}><Icon name="save" /></FABButton>
-          <FABButton mini onClick={this.clickClose}><Icon name="arrow_forward" /></FABButton>
+          <FABButton mini {...saveOpts} onClick={this.clickClose}><Icon name="arrow_forward" /></FABButton>
         </div>
       </div>
     )
