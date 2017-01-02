@@ -6,6 +6,10 @@ var MountainsView = function() {
   this._mountainsModel = new Mountains();
   this.mountains = null;
   this._user = null;
+
+  Object.defineProperty(this, "nextUpdate", { get: function(){ return this._mountainsModel.nextUpdate; } });
+  Object.defineProperty(this, "updateInterval", { get: function(){ return this._mountainsModel.updateInterval; } });
+
 }
 
 MountainsView.prototype.all = function(onCompleted) {

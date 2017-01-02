@@ -6,10 +6,18 @@ const baseURL = "http://www.munrobagger.scot/";
 // const baseURL = "http://localhost:3000/";
 // const baseURL = "http://192.168.1.124:3000/";
 const mountainKey = "mountains";
-const updateKey = "updated_at";
+const updatedKey = "updated_at";
+const refreshKey = "refresh_at";
 
 var Mountains = function(){
   this._mountains = this._retrieveFromStore();
+  this._nextUpdate = parseInt(window.localStorage.getItem(refreshKey), 10);
+
+  Object.defineProperty(this, "nextUpdate", { get: function(){ return this._nextUpdate; } });
+  Object.defineProperty(this, "updateInterval", { get: function(){
+    const now = Date.now();
+    return (this._nextUpdate > now) ? this._nextUpdate - now : 0;
+  } });
 };
 
 Mountains.prototype.all = function(onCompleted) {
@@ -70,14 +78,28 @@ Mountains.prototype._updateForecasts = function(forecasts) {
         this._mountains[i].forecast.data = forecasts[i].data;
         this._mountains[i].forecast.updated_at = forecasts[i].updated_at;
       }
-    } 
+    }
   }
+}
+
+Mountains.prototype._getTimestamp = function(mountains) {
+  let lastUpdate = "";
+  for (let i = 0; i < mountains.length; i++) {
+    let updatedAt = mountains[i].forecast.updated_at;
+    if (lastUpdate < updatedAt) lastUpdate = updatedAt;
+  }
+  return new Date(lastUpdate).getTime();
 }
 
 Mountains.prototype._saveToStore = function(mountains) {
   if (mountains) {
     logger("Saving Mountains")
-    window.localStorage.setItem(updateKey, Date.now().toString());
+    const timeStamp = this._getTimestamp(mountains);  // UTC time
+    this._nextUpdate = timeStamp + ((2.05 + (Math.random() / 6)) * 60 * 60 * 1000);
+    logger("Forecasts updated:", new Date(timeStamp).toISOString());
+    logger("Refresh scheduled:", new Date(this._nextUpdate).toISOString());
+    window.localStorage.setItem(updatedKey, timeStamp.toString());
+    window.localStorage.setItem(refreshKey, this._nextUpdate.toString());
     window.localStorage.setItem(mountainKey, JSON.stringify(mountains));
   }
 }
@@ -89,10 +111,9 @@ Mountains.prototype._retrieveFromStore = function() {
 }
 
 Mountains.prototype._needUpdate = function() {
-  const oneHour = 60 * 60 * 1000;
-  let updatedAt = parseInt(window.localStorage.getItem(updateKey), 10);
-  if (!isNaN(updatedAt)) logger("Mountains last updated", Math.round((Date.now() - updatedAt) / 600) / 100, "minutes ago");
-  return isNaN(updatedAt) || (Date.now() > updatedAt + oneHour);
+  let updatedAt = parseInt(window.localStorage.getItem(updatedKey), 10);
+  logger("Mountains last updated", Math.round((Date.now() - updatedAt) / 600) / 100, "minutes ago");
+  return (Date.now() > this._nextUpdate);
 }
 
 module.exports = Mountains;

@@ -28,7 +28,6 @@ const UI = React.createClass({
   getInitialState: function() {
     this.mapObj = null;
     this.mountainViews = null;
-    this.updatedAt = 0;
     this.timeoutID = -1;
 
     let user = new User();
@@ -62,11 +61,12 @@ const UI = React.createClass({
     let mtnsView = new MountainsView();
     mtnsView.all(function() {
       logger("Mountains loaded.")
+      logger("Setting timeout for", Math.round(mtnsView.updateInterval / 600) / 100, "minutes");
+
       const baseDate = new Date(mtnsView.mountains[0].detail.forecasts.dataDate.split("T")[0]);
       // Allow for a change in date
       if (!this.state.baseDate || (baseDate.getTime() !== this.state.baseDate.getTime())) this.logAndSetState({baseDate: baseDate});
-      this.updatedAt = Date.now();
-      this.timeoutID = window.setTimeout(this.onTimeout, oneHour);
+      this.timeoutID = window.setTimeout(this.onTimeout, mtnsView.updateInterval);
       if (this.mapObj) this.putMountainsOnMap(mtnsView);
       this.mountainViews = mtnsView;
     }.bind(this))
@@ -82,15 +82,15 @@ const UI = React.createClass({
 
   updateForecasts() {
     logger("Updating the forecasts")
-    this.state.mountainViews.updateForecasts(function(){
-      logger("Forecasts received")
-      const mtns = this.state.mountainViews.mountains;
+    this.mountainViews.updateForecasts(function(){
+      logger("Forecasts received");
+      logger("Setting timeout for", Math.round(this.mountainViews.updateInterval / 600) / 100, "minutes");
+      const mtns = this.mountainViews.mountains;
       const baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
       if (baseDate.getTime() !== this.state.baseDate.getTime()) this.logAndSetState({baseDate: baseDate});
-      // Allow for a change in date
-      this.updatedAt = Date.now();
+      this.timeoutID = window.setTimeout(this.onTimeout, this.mountainViews.updateInterval);
       // Change the forecast without changing the forecast dayNum
-      this.mapObj.changeForecasts(this.state.dayNum);
+      if (this.mapObj) this.mapObj.changeForecasts(this.state.dayNum);
     }.bind(this))
   },
 
@@ -247,7 +247,6 @@ const UI = React.createClass({
 
   onTimeout: function() {
     this.updateForecasts();
-    this.timeoutID = window.setTimeout(this.onTimeout, oneHour);
   },
 
   onPause: function() {
@@ -257,13 +256,14 @@ const UI = React.createClass({
 
   onResume: function() {
     logger("App resumed");
-    let timeLeft = this.updatedAt + oneHour - Date.now();
-    if (timeLeft < oneMinute) {
+    let timeLeft = this.mountainViews.updateInterval;
+    if (timeLeft <= 0) {
       this.updateForecasts();
-      timeLeft = oneHour;
     }
-    logger("Setting timeout for", Math.round(timeLeft / 600) / 100, "minutes");
-    this.timeoutID = window.setTimeout(this.onTimeout, timeLeft);
+    else {
+      logger("Setting timeout for", Math.round(timeLeft / 600) / 100, "minutes");
+      this.timeoutID = window.setTimeout(this.onTimeout, timeLeft); 
+    }
   },
 
   onResize: function() {
