@@ -1,6 +1,6 @@
 const React = require('react');
 import { Drawer, Textfield, List, ListItem, Navigation, Checkbox } from 'react-mdl';
-
+const logger = require('../utility').logger;
 
 const MBDrawer = React.createClass({
 
@@ -49,7 +49,7 @@ const MBDrawer = React.createClass({
 
 	render: function() {
 
-		console.log("Rendering Drawer")
+		logger("Rendering Drawer")
 
 		return(
 			 <Drawer title="Munro Bagger">

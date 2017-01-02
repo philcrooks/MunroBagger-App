@@ -1,6 +1,7 @@
 const React = require('react');
 import { Textfield, IconButton, List, ListItem, ListItemContent } from 'react-mdl';
 const getBrowserHeight = require('../utility').getBrowserHeight;
+const logger = require('../utility').logger;
 
 const Search = React.createClass({
 
@@ -16,7 +17,7 @@ const Search = React.createClass({
   },
 
   logAndSetState: function(state) {
-    console.log("Setting Search state:", state);
+    logger("Setting Search state:", state);
     this.setState(state);
   },
 
@@ -99,7 +100,7 @@ const Search = React.createClass({
 	},
 
   render: function() {
-  	console.log("Rendering Search");
+  	logger("Rendering Search");
 
   	let taggedList = null;
   	if (this.state.expanded) {
@@ -125,7 +126,7 @@ const Search = React.createClass({
   		searchWidth = (this.props.availableWidth > 200) ? 200 : this.props.availableWidth;
   	}
   	let searchHeight = this.props.availableHeight - 60;
-  	console.log("searchHeight", searchHeight, "classes", resultClasses);
+  	logger("searchHeight", searchHeight, "classes", resultClasses);
 
   	return (
   		<div className="search">

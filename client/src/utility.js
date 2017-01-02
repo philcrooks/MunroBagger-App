@@ -59,7 +59,7 @@ var getBrowserHeight = function(){
   return Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
 };
 
-function getScript(source, callback) {
+var getScript = function(source, callback) {
   var script = document.createElement('script');
   script.async = 1;
 
@@ -76,7 +76,17 @@ function getScript(source, callback) {
   };
 
   script.src = source;
-}
+};
+
+var logger = function() {
+  if (true) {
+    const date = new Date();
+    const ms = date.getMilliseconds();
+    const time = date.toTimeString().split(" ")[0] + ":" + ms;
+    let args = Array.from(arguments);
+    console.log.apply(null, [time].concat(args));
+  }
+};
 
 module.exports = {
   mountainSearch: mountainSearch,
@@ -86,5 +96,6 @@ module.exports = {
   dayOfWeek: dayOfWeek,
   getBrowserWidth: getBrowserWidth,
   getBrowserHeight: getBrowserHeight,
-  getScript: getScript
+  getScript: getScript,
+  logger: logger
 }

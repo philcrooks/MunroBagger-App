@@ -5,7 +5,6 @@ function Pin (map, mtnView, loggedIn, hidden) {
   this._mtnView = mtnView;
   this._mountain = mtnView.detail;
   this._map = map;
-  this._dayNum = 0;
   this._loggedIn = (loggedIn) ? true : false;
   this._mountSunny = (mtnView.detail.forecasts.day[0].code <= 3)
   this._marker = null;
@@ -34,15 +33,14 @@ function Pin (map, mtnView, loggedIn, hidden) {
 
 Pin.prototype.changeForecast = function(dayNum) {
   let sunnyForecast = (this._mountain.forecasts.day[dayNum].code <= 3)
-  this._dayNum = dayNum;
   if (this._mountSunny !== sunnyForecast) {
     this._mountSunny = sunnyForecast
     this._marker.setMap(null);
     this._resetMarker();
   }
-  else {
-    if (this._hasFocus) this._openInfoWindow();
-  }
+  // else {
+  //   if (this._hasFocus) this._openInfoWindow();
+  // }
 }
 
 Pin.prototype.changeBaggedState = function() {

@@ -79,7 +79,7 @@ MapObject.prototype.addPin = function(mountainView, onMarkerClicked, onInfoBoxCl
   mountainView.pin = pin;
 }
 
-MapObject.prototype.changeForecast = function(dayNum) {
+MapObject.prototype.changeForecasts = function(dayNum) {
   for (let i = 0; i < this._allPins.length; i++) {
     this._allPins[i].changeForecast(dayNum);
   }

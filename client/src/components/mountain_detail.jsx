@@ -5,6 +5,7 @@ import { Checkbox, FABButton, Icon } from 'react-mdl';
 // const DatePicker = require('react-datepicker');
 // const moment = require('moment');
 const dayOfWeek = require('../utility').dayOfWeek;
+const logger = require('../utility').logger;
 
 // require('react-datepicker/dist/react-datepicker.css');
 
@@ -100,7 +101,7 @@ const MountDetail = React.createClass({
 
   render: function() {
 
-    console.log("Rendering MountainDetail");
+    logger("Rendering MountainDetail");
 
     if (!this.props.mountain) {
       return(<div className='mountain'></div>);

@@ -1,5 +1,6 @@
 const React = require('react');
 import { Snackbar } from 'react-mdl';
+const logger = require('../utility').logger;
 
 const MountainSnackbar = React.createClass({
   getInitialState: function() {
@@ -20,7 +21,7 @@ const MountainSnackbar = React.createClass({
   },
 
   handleTimeoutSnackbar: function() {
-    console.log("Snackbar timeout")
+    logger("Snackbar timeout")
     this.setState({ active: false });
     this.props.onCompleted();
   },
@@ -31,7 +32,7 @@ const MountainSnackbar = React.createClass({
   },
 
   render: function() {
-    console.log("Rendering Snackbar")
+    logger("Rendering Snackbar")
 
     return (
       <Snackbar

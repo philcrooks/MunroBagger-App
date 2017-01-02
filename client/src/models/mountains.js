@@ -1,5 +1,6 @@
-let Mountain = require('./mountain');
-let ApiRequest = require('./api_request');
+const Mountain = require('./mountain');
+const ApiRequest = require('./api_request');
+const logger = require('../utility').logger;
 
 const baseURL = "http://www.munrobagger.scot/";
 // const baseURL = "http://localhost:3000/";
@@ -17,21 +18,21 @@ Mountains.prototype.all = function(onCompleted) {
     // Have already downloaded the mountains
     if (this._needUpdate()) {
       // The forecasts are probably out of date and should be refreshed
-      console.log("Updating Forecasts")
+      logger("Updating Forecasts")
       this.fetchForecasts(function(){
         mountains = this._makeMountains(this._mountains);
         onCompleted(mountains);
       }.bind(this));
     }
     else {
-      console.log("Using mountains as they are")
+      logger("Using mountains as they are")
       mountains = this._makeMountains(this._mountains);
       onCompleted(mountains);
     }
   }
   else {
     // Don't have cached mountains so need to download them
-    console.log("Retrieving Mountains from Internet")
+    logger("Retrieving Mountains from Internet")
     const url = baseURL + "munros";
     const apiRequest = new ApiRequest();
     apiRequest.makeGetRequest(url, null, function(status, receivedMtns) {
@@ -75,7 +76,7 @@ Mountains.prototype._updateForecasts = function(forecasts) {
 
 Mountains.prototype._saveToStore = function(mountains) {
   if (mountains) {
-    console.log("Saving Mountains")
+    logger("Saving Mountains")
     window.localStorage.setItem(updateKey, Date.now().toString());
     window.localStorage.setItem(mountainKey, JSON.stringify(mountains));
   }
@@ -83,14 +84,14 @@ Mountains.prototype._saveToStore = function(mountains) {
 
 Mountains.prototype._retrieveFromStore = function() {
   let mountains = JSON.parse(window.localStorage.getItem(mountainKey));
-  console.log("Retrieving Mountains from store", mountains)
+  logger("Retrieving Mountains from store", mountains)
   return mountains;
 }
 
 Mountains.prototype._needUpdate = function() {
   const oneHour = 60 * 60 * 1000;
   let updatedAt = parseInt(window.localStorage.getItem(updateKey), 10);
-  if (!isNaN(updatedAt)) console.log("Last updated", (Date.now() - updatedAt) / 60000, "minutes ago");
+  if (!isNaN(updatedAt)) logger("Mountains last updated", Math.round((Date.now() - updatedAt) / 600) / 100, "minutes ago");
   return isNaN(updatedAt) || (Date.now() > updatedAt + oneHour);
 }
 

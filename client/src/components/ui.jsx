@@ -18,6 +18,7 @@ const User = require('../models/user');
 const dayOfWeek = require('../utility').dayOfWeek;
 const getBrowserWidth = require('../utility').getBrowserWidth;
 const getBrowserHeight = require('../utility').getBrowserHeight;
+const logger = require('../utility').logger;
 
 const oneMinute = 60 * 1000;
 const oneHour = 60 * oneMinute;
@@ -26,6 +27,7 @@ const UI = React.createClass({
 
   getInitialState: function() {
     this.mapObj = null;
+    this.mountainViews = null;
     this.updatedAt = 0;
     this.timeoutID = -1;
 
@@ -36,7 +38,7 @@ const UI = React.createClass({
       showingMountain:  false,
       action:           null,
       user:             user,
-      userLoggedIn:     user.loggedIn,
+      userLoggedIn:     false,
       mountainViews:    null,
       baseDate:         null,
       shrinkTitle:      false,
@@ -46,7 +48,7 @@ const UI = React.createClass({
   },
 
   logAndSetState: function(state) {
-    console.log("Setting UI state:", state);
+    logger("Setting UI state:", state);
     this.setState(state);
   },
 
@@ -59,14 +61,14 @@ const UI = React.createClass({
     // Get the mountain data
     let mtnsView = new MountainsView();
     mtnsView.all(function() {
-      console.log("Mountains loaded.")
+      logger("Mountains loaded.")
       const baseDate = new Date(mtnsView.mountains[0].detail.forecasts.dataDate.split("T")[0]);
       // Allow for a change in date
       if (!this.state.baseDate || (baseDate.getTime() !== this.state.baseDate.getTime())) this.setState({baseDate: baseDate});
       this.updatedAt = Date.now();
       this.timeoutID = window.setTimeout(this.onTimeout, oneHour);
       if (this.mapObj) this.putMountainsOnMap(mtnsView);
-      this.logAndSetState({mountainViews: mtnsView});
+      this.mountainViews = mtnsView;
     }.bind(this))
   },
 
@@ -79,34 +81,36 @@ const UI = React.createClass({
   },
 
   updateForecasts() {
-    console.log("Updating the forecasts")
+    logger("Updating the forecasts")
     this.state.mountainViews.updateForecasts(function(){
-      console.log("Forecasts received")
+      logger("Forecasts received")
       const mtns = this.state.mountainViews.mountains;
       const baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
       if (baseDate.getTime() !== this.state.baseDate.getTime()) this.setState({baseDate: baseDate});
       // Allow for a change in date
       this.updatedAt = Date.now();
       // Change the forecast without changing the forecast dayNum
-      this.mapObj.changeForecast(this.state.dayNum);
+      this.mapObj.changeForecasts(this.state.dayNum);
     }.bind(this))
   },
 
   putMountainsOnMap: function(mtnsView) {
     const mtns = mtnsView.mountains;
-    if (this.state.userLoggedIn) {
+    if (this.state.user.loggedIn) {
       // User still has a token from an earlier session
       this.state.user.getInfo(function(success, returned) {
         if (success) mtnsView.userLogin(this.state.user);
         for (let i = 0; i < mtns.length; i++) {
           this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested, true);
         }
+        this.logAndSetState({mountainViews: mtnsView, userLoggedIn: true});
       }.bind(this))
     }
     else {
       for (let i = 0; i < mtns.length; i++) {
         this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested, false);
       }
+      this.logAndSetState({mountainViews: mtnsView});
     }
   },
 
@@ -127,11 +131,11 @@ const UI = React.createClass({
   requestPasswordReset: function(email){
     this.state.user.resetPassword(email, function(success){
       if (!success) {
-        // console.log("not successful")
+        // logger("not successful")
         this.logAndSetState({resetEmailExists: false});
       }
       else {
-        // console.log("not successful")
+        // logger("not successful")
         this.logAndSetState({action: null})
       }
     }.bind(this))
@@ -176,7 +180,7 @@ const UI = React.createClass({
 
   // setFilterOption: function(value) {
   //   this.logAndSetState({filter: value});
-  //   console.log("UI: setFilterOption", this.state.filter);
+  //   logger("UI: setFilterOption", this.state.filter);
   // },
 
   //
@@ -203,16 +207,16 @@ const UI = React.createClass({
   },
 
   onMapLoaded: function(mapObj) {
-    console.log("Map loaded");
+    logger("Map loaded");
     this.mapObj = mapObj;
     
     // Now the map exists add the mountains
-    if (this.state.mountainViews) this.putMountainsOnMap(this.state.mountainViews)
+    if (this.mountainViews) this.putMountainsOnMap(this.mountainViews)
   },
 
   onForecastDaySelected: function(dayNum) {
     this.logAndSetState({dayNum: dayNum})
-    this.mapObj.changeForecast(dayNum);
+    this.mapObj.changeForecasts(dayNum);
   },
 
   onMountainSelected: function(mtnView) {
@@ -247,18 +251,18 @@ const UI = React.createClass({
   },
 
   onPause: function() {
-    console.log("App paused");
+    logger("App paused");
     if (this.timeoutID >= 0) window.clearTimeout(this.timeoutID);
   },
 
   onResume: function() {
-    console.log("App resumed");
+    logger("App resumed");
     let timeLeft = this.updatedAt + oneHour - Date.now();
     if (timeLeft < oneMinute) {
       this.updateForecasts();
       timeLeft = oneHour;
     }
-    console.log("Setting timeout for", timeLeft / 60000, "minutes");
+    logger("Setting timeout for", timeLeft / 60000, "minutes");
     this.timeoutID = window.setTimeout(this.onTimeout, timeLeft);
   },
 
@@ -295,8 +299,8 @@ const UI = React.createClass({
 
   render: function() {
 
-    console.log("Rendering UI");
-    if (this.state.action) console.log("Action:", this.state.action)
+    logger("Rendering UI");
+    if (this.state.action) logger("Action:", this.state.action)
 
     let days = ["Today", "Tomorrow", "Day After"];
     const baseDate = (this.state.baseDate) ? this.state.baseDate : new Date();

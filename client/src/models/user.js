@@ -1,5 +1,6 @@
 let UserMountain = require('./user_mountain');
 let ApiRequest = require('./api_request');
+const logger = require('../utility').logger;
 
 const baseURL = "http://www.munrobagger.scot/";
 // const baseURL = "http://localhost:3000/"
@@ -114,7 +115,7 @@ User.prototype.logout = function(onCompleted) {
 }
 
 User.prototype.resetPassword = function(email, onCompleted) {
-  // console.log(email)
+  // logger(email)
   const url = baseURL + "users/reset";
   const params = { user: {
     email: email
@@ -131,7 +132,7 @@ User.prototype.changePassword = function(password, onCompleted) {
     password: password
   } };
   apiRequest.makePutRequest(url, params, this._jwtoken, function(status, result) {
-    // console.log('status', status)
+    // logger('status', status)
     let success = (status === 200);
     onCompleted(success, this._getMessage(status, 'changePassword'));
   }.bind(this));
@@ -211,7 +212,7 @@ User.prototype._saveToken = function(token) {
     // Don't save to local storage unless running in a Cordova app
     // Local storage is not secure enough for a token when running is a browser.
     // A Cordova app has sole access to storage so is more secure.
-    console.log("Saving token to store")
+    logger("Saving token to store")
     window.localStorage.setItem(tokenKey, token);
   }
 }
@@ -221,13 +222,13 @@ User.prototype._removeToken = function() {
     // Don't save to local storage unless running in a Cordova app
     // Local storage is not secure enough for a token when running is a browser.
     // A Cordova app has sole access to storage so is more secure.
-    console.log("Removing token from store")
+    logger("Removing token from store")
     window.localStorage.removeItem(tokenKey);
   }
 }
 
 User.prototype._retrieveToken = function() {
-  console.log("Retrieving token from store")
+  logger("Retrieving token from store")
   return window.localStorage.getItem(tokenKey);
 }
 

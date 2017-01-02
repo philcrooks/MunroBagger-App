@@ -1,3 +1,5 @@
+const logger = require('../utility').logger;
+
 let ApiRequest = function() {
 };
 
@@ -10,8 +12,7 @@ ApiRequest.prototype._makeRequest = function(httpVerb, url, expected, callback, 
   request.onload = function() {
     let errorStatus = (expected.indexOf(this.status) === -1);
     let content = ((this.status === 204) || errorStatus ) ? null : JSON.parse(this.responseText);
-    console.log(httpVerb + " request to " + url + " returned status " + this.status)
-    // if (content) console.log("Content: " + this.responseText);
+    logger(httpVerb + " request to " + url + " returned status " + this.status)
     callback(this.status, content);
   };
   let json = (content) ? JSON.stringify(content) : null;

@@ -2,17 +2,18 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const MapObject = require('../views/map')
 const getScript = require('../utility').getScript;
+const logger = require('../utility').logger;
 
 const Map = React.createClass({
 
 	componentDidMount: function() {
 		if (navigator.connection.type === Connection.NONE) {
-			console.log("offline - adding listener for Google API")
+			logger("offline - adding listener for Google API")
 			// callback when online
 			document.addEventListener("online", this.loadMap, false);
 		}
 		else {
-			console.log("online")
+			logger("online")
 			this.loadMap();
 		}
 	},
@@ -22,9 +23,9 @@ const Map = React.createClass({
 	},
 
 	loadMap: function(){
-		console.log("Loading map");
+		logger("Loading map");
 		getScript("https://maps.googleapis.com/maps/api/js", function() {
-			console.log("API loaded")
+			logger("API loaded")
 			document.removeEventListener("online", this.loadMap);
 			const node = ReactDOM.findDOMNode(this.refs.map);
 	  	const mapObj = new MapObject(node);
