@@ -29,13 +29,13 @@ const UI = React.createClass({
 
     let user = new User();
     return {
+      UIBusy:           true,
       dayNum:           0,
       focusMountain:    null,
       showingMountain:  false,
       action:           null,
       user:             user,
       userLoggedIn:     false,
-      mountainViews:    null,
       baseDate:         null,
       shrinkTitle:      false,
       availableWidth:   getBrowserWidth(),
@@ -100,15 +100,19 @@ const UI = React.createClass({
         for (let i = 0; i < mtns.length; i++) {
           this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested, true);
         }
-        this.logAndSetState({mountainViews: mtnsView, userLoggedIn: true});
+        this.logAndSetState({UIBusy: false, userLoggedIn: true});
       }.bind(this))
     }
     else {
       for (let i = 0; i < mtns.length; i++) {
         this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested, false);
       }
-      this.logAndSetState({mountainViews: mtnsView});
+      this.logAndSetState({UIBusy: false});
     }
+  },
+
+  showSpinner: function(busy) {
+    this.logAndSetState({UIBusy: busy});
   },
 
   //
@@ -119,7 +123,7 @@ const UI = React.createClass({
   requestLogout: function(){
     this.state.user.logout(function(success) {
       if (!success) return;
-      this.state.mountainViews.userLogout();
+      this.mountainViews.userLogout();
       this.mapObj.userLoggedOut();
       this.logAndSetState({userLoggedIn: false, action: null});
     }.bind(this))
@@ -190,8 +194,8 @@ const UI = React.createClass({
     if (isLoggedIn) {
       this.state.user.getInfo(function(success, returned) {
         if (success) {
-          this.state.mountainViews.userLogin(this.state.user);
-          this.mapObj.userLoggedIn(this.state.mountainViews.mountains);
+          this.mountainViews.userLogin(this.state.user);
+          this.mapObj.userLoggedIn(this.mountainViews.mountains);
         }
         this.logAndSetState({userLoggedIn: true});
       }.bind(this))
@@ -307,9 +311,9 @@ const UI = React.createClass({
     }
 
     let spinner = null;
-    if (!this.state.mountainViews) {
+    if (this.state.UIBusy) {
       spinner = (
-        <div style={{position:'absolute', width: '32px', height: '32px', top: '50%', left: '50%', margin: '-16px 0 0 -16px'}}>
+        <div style={{zIndex: '5', position:'absolute', width: '28px', height: '28px', top: '50%', left: '50%', margin: '-14px 0 0 -14px'}}>
           <Spinner singleColor />
         </div>
       )
@@ -372,6 +376,7 @@ const UI = React.createClass({
               willDisplay={this.selectedAction('mountain')}
               onCompleted={this.onInfoClosed}
               onSave={this.requestBaggedStatusChange}
+              onBusy={this.showSpinner}
               mountain={this.state.focusMountain}
               dayNum={this.state.dayNum}
               baseDate={baseDate}
@@ -382,10 +387,12 @@ const UI = React.createClass({
             <Login
               user={this.state.user}
               willDisplay={this.selectedAction('login')}
+              onBusy={this.showSpinner}
               onCompleted={this.onLoginCompleted} />
             <Registration
               user={this.state.user}
               willDisplay={this.selectedAction('register')}
+              onBusy={this.showSpinner}
               onCompleted={this.onCompleted} />
           </Content>
         </Layout>

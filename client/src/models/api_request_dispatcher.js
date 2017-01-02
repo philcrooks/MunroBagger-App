@@ -6,10 +6,12 @@ const ApiRequestDispatcher = function() {
 };
 
 ApiRequestDispatcher.prototype.dispatch = function(request) {
-	if (navigator.connection.type === Connection.NONE)
+	let connection = navigator.connection.type;
+	if (connection === Connection.NONE)
 		this.queue.push(request);
 	else
 		request.send();
+	return connection !== Connection.NONE;
 };
 
 ApiRequestDispatcher.prototype.online = function() {

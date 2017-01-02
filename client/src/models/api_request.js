@@ -21,7 +21,7 @@ ApiRequest.prototype._makeRequest = function(httpVerb, url, expected, callback, 
     callback(this.status, content);
   };
   if (content) this.content = JSON.stringify(content);
-  dispatcher.dispatch(this);
+  return dispatcher.dispatch(this);
 };
 
 ApiRequest.prototype.send = function() {
@@ -29,19 +29,19 @@ ApiRequest.prototype.send = function() {
 };
 
 ApiRequest.prototype.makeGetRequest = function(url, jwtoken, callback) {
-  this._makeRequest("GET", url, [200], callback, jwtoken)
+  return this._makeRequest("GET", url, [200], callback, jwtoken)
 };
 
 ApiRequest.prototype.makePostRequest = function(url, content, jwtoken, callback) {
-  this._makeRequest("POST", url, [200, 201], callback, jwtoken, content)
+  return this._makeRequest("POST", url, [200, 201], callback, jwtoken, content)
 };
 
 ApiRequest.prototype.makePutRequest = function(url, content, jwtoken, callback) {
-  this._makeRequest("PUT", url, [200, 201], callback, jwtoken, content)
+  return this._makeRequest("PUT", url, [200, 201], callback, jwtoken, content)
 };
 
 ApiRequest.prototype.makeDeleteRequest = function(url, content, jwtoken, callback) {
-  this._makeRequest("DELETE", url, [200, 201, 204], callback, jwtoken, content);
+  return this._makeRequest("DELETE", url, [200, 201, 204], callback, jwtoken, content);
 };
 
 module.exports = ApiRequest;

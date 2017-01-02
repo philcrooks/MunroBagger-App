@@ -78,13 +78,15 @@ const MountDetail = React.createClass({
     let status = this.state.bagged;
     mtn.backup();
     mtn.bagged = status;
-    mtn.save(function(success, returned) {
+    let wasSent = mtn.save(function(success, returned) {
+      if (!wasSent) this.props.onBusy(false);
       if (!success) {
         status = !status;
         mtn.restore();
       }
-      this.setState({baggedEnabled: true, saveEnabled: true, bagged: status, updating: false});
+      this.setState({baggedEnabled: true, bagged: status, updating: false});
     }.bind(this));
+    if (!wasSent) this.props.onBusy(true);
   },
 
   handleDateChange: function(date) {
