@@ -78,7 +78,8 @@ const MountDetail = React.createClass({
     let status = this.state.bagged;
     mtn.backup();
     mtn.bagged = status;
-    let wasSent = mtn.save(function(success, returned) {
+    var wasSent;
+    let request = mtn.save(function(success, returned) {
       if (!wasSent) this.props.onBusy(false);
       if (!success) {
         status = !status;
@@ -86,6 +87,8 @@ const MountDetail = React.createClass({
       }
       this.setState({baggedEnabled: true, bagged: status, updating: false});
     }.bind(this));
+    logger("MountainDetail request", request);
+    wasSent = (request.status === "sent");
     if (!wasSent) this.props.onBusy(true);
   },
 

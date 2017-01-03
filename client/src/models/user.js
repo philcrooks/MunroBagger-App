@@ -40,7 +40,8 @@ User.prototype._getMessage = function(status, request) {
     505: "HTTP Version Not Supported",
     511: "Network Authentication Required",
     598: "Network read timeout error",
-    599: "Network connect timeout error"
+    599: "Network connect timeout error",
+    600: "No network connection, try again later"
   };
 
   // This object contains messages for specific requests.
@@ -75,7 +76,7 @@ User.prototype.register = function(email, password, onCompleted) {
     email: email,
     password: password
   } };
-  return apiRequest.makePostRequest(url, params, null, function(status, result) {
+  return apiRequest.makePostRequest(url, params, null, true, function(status, result) {
     let success = (status === 201);
     if(success) {
       this._jwtoken = result.auth_token;
@@ -91,7 +92,7 @@ User.prototype.login = function(email, password, onCompleted) {
     email: email,
     password: password
   } };
-  return apiRequest.makePostRequest(url, params, null, function(status, result) {
+  return apiRequest.makePostRequest(url, params, null, true, function(status, result) {
     let success = (status === 201);
     if(success) {
       this._jwtoken = result.auth_token;
@@ -103,7 +104,7 @@ User.prototype.login = function(email, password, onCompleted) {
 
 User.prototype.logout = function(onCompleted) {
   const url = baseURL + "sessions";
-  return apiRequest.makeDeleteRequest(url, null, this._jwtoken, function(status) {
+  return apiRequest.makeDeleteRequest(url, null, this._jwtoken, true, function(status) {
     let success = (status === 204);
     if (success) {
       this._mountains = [];
@@ -120,7 +121,7 @@ User.prototype.resetPassword = function(email, onCompleted) {
   const params = { user: {
     email: email
   } };
-  return apiRequest.makePutRequest(url, params, null, function(status, result) {
+  return apiRequest.makePutRequest(url, params, null, true, function(status, result) {
     let success = (status === 204);
     onCompleted(success, this._getMessage(status, 'resetPassword'));
   }.bind(this));
@@ -131,17 +132,18 @@ User.prototype.changePassword = function(password, onCompleted) {
   const params = { user: {
     password: password
   } };
-  return apiRequest.makePutRequest(url, params, this._jwtoken, function(status, result) {
+  return apiRequest.makePutRequest(url, params, this._jwtoken, true, function(status, result) {
     // logger('status', status)
     let success = (status === 200);
     onCompleted(success, this._getMessage(status, 'changePassword'));
   }.bind(this));
 }
 
-User.prototype.getInfo = function(onCompleted) {
+User.prototype.getInfo = function(timeout, onCompleted) {
+  timeout = (timeout) ? true : false;
   const url = baseURL + baggedRoute;
   const apiRequest = new ApiRequest();
-  return apiRequest.makeGetRequest(url, this._jwtoken, function(status, mountains) {
+  return apiRequest.makeGetRequest(url, this._jwtoken, timeout, function(status, mountains) {
     let success = (status === 200);
     if (success) {
       for (let i = 0; i < mountains.length; i++) {
@@ -159,7 +161,7 @@ User.prototype.createUserMountain = function(mountainId) {
 }
 
 User.prototype.saveUserMountain = function(mountain, onCompleted) {
-  if (!mountain.isDirty()) return;
+  if (!mountain.isDirty()) return null;
   let url = baseURL + baggedRoute;
   let forExport = mountain.export();
 
@@ -167,7 +169,7 @@ User.prototype.saveUserMountain = function(mountain, onCompleted) {
 
   if (!mountain._originId && mountain.bagged) {
     // Mountain has not been in the database before so should be a create request
-    return apiRequest.makePostRequest(url, { bagged: forExport }, this._jwtoken, function(status, savedMtn) {
+    return apiRequest.makePostRequest(url, { bagged: forExport }, this._jwtoken, true, function(status, savedMtn) {
       let success = (status === 201);
       if (success) {
         mountain._dirty = false;
@@ -184,7 +186,7 @@ User.prototype.saveUserMountain = function(mountain, onCompleted) {
   if (mountain._originId && !mountain.bagged) {
     // This mountain has been in the database so was bagged once but not now
     // This is a delete request
-    return apiRequest.makeDeleteRequest(url, null, this._jwtoken, function(status) {
+    return apiRequest.makeDeleteRequest(url, null, this._jwtoken, true, function(status) {
       let success = (status === 204);
       if (success) {
         mountain._dirty = false;
@@ -195,7 +197,7 @@ User.prototype.saveUserMountain = function(mountain, onCompleted) {
   }
 
   if (mountain._originId && mountain.bagged) {
-    return apiRequest.makePutRequest(url, { bagged: forExport }, this._jwtoken, function(status) {
+    return apiRequest.makePutRequest(url, { bagged: forExport }, this._jwtoken, true, function(status) {
       let success = (status === 201);
       if (success) {
         mountain._dirty = false;
@@ -203,6 +205,9 @@ User.prototype.saveUserMountain = function(mountain, onCompleted) {
       onCompleted(success, this._getMessage(status, 'updateBagged'));
     }.bind(this));
   }
+
+  // Should never arrive here
+  return null;
 }
 
 User.prototype._saveToken = function(token) {

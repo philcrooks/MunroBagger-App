@@ -43,7 +43,7 @@ Mountains.prototype.all = function(onCompleted) {
     logger("Retrieving Mountains from Internet")
     const url = baseURL + "munros";
     const apiRequest = new ApiRequest();
-    apiRequest.makeGetRequest(url, null, function(status, receivedMtns) {
+    apiRequest.makeGetRequest(url, null, false, function(status, receivedMtns) {
       this._saveToStore(receivedMtns);
       mountains = this._makeMountains(receivedMtns);
       onCompleted(mountains);
@@ -54,7 +54,7 @@ Mountains.prototype.all = function(onCompleted) {
 Mountains.prototype.fetchForecasts = function(onCompleted) {
   const url = baseURL + "forecasts";
   const apiRequest = new ApiRequest();
-  apiRequest.makeGetRequest(url, null, function(status, receivedForecasts) {
+  apiRequest.makeGetRequest(url, null, false, function(status, receivedForecasts) {
     this._updateForecasts(receivedForecasts);
     this._saveToStore(this._mountains);
     onCompleted(receivedForecasts);

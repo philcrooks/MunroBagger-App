@@ -91,22 +91,41 @@ const UI = React.createClass({
     }.bind(this))
   },
 
+  addPinsToMap: function(mountains, loggedIn) {
+    for (let i = 0; i < mountains.length; i++) {
+      this.mapObj.addPin(mountains[i], this.onMountainSelected, this.onInfoRequested, loggedIn);
+    }
+  },
+
   putMountainsOnMap: function(mtnsView) {
     const mtns = mtnsView.mountains;
     if (this.state.user.hasToken) {
       // User still has a token from an earlier session
-      this.state.user.getInfo(function(success, returned) {
-        if (success) mtnsView.userLogin(this.state.user);
-        for (let i = 0; i < mtns.length; i++) {
-          this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested, true);
+      // Cannot come this far without a network connection - the map will not load
+      let loggedIn = false;
+      this.state.user.getInfo(true, function(success, returned) {
+        // This call will timeout if network connection is lost
+        // Timing out will let the user work with the data that has been retrieved already
+        if (success) {
+          mtnsView.userLogin(this.state.user);
+          loggedIn = true;
         }
-        this.logAndSetState({UIBusy: false, userLoggedIn: true});
+        this.addPinsToMap(mtns, loggedIn);
+        this.logAndSetState({UIBusy: false, userLoggedIn: loggedIn});
+        if (!success && (returned.status === 600)) {
+          // Offline - reissue the request without a timeout - it shoiuld succeed at some point
+          this.state.user.getInfo(false, function(success, returned) {
+            if (success) {
+              mtnsView.userLogin(this.state.user);
+              this.mapObj.userLoggedIn(mtns);
+              this.logAndSetState({userLoggedIn: true});
+            }
+          }.bind(this))
+        }
       }.bind(this))
     }
     else {
-      for (let i = 0; i < mtns.length; i++) {
-        this.mapObj.addPin(mtns[i], this.onMountainSelected, this.onInfoRequested, false);
-      }
+      this.addPinsToMap(mtns, false);
       this.logAndSetState({UIBusy: false});
     }
   },
@@ -192,12 +211,12 @@ const UI = React.createClass({
   onLoginCompleted: function(isLoggedIn, nextAction) {
     this.logAndSetState({action: nextAction});
     if (isLoggedIn) {
-      this.state.user.getInfo(function(success, returned) {
+      this.state.user.getInfo(true, function(success, returned) {
         if (success) {
           this.mountainViews.userLogin(this.state.user);
           this.mapObj.userLoggedIn(this.mountainViews.mountains);
+          this.logAndSetState({userLoggedIn: true});
         }
-        this.logAndSetState({userLoggedIn: true});
       }.bind(this))
     }
   },
