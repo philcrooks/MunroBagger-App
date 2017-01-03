@@ -29,7 +29,7 @@ const UI = React.createClass({
 
     let user = new User();
     return {
-      UIBusy:           true,
+      busy:           true,
       dayNum:           0,
       focusMountain:    null,
       showingMountain:  false,
@@ -111,7 +111,7 @@ const UI = React.createClass({
           loggedIn = true;
         }
         this.addPinsToMap(mtns, loggedIn);
-        this.logAndSetState({UIBusy: false, userLoggedIn: loggedIn});
+        this.logAndSetState({busy: false, userLoggedIn: loggedIn});
         if (!success && (returned.status === 600)) {
           // Offline - reissue the request without a timeout - it shoiuld succeed at some point
           this.state.user.getInfo(false, function(success, returned) {
@@ -126,12 +126,12 @@ const UI = React.createClass({
     }
     else {
       this.addPinsToMap(mtns, false);
-      this.logAndSetState({UIBusy: false});
+      this.logAndSetState({busy: false});
     }
   },
 
   showSpinner: function(busy) {
-    this.logAndSetState({UIBusy: busy});
+    this.logAndSetState({busy: busy});
   },
 
   //
@@ -328,12 +328,8 @@ const UI = React.createClass({
     }
 
     let spinner = null;
-    if (this.state.UIBusy) {
-      spinner = (
-        <div style={{zIndex: '100', position:'absolute', width: '28px', height: '28px', top: '50%', left: '50%', margin: '-14px 0 0 -14px'}}>
-          <Spinner singleColor />
-        </div>
-      )
+    if (this.state.busy) {
+      spinner = <div className='spinner-container'><Spinner singleColor /></div>
     }
 
     var enabledIn, enabledOut, login;

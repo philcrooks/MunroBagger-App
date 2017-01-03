@@ -77,6 +77,7 @@ const UserRegistration = React.createClass({
             onChange={this.updateEmail}
             label="Email..."
             style={{width: '200px'}}
+            type="email"
             value={this.state.email}
           />
           <Textfield

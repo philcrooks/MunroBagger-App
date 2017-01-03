@@ -8,10 +8,12 @@ let ApiRequest = function() {
   this._timeout = false;
   this._timeoutID = null;
   this._status = 'created';
+  this._id = 0;
 
   Object.defineProperty(this, "timeout", { get: function() { return this._timeout; } });
   Object.defineProperty(this, "callback", { get: function() { return this._callback; } });
   Object.defineProperty(this, "status", { get: function() { return this._status; } });
+  Object.defineProperty(this, "id", { get: function() { return this._id; } });
 };
 
 ApiRequest.prototype._makeRequest = function(httpVerb, url, expected, callback, jwtoken, content, timeout) {

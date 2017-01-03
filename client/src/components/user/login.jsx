@@ -1,5 +1,6 @@
 const React = require('react');
-import { Dialog, DialogTitle, DialogContent, DialogActions, Textfield, Button } from 'react-mdl';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Textfield, Button, Spinner } from 'react-mdl';
+const logger = require('../../utility').logger;
 
 const UserLogin = React.createClass({
 
@@ -7,7 +8,8 @@ const UserLogin = React.createClass({
     return {
       openDialog: false,
       email: "",
-      password: ""
+      password: "",
+      busy: false
     }
   },
 
@@ -30,7 +32,7 @@ const UserLogin = React.createClass({
   },
 
   clickLogin: function() {
-    let busy = false;
+    this.setState({busy: true})
     let request = this.props.user.login(
       this.state.email.toLowerCase(),
       this.state.password,
@@ -39,29 +41,25 @@ const UserLogin = React.createClass({
           // Credentials have been accepted
           // Try and read the bagged_munro data
           request = this.props.user.getInfo(true, function(success, returned) {
-            if (busy) this.props.onBusy(false);
             if (success) {
-              console.log("Logged In")
-              this.setState({openDialog: false});
+              logger("Logged In")
+              this.setState({openDialog: false, busy: false});
               this.props.onCompleted(true, null);
             }
             else {
               // Failed to login
+              this.setState({busy: false})
               navigator.notification.alert(returned.message, null, "Login Failed", "OK");
             }
           }.bind(this));
-          busy = busy || (request.state !== "sent");
-          if (busy) this.props.onBusy(true);
         }
         else {
           // Failed to login
           navigator.notification.alert(returned.message, null, "Login Failed", "OK");
-          this.setState({email: "", password: ""})
+          this.setState({email: "", password: "", busy: false});
         }
       }.bind(this)
     )
-    busy = (request.state !== "sent");
-    if (busy) this.props.onBusy(true);
   },
 
   clickClose: function() {
@@ -80,8 +78,12 @@ const UserLogin = React.createClass({
   },
 
   render: function(){
+
+    let spinner = (this.state.busy) ? <div className='spinner-container'><Spinner singleColor /></div> : null;
+
     return (
       <Dialog open={this.state.openDialog}>
+        {spinner}
         <DialogTitle>Login</DialogTitle>
         <DialogContent>
           <Textfield
@@ -89,6 +91,7 @@ const UserLogin = React.createClass({
             onChange={this.updateEmail}
             label="Email..."
             style={{width: '200px'}}
+            type="email"
             value={this.state.email}
           />
           <Textfield

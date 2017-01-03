@@ -1,6 +1,6 @@
 const React = require('react');
 
-import { Checkbox, FABButton, Icon } from 'react-mdl';
+import { Checkbox, FABButton, Icon, Spinner } from 'react-mdl';
 
 // const DatePicker = require('react-datepicker');
 // const moment = require('moment');
@@ -18,7 +18,8 @@ const MountDetail = React.createClass({
       saveEnabled: false,
       baggedEnabled: false,
       bagged: false,
-      updating: false
+      updating: false,
+      busy: false
     });
   },
 
@@ -79,18 +80,15 @@ const MountDetail = React.createClass({
 
     mtn.backup();         // Backup the mountain status
     mtn.bagged = status;  // Update the status
-    let sentImmediately = false;
     let request = mtn.save(function(success, returned) {
-      if (!sentImmediately) this.props.onBusy(false);
       if (!success) {
         status = !status;
         mtn.restore();    // The request failed so restore the mountain status
         navigator.notification.alert(returned.message, null, "Update Failed", "OK");
       }
-      this.setState({baggedEnabled: true, bagged: status, updating: false});
+      this.setState({baggedEnabled: true, bagged: status, updating: false, busy: false});
     }.bind(this));
-    sentImmediately = (request.status === "sent");
-    if (!sentImmediately) this.props.onBusy(true);
+    if (request.status !== "sent") this.setState({busy: true});
   },
 
   handleDateChange: function(date) {
@@ -136,8 +134,11 @@ const MountDetail = React.createClass({
     }
 
     let classes = (this.state.visible) ? "mountain is-visible" : "mountain";
+    let spinner = (this.state.busy) ? <div className='spinner-container'><Spinner singleColor /></div> : null;
+
     return (
       <div className={classes}>
+        {spinner}
         <div className='mountain-title'>
           <h1>{name}</h1>
           <p>{detail.meaning}</p>
