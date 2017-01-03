@@ -76,14 +76,14 @@ const UserRegistration = React.createClass({
             required={true}
             onChange={this.updateEmail}
             label="Email..."
-            style={{width: '230px'}}
+            style={{width: '200px'}}
             value={this.state.email}
           />
           <Textfield
             required={true}
             onChange={this.updatePassword}
             label="Password..."
-            style={{width: '230px'}}
+            style={{width: '200px'}}
             type="password"
             value={this.state.password}
           />
@@ -91,11 +91,11 @@ const UserRegistration = React.createClass({
             required={true}
             onChange={this.updatePasswordConfirmation}
             label="Repeat password..."
-            style={{width: '230px'}}
+            style={{width: '200px'}}
             type="password"
             value={this.state.passwordConfirmation}
           />
-          <p>Passwords have at least 1 capital, 1 number and 8 characters.</p>
+          <p>Passwords must have at least one capital letter, one number and eight characters.</p>
         </DialogContent>
         <DialogActions>
           <Button type='button' onClick={this.clickClose}>Close</Button>

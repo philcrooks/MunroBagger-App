@@ -7,14 +7,13 @@ const UserLogin = React.createClass({
     return {
       openDialog: false,
       email: "",
-      password: "",
-      loginFailed: false
+      password: ""
     }
   },
 
   componentWillReceiveProps: function(nextProps) {
     if (nextProps.willDisplay) {
-      this.setState({openDialog: true, email: "", password: "", loginFailed: false});
+      this.setState({openDialog: true, email: "", password: ""});
     }
   },
 
@@ -31,21 +30,38 @@ const UserLogin = React.createClass({
   },
 
   clickLogin: function() {
-    this.props.user.login(
+    let busy = false;
+    let request = this.props.user.login(
       this.state.email.toLowerCase(),
       this.state.password,
       function(success, returned){
         if (success) {
-          console.log("Logged In")
-          this.setState({openDialog: false});
-          this.props.onCompleted(true, null);
+          // Credentials have been accepted
+          // Try and read the bagged_munro data
+          request = this.props.user.getInfo(true, function(success, returned) {
+            if (busy) this.props.onBusy(false);
+            if (success) {
+              console.log("Logged In")
+              this.setState({openDialog: false});
+              this.props.onCompleted(true, null);
+            }
+            else {
+              // Failed to login
+              navigator.notification.alert(returned.message, null, "Login Failed", "OK");
+            }
+          }.bind(this));
+          busy = busy || (request.state !== "sent");
+          if (busy) this.props.onBusy(true);
         }
         else {
-          console.log("Failed to log in")
-          this.setState({email: "", password: "", loginFailed: true})
+          // Failed to login
+          navigator.notification.alert(returned.message, null, "Login Failed", "OK");
+          this.setState({email: "", password: ""})
         }
       }.bind(this)
     )
+    busy = (request.state !== "sent");
+    if (busy) this.props.onBusy(true);
   },
 
   clickClose: function() {
@@ -64,19 +80,6 @@ const UserLogin = React.createClass({
   },
 
   render: function(){
-
-    var message;
-    if (this.state.loginFailed) {
-      message = (
-        <p>Failed to log in. <span className="user-link" onClick={this.clickPasswordReset}>Reset password?</span></p>
-      );
-    }
-    else {
-      message = (
-        <p>Do you need to <span className="user-link" onClick={this.clickRegister}>register?</span></p>
-      )
-    }
-
     return (
       <Dialog open={this.state.openDialog}>
         <DialogTitle>Login</DialogTitle>
@@ -85,22 +88,22 @@ const UserLogin = React.createClass({
             required={true}
             onChange={this.updateEmail}
             label="Email..."
-            style={{width: '230px'}}
+            style={{width: '200px'}}
             value={this.state.email}
           />
           <Textfield
             required={true}
             onChange={this.updatePassword}
             label="Password..."
-            style={{width: '230px'}}
+            style={{width: '200px'}}
             type="password"
             value={this.state.password}
           />
+          <p>Logging in allows you to share your bagged Munros between different devices. You must register first.</p>
         </DialogContent>
         <DialogActions>
           <Button type='button' onClick={this.clickClose}>Close</Button>
           <Button type='button' onClick={this.clickLogin}>Login</Button>
-          {message}
         </DialogActions>
       </Dialog>
     )

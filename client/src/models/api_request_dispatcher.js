@@ -31,7 +31,8 @@ ApiRequestDispatcher.prototype._dequeue = function(request) {
 	logger("Removing a request from the dispatcher queue:", request);
 	for (let i = 0; i < this._queue.length; i++) {
 		if (this._queue[i] === request) {
-			this._queue = this._queue.slice(i, i + 1);
+			logger("Found it!")
+			this._queue.splice(i, 1);
 			break;
 		}
 	}

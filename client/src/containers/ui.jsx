@@ -209,15 +209,13 @@ const UI = React.createClass({
   //
 
   onLoginCompleted: function(isLoggedIn, nextAction) {
-    this.logAndSetState({action: nextAction});
     if (isLoggedIn) {
-      this.state.user.getInfo(true, function(success, returned) {
-        if (success) {
-          this.mountainViews.userLogin(this.state.user);
-          this.mapObj.userLoggedIn(this.mountainViews.mountains);
-          this.logAndSetState({userLoggedIn: true});
-        }
-      }.bind(this))
+      this.mountainViews.userLogin(this.state.user);
+      this.mapObj.userLoggedIn(this.mountainViews.mountains);
+      this.logAndSetState({userLoggedIn: true, action: nextAction});
+    }
+    else {
+      this.logAndSetState({action: nextAction});
     }
   },
 
@@ -332,7 +330,7 @@ const UI = React.createClass({
     let spinner = null;
     if (this.state.UIBusy) {
       spinner = (
-        <div style={{zIndex: '5', position:'absolute', width: '28px', height: '28px', top: '50%', left: '50%', margin: '-14px 0 0 -14px'}}>
+        <div style={{zIndex: '100', position:'absolute', width: '28px', height: '28px', top: '50%', left: '50%', margin: '-14px 0 0 -14px'}}>
           <Spinner singleColor />
         </div>
       )

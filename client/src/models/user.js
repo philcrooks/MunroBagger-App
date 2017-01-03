@@ -41,14 +41,14 @@ User.prototype._getMessage = function(status, request) {
     511: "Network authentication required.",
     598: "Network read timeout error.",
     599: "Network connect timeout error.",
-    600: "No network connection, please try again later."
+    600: "You do not have a network connection, please try again later."
   };
 
   // This object contains messages for specific requests.
   // This contains all the explicit error responses made by the server
   let requests = {
-    register: { 422: "That email address already registered." },
-    login: { 401: "Unrecognised username or password." },
+    register: { 422: "That email address is already registered." },
+    login: { 401: "Unrecognised email or password. Have you registered?" },
     logout: {},
     resetPassword: { 404: "User not recognised." },
     changePassword: {  401: "Not logged in.", 422: "Update of password failed." },
