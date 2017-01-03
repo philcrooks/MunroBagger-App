@@ -76,20 +76,21 @@ const MountDetail = React.createClass({
     this.setState({baggedEnabled: false, saveEnabled: false, updating: true})
     const mtn = this.props.mountain;
     let status = this.state.bagged;
-    mtn.backup();
-    mtn.bagged = status;
-    var wasSent;
+
+    mtn.backup();         // Backup the mountain status
+    mtn.bagged = status;  // Update the status
+    let sentImmediately = false;
     let request = mtn.save(function(success, returned) {
-      if (!wasSent) this.props.onBusy(false);
+      if (!sentImmediately) this.props.onBusy(false);
       if (!success) {
         status = !status;
-        mtn.restore();
+        mtn.restore();    // The request failed so restore the mountain status
+        navigator.notification.alert(returned.message, null, "Update Failed", "OK");
       }
       this.setState({baggedEnabled: true, bagged: status, updating: false});
     }.bind(this));
-    logger("MountainDetail request", request);
-    wasSent = (request.status === "sent");
-    if (!wasSent) this.props.onBusy(true);
+    sentImmediately = (request.status === "sent");
+    if (!sentImmediately) this.props.onBusy(true);
   },
 
   handleDateChange: function(date) {

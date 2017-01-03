@@ -20,42 +20,42 @@ User.prototype._getMessage = function(status, request) {
   // Global messages.
   // The wording comes from the official definition of the error codes.
   let messages = {
-    400: "Bad Request",
-    401: "Unauthorized",
-    403: "Forbidden",
-    404: "Not Found",
-    405: "Method Not Allowed",
-    406: "Not Acceptable",
-    407: "Proxy Authentication Required",
-    408: "Request Timeout",
-    409: "Conflict",
-    422: "Unprocessable Entity",
-    429: "Too Many Requests",
-    431: "Request Header Fields Too Large",
-    500: "Internal Server Error",
-    501: "Not Implemented",
-    502: "Bad Gateway",
-    503: "Service Unavailable",
-    504: "Gateway Timeout",
-    505: "HTTP Version Not Supported",
-    511: "Network Authentication Required",
-    598: "Network read timeout error",
-    599: "Network connect timeout error",
-    600: "No network connection, try again later"
+    400: "Bad request.",
+    401: "Unauthorized.",
+    403: "Forbidden.",
+    404: "Not found.",
+    405: "Method not allowed.",
+    406: "Not acceptable.",
+    407: "Proxy authentication required.",
+    408: "Request timeout.",
+    409: "Conflict.",
+    422: "Unprocessable entity.",
+    429: "Too many requests.",
+    431: "Request header fields too large.",
+    500: "Unexpected server error.",
+    501: "Not implemented.",
+    502: "Bad gateway.",
+    503: "Service unavailable.",
+    504: "Gateway timeout.",
+    505: "HTTP version not supported.",
+    511: "Network authentication required.",
+    598: "Network read timeout error.",
+    599: "Network connect timeout error.",
+    600: "No network connection, please try again later."
   };
 
   // This object contains messages for specific requests.
   // This contains all the explicit error responses made by the server
   let requests = {
-    register: { 422: "Email address already registered" },
-    login: { 401: "Unrecognised username or password" },
+    register: { 422: "That email address already registered." },
+    login: { 401: "Unrecognised username or password." },
     logout: {},
-    resetPassword: { 404: "User not recognised" },
-    changePassword: {  401: "Not logged in", 422: "Update of password failed" },
-    getBagged: { 401: "Not logged in" },
-    saveBagged: { 401: "Not logged in" },
-    deleteBagged: { 401: "Not logged in", 422: "Update failed" },
-    updateBagged: { 401: "Not logged in" , 422: "Update failed" }
+    resetPassword: { 404: "User not recognised." },
+    changePassword: {  401: "Not logged in.", 422: "Update of password failed." },
+    getBagged: { 401: "Not logged in." },
+    saveBagged: { 401: "Not logged in." },
+    deleteBagged: { 401: "Not logged in.", 422: "Update failed." },
+    updateBagged: { 401: "Not logged in." , 422: "Update failed." }
   }
 
   // Merge the list for the request with the global list
