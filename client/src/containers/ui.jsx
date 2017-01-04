@@ -8,7 +8,7 @@ const MBDrawer = require('../components/mb_drawer')
 const MountainSnackbar = require('../components/mountain_snackbar')
 const Login = require('../components/user/login');
 const Registration = require('../components/user/registration');
-const UserNewPassword = require('../components/user/user_new_password');
+const ResetPassword = require('../components/user/reset_password');
 const ChangePassword = require('../components/user/change_password');
 const About = require('../components/about');
 const Search = require('../components/search');
@@ -144,30 +144,6 @@ const UI = React.createClass({
     }.bind(this))
   },
 
-  requestPasswordReset: function(email){
-    this.state.user.resetPassword(email, function(success){
-      if (!success) {
-        // logger("not successful")
-        this.logAndSetState({resetEmailExists: false});
-      }
-      else {
-        // logger("not successful")
-        this.logAndSetState({action: null})
-      }
-    }.bind(this))
-    // TODO add if not success
-  },
-
-  requestChangePassword: function(password){
-    this.state.user.changePassword(password, function(success){
-      if (success) this.logAndSetState({action: null})
-    }.bind(this))
-  },
-
-  setDate: function() {
-    // Do something here with date
-  },
-
   //
   // START OF THE FORM DISPLAY SECTION
   // Functions that start 'set' and end 'Form' change the form displayed in the Infobox
@@ -293,12 +269,6 @@ const UI = React.createClass({
 
   dialogs: function(action) {
     let choices = {
-      password:
-        <UserNewPassword
-          loginClicked={this.setLoginForm}
-          signUpClicked={this.setSignUpForm}
-          passwordReset={this.requestPasswordReset}
-          resetEmailExists={this.state.resetEmailExists}/>,
       contactUs:
         <About/>,
       welcome:
@@ -399,6 +369,10 @@ const UI = React.createClass({
             <ChangePassword
               user={this.state.user}
               willDisplay={this.selectedAction('changePassword')}
+              onCompleted={this.onCompleted} />
+            <ResetPassword
+              user={this.state.user}
+              willDisplay={this.selectedAction('resetPassword')}
               onCompleted={this.onCompleted} />
           </Content>
         </Layout>
