@@ -32,6 +32,11 @@ var passwordOK = function(password) {
   return true;
 };
 
+var emailOK = function(email) {
+  var filter=/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
+  return filter.test(email);
+}
+
 var compassBearing = function(direction) {
   const directions = { N: "North", E: "East", S: "South", W: "West" }
   if (direction.length == 1) return directions[direction]
@@ -92,6 +97,7 @@ module.exports = {
   mountainSearch: mountainSearch,
   upCase: upCase,
   passwordOK: passwordOK,
+  emailOK: emailOK,
   compassBearing: compassBearing,
   dayOfWeek: dayOfWeek,
   getBrowserWidth: getBrowserWidth,

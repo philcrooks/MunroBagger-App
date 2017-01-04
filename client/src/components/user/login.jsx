@@ -33,14 +33,14 @@ const UserLogin = React.createClass({
 
   clickLogin: function() {
     this.setState({busy: true})
-    let request = this.props.user.login(
+    this.props.user.login(
       this.state.email.toLowerCase(),
       this.state.password,
       function(success, returned){
         if (success) {
           // Credentials have been accepted
           // Try and read the bagged_munro data
-          request = this.props.user.getInfo(true, function(success, returned) {
+          this.props.user.getInfo(true, function(success, returned) {
             if (success) {
               logger("Logged In")
               this.setState({openDialog: false, busy: false});
@@ -56,7 +56,7 @@ const UserLogin = React.createClass({
         else {
           // Failed to login
           navigator.notification.alert(returned.message, null, "Login Failed", "OK");
-          this.setState({email: "", password: "", busy: false});
+          this.setState({password: "", busy: false});
         }
       }.bind(this)
     )
