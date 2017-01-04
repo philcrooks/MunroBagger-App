@@ -294,16 +294,26 @@ const UI = React.createClass({
       spinner = <div className='spinner-container'><Spinner singleColor /></div>
     }
 
-    var enabledIn, enabledOut, login;
+    let menu;
     if (this.state.userLoggedIn) {
-      enabledIn = {}
-      enabledOut = {'disabled': 'disabled'}
-      login = <MenuItem onClick={this.requestLogout}>Logout</MenuItem>
+      menu = (
+        <Menu target="menu-top-right" align="right">
+          <MenuItem onClick={this.requestLogout}>Logout</MenuItem>
+          <MenuItem onClick={this.setSignUpForm}>Register</MenuItem>
+          <MenuItem onClick={this.setChangePasswordForm}>Change Password</MenuItem>
+          <MenuItem onClick={this.setAboutForm}>About</MenuItem>
+        </Menu>
+      );
     }
     else {
-      enabledOut = {}
-      enabledIn = {'disabled': 'disabled'}
-      login = <MenuItem onClick={this.setLoginForm}>Login</MenuItem>
+      menu = (
+        <Menu target="menu-top-right" align="right">
+          <MenuItem onClick={this.setLoginForm}>Login</MenuItem>
+          <MenuItem onClick={this.setSignUpForm}>Register</MenuItem>
+          <MenuItem onClick={this.setPasswordForm}>Reset Password</MenuItem>
+          <MenuItem onClick={this.setAboutForm}>About</MenuItem>
+        </Menu>
+      );
     }
 
     // These width numbers are approximate
@@ -327,13 +337,7 @@ const UI = React.createClass({
                 onSearchClicked={this.onSearchClicked}
                 onSelection={this.onMountainSelected} />
               <IconButton name="more_vert" id="menu-top-right" />
-              <Menu target="menu-top-right" align="right">
-                  {login}
-                  <MenuItem onClick={this.setSignUpForm} {...enabledOut}>Register</MenuItem>
-                  <MenuItem onClick={this.setChangePasswordForm} {...enabledIn}>Change Password</MenuItem>
-                  <MenuItem onClick={this.setPasswordForm} {...enabledOut}>Reset Password</MenuItem>
-                  <MenuItem onClick={this.setAboutForm}>About</MenuItem>
-              </Menu>
+              {menu}
             </HeaderRow>
             <HeaderTabs activeTab={this.state.dayNum} onChange={this.onForecastDaySelected}>
               <Tab>{days[0]}</Tab>
