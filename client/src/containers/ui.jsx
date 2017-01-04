@@ -133,6 +133,7 @@ const UI = React.createClass({
   //
   // START OF SERVER REQUEST SECTION
   // All callback functions that start with the word 'request' interact with the server
+  // THe majority of server requests are performed by dialogs.
   //
 
   requestLogout: function(){
@@ -145,9 +146,8 @@ const UI = React.createClass({
   },
 
   //
-  // START OF THE FORM DISPLAY SECTION
-  // Functions that start 'set' and end 'Form' change the form displayed in the Infobox
-  // The effect of these event-handlers is local to InfoBox
+  // START OF THE DIALOG DISPLAY SECTION
+  // Functions that start 'set' and end 'Form' cause a dialog to appaer
   //
 
   setLoginForm: function() {
@@ -169,11 +169,6 @@ const UI = React.createClass({
   setAboutForm: function() {
     this.logAndSetState({action: "about"})
   },
-
-  // setFilterOption: function(value) {
-  //   this.logAndSetState({filter: value});
-  //   logger("UI: setFilterOption", this.state.filter);
-  // },
 
   //
   // START OF THE GLOBAL EVENT HANDLERS SECTION
@@ -262,20 +257,8 @@ const UI = React.createClass({
   },
 
   //
-  // START OF THE INFOBOX COMPONENT SECTION
-  // The InfoBox is a container that will hold the componenet returned by infoBoxComponents()
-  // this.state.infoBoxStatus is used to determine which component should be displayed
+  // START OF THE RENDER FUNCTION
   //
-
-  dialogs: function(action) {
-    let choices = {
-      contactUs:
-        <About/>,
-      welcome:
-        <Welcome signUpClicked={this.setSignUpForm}/>,
-    }
-    return choices[action];
-  },
 
   render: function() {
 
@@ -377,6 +360,9 @@ const UI = React.createClass({
             <ResetPassword
               user={this.state.user}
               willDisplay={this.selectedAction('resetPassword')}
+              onCompleted={this.onCompleted} />
+            <About
+              willDisplay={this.selectedAction('about')}
               onCompleted={this.onCompleted} />
           </Content>
         </Layout>

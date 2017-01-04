@@ -90,7 +90,7 @@ const UserLogin = React.createClass({
             required={true}
             onChange={this.updateEmail}
             label="Email..."
-            style={{width: '200px'}}
+            style={{width: '220px'}}
             type="email"
             value={this.state.email}
           />
@@ -98,7 +98,7 @@ const UserLogin = React.createClass({
             required={true}
             onChange={this.updatePassword}
             label="Password..."
-            style={{width: '200px'}}
+            style={{width: '220px'}}
             type="password"
             value={this.state.password}
           />

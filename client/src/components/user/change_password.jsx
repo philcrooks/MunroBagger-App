@@ -76,7 +76,7 @@ const ChangePassword = React.createClass ({
             required={true}
             onChange={this.updatePassword}
             label="Password..."
-            style={{width: '200px'}}
+            style={{width: '220px'}}
             type="password"
             value={this.state.password}
           />
@@ -84,7 +84,7 @@ const ChangePassword = React.createClass ({
             required={true}
             onChange={this.updatePasswordConfirmation}
             label="Repeat password..."
-            style={{width: '200px'}}
+            style={{width: '220px'}}
             type="password"
             value={this.state.passwordConfirmation}
           />
