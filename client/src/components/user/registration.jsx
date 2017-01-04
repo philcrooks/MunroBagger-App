@@ -54,8 +54,8 @@ const UserRegistration = React.createClass({
           this.setState({busy: false, openDialog: false});
           navigator.notification.alert(
             "Please check your inbox for a confirmation email. You must complete the registration process within 24 hours.",
-            function() { this.props.onCompleted(null); }.bind(this),
-            "Registration Success", "OK");
+            null, "Registration Success", "OK");
+          this.props.onCompleted(null);
         }
         else {
           navigator.notification.alert(returned.message, null, "Registration Failed", "OK");
