@@ -7482,7 +7482,7 @@ input.mdl-button[type="submit"] {
       .mdl-layout__drawer > .mdl-layout__title,
       .mdl-layout__drawer > .mdl-layout-title {
         line-height: 56px;
-        padding-left: 16px; } }
+        padding-left: 0px; } }
   .mdl-layout__drawer .mdl-navigation {
     -webkit-flex-direction: column;
         -ms-flex-direction: column;

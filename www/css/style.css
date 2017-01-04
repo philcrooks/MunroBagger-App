@@ -214,7 +214,11 @@ ul {
 }
 
 .mdl-layout__drawer {
-  padding: 0 10px;
+  padding: 0px 16px;
+}
+
+.mdl-layout__drawer .mdl-checkbox {
+  margin: 4px 0;
 }
 
 .search {
