@@ -9,7 +9,7 @@ const MountainSnackbar = require('../components/mountain_snackbar')
 const Login = require('../components/user/login');
 const Registration = require('../components/user/registration');
 const UserNewPassword = require('../components/user/user_new_password');
-const UserChangePassword = require('../components/user/user_change_password');
+const ChangePassword = require('../components/user/change_password');
 const About = require('../components/about');
 const Search = require('../components/search');
 
@@ -128,10 +128,6 @@ const UI = React.createClass({
       this.addPinsToMap(mtns, false);
       this.logAndSetState({busy: false});
     }
-  },
-
-  showSpinner: function(busy) {
-    this.logAndSetState({busy: busy});
   },
 
   //
@@ -303,10 +299,6 @@ const UI = React.createClass({
           signUpClicked={this.setSignUpForm}
           passwordReset={this.requestPasswordReset}
           resetEmailExists={this.state.resetEmailExists}/>,
-      changePassword:
-        <UserChangePassword submitChangePassword={this.requestChangePassword}/>,
-      changePasswordSuccess:
-        <h4>Your password was changed successfully</h4>,
       contactUs:
         <About/>,
       welcome:
@@ -389,7 +381,6 @@ const UI = React.createClass({
               willDisplay={this.selectedAction('mountain')}
               onCompleted={this.onInfoClosed}
               onSave={this.requestBaggedStatusChange}
-              onBusy={this.showSpinner}
               mountain={this.state.focusMountain}
               dayNum={this.state.dayNum}
               baseDate={baseDate}
@@ -400,12 +391,14 @@ const UI = React.createClass({
             <Login
               user={this.state.user}
               willDisplay={this.selectedAction('login')}
-              onBusy={this.showSpinner}
               onCompleted={this.onLoginCompleted} />
             <Registration
               user={this.state.user}
               willDisplay={this.selectedAction('register')}
-              onBusy={this.showSpinner}
+              onCompleted={this.onCompleted} />
+            <ChangePassword
+              user={this.state.user}
+              willDisplay={this.selectedAction('changePassword')}
               onCompleted={this.onCompleted} />
           </Content>
         </Layout>

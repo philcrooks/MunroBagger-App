@@ -1,15 +1,12 @@
-const React = require('react');
+var React = require('react');
 import { Dialog, DialogTitle, DialogContent, DialogActions, Textfield, Button, Spinner } from 'react-mdl';
-const ApiRequest = require('../../models/api_request')
 const passwordOK = require('../../utility.js').passwordOK;
-const emailOK = require('../../utility.js').emailOK;
 
-const UserRegistration = React.createClass({
+const ChangePassword = React.createClass ({
 
   getInitialState: function() {
     return {
       openDialog: false,
-      email: "",
       password: "",
       passwordConfirmation: "",
       busy: false
@@ -20,7 +17,6 @@ const UserRegistration = React.createClass({
     if (nextProps.willDisplay) {
       this.setState({
         openDialog: true,
-        email: "",
         password: "",
         passwordConfirmation: ""
       });
@@ -31,10 +27,6 @@ const UserRegistration = React.createClass({
     return this.state.openDialog || nextState.openDialog;
   },
 
-  updateEmail: function(event) {
-    this.setState({email: event.target.value})
-  },
-
   updatePassword: function(event) {
     this.setState({password: event.target.value})
   },
@@ -43,41 +35,32 @@ const UserRegistration = React.createClass({
     this.setState({passwordConfirmation: event.target.value})
   },
 
-
-  clickRegister: function() {
-    const pwdOK = ((this.state.password === this.state.passwordConfirmation) && passwordOK(this.state.password));
-    const emlOK = emailOK(this.state.email);
-    if (pwdOK && emlOK) {
-      this.setState({busy: true})
-      this.props.user.register(this.state.email, this.state.password, function(success, returned) {
+  clickChange: function(event){
+    if (this.state.password === this.state.passwordConfirmation && passwordOK(this.state.password)) {
+      this.setState({busy: true});
+      this.props.user.changePassword(this.state.password, function(success, returned){
+        this.setState({busy: false});
         if (success) {
-          this.setState({busy: false, openDialog: false});
-          navigator.notification.alert(
-            "Please check your inbox for a confirmation email. You must complete the registration process within 24 hours.",
-            function() { this.props.onCompleted(null); }.bind(this),
-            "Registration Success", "OK");
+          this.setState({openDialog: false, busy: false});
+          this.props.onCompleted(null);
         }
         else {
-          navigator.notification.alert(returned.message, null, "Registration Failed", "OK");
           this.setState({busy: false, password: "", passwordConfirmation: ""});
+          navigator.notification.alert("Passwords must match and fulfill the strength requirements,",
+            null, "Change Password Failed", "OK");
         }
-      }.bind(this))
-    } else {
-      let message;
-      if (emlOK) {
-        message = "Passwords must match and fulfill the strength requirements,";
-        this.setState({password: "", passwordConfirmation: ""});
-      }
-      else {
-        message = "You must enter a valid email address.";
-      }
-      navigator.notification.alert(message, null, "Registration Failed", "OK");
-    } 
+      }.bind(this));
+    }
+    else {
+      this.setState({password: "", passwordConfirmation: ""});
+      navigator.notification.alert("Passwords must match and fulfill the strength requirements,",
+        null, "Change Password Failed", "OK");
+    }
   },
 
   clickClose: function() {
     this.setState({openDialog: false});
-    this.props.onCompleted(false, null);
+    this.props.onCompleted(null);
   },
 
   render: function(){
@@ -87,16 +70,8 @@ const UserRegistration = React.createClass({
     return (
       <Dialog open={this.state.openDialog}>
         {spinner}
-        <DialogTitle>Register</DialogTitle>
+        <DialogTitle>Change Password</DialogTitle>
         <DialogContent>
-          <Textfield
-            required={true}
-            onChange={this.updateEmail}
-            label="Email..."
-            style={{width: '200px'}}
-            type="email"
-            value={this.state.email}
-          />
           <Textfield
             required={true}
             onChange={this.updatePassword}
@@ -117,13 +92,11 @@ const UserRegistration = React.createClass({
         </DialogContent>
         <DialogActions>
           <Button type='button' onClick={this.clickClose}>Close</Button>
-          <Button type='button' onClick={this.clickRegister}>Register</Button>
+          <Button type='button' onClick={this.clickChange}>Change</Button>
         </DialogActions>
       </Dialog>
     )
-
   }
-
 })
 
-module.exports = UserRegistration;
+module.exports = ChangePassword;
