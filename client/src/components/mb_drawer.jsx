@@ -19,12 +19,12 @@ const MBDrawer = React.createClass({
 	},
 
 	shouldComponentUpdate: function(nextProps, nextState){
-		const drawer = document.getElementsByClassName('mdl-layout__drawer')[0];
-		const visible = drawer.classList.contains('is-visible');
-    return visible && ((this.state.map != nextState.map) ||
+		// const drawer = document.getElementsByClassName('mdl-layout__drawer')[0];
+		// const visible = drawer.classList.contains('is-visible');
+    return (this.state.map != nextState.map) ||
       (this.props.userLoggedIn !== nextProps.userLoggedIn) ||
       (this.state.showClimbed !== nextState.showClimbed) ||
-      (this.state.showUnclimbed !== nextState.showUnclimbed));
+      (this.state.showUnclimbed !== nextState.showUnclimbed);
 	},
 
 	climbedChange: function(event) {
