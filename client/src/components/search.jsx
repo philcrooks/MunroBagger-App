@@ -1,6 +1,5 @@
 const React = require('react');
 import { Textfield, IconButton, List, ListItem, ListItemContent } from 'react-mdl';
-const getBrowserHeight = require('../utility').getBrowserHeight;
 const logger = require('../utility').logger;
 
 const Search = React.createClass({

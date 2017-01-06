@@ -2,7 +2,7 @@ const React = require('react');
 import { Layout, Header, HeaderRow, HeaderTabs, Footer, FooterSection, Textfield, Menu, MenuItem, IconButton, Icon, FABButton, Tab, Content, Spinner } from 'react-mdl';
 const Scotland = require('../components/map')
 
-const Welcome = require('../components/welcome');
+// const Welcome = require('../components/welcome');
 const MountainDetail = require('../components/mountain_detail');
 const MBDrawer = require('../components/mb_drawer')
 const MountainSnackbar = require('../components/mountain_snackbar')

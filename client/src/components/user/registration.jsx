@@ -1,6 +1,5 @@
 const React = require('react');
 import { Dialog, DialogTitle, DialogContent, DialogActions, Textfield, Button, Spinner } from 'react-mdl';
-const ApiRequest = require('../../models/api_request')
 const passwordOK = require('../../utility.js').passwordOK;
 const emailOK = require('../../utility.js').emailOK;
 
