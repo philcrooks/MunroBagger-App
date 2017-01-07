@@ -30,20 +30,21 @@ const About = React.createClass({
 
     return (
       <Dialog open={this.state.openDialog}>
-        <DialogTitle>About</DialogTitle>
+        <div className='about-heading'>
+          <span className='about-heading-title'>Munro Bagger</span>
+          <span className='about-heading-version'>Version {AppVersion.version}</span>
+        </div>
         <DialogContent>
-          <p>
-            Munro Bagger was originally created as a <a className="user-link" target="_blank"
-            href="https://codeclan.com/">CodeClan</a> project by Phil Crooks, John Easton & Sian Robinson
-            Davies of Cohort 6. This app is a derivative of that work and was created by Phil Crooks.
-          </p>
-          <p style={{paddingTop: '8px'}}>
-            If you have any questions or suggestions, please get in touch on Twitter or send us an email.
-          </p>
-          <p style={{paddingTop: '8px'}}>
-            <span style={{display: 'inline-block', width: '45px'}}>Twitter:</span><a className="user-link" target="_blank" href="https://twitter.com/@MunroBaggerScot">@MunroBaggerScot</a><br/>
-            <span style={{display: 'inline-block', width: '45px'}}>Email:</span><a className="user-link" href="mailto:munrobagger.scot@gmail.com">munrobagger.scot@gmail.com</a><br/>
-          </p>
+          <div className='about'>
+            <p style={{padding: '0'}}>
+              Munro Bagger was originally created as a <a target="_blank"
+              href="https://codeclan.com/">CodeClan</a> project by Phil Crooks, John Easton & Sian Robinson
+              Davies of Cohort 6. This app is a derivative of that work and was created by Phil Crooks.
+            </p>
+            <p>If you have any questions or suggestions, please get in touch using Twitter or email.</p>
+            <p><span className='comms'>Twitter:</span><a target="_blank" href="https://twitter.com/@MunroBaggerScot">@MunroBaggerScot</a></p>
+            <p><span className='comms'>Email:</span><a href="mailto:munrobagger.scot@gmail.com">munrobagger.scot@gmail.com</a></p>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button type='button' onClick={this.clickClose}>Close</Button>

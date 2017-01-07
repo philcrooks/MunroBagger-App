@@ -4,7 +4,7 @@ const Scotland = require('../components/map')
 
 // const Welcome = require('../components/welcome');
 const MountainDetail = require('../components/mountain_detail');
-const MBDrawer = require('../components/mb_drawer')
+const MBDrawer = require('./mb_drawer')
 const MountainSnackbar = require('../components/mountain_snackbar')
 const Login = require('../components/user/login');
 const Registration = require('../components/user/registration');
