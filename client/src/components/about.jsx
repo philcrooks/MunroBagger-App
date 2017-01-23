@@ -43,7 +43,7 @@ const About = React.createClass({
             </p>
             <p>If you have any questions or suggestions, please get in touch using Twitter or email.</p>
             <p><span className='comms'>Twitter:</span><a target="_blank" href="https://twitter.com/@MunroBaggerScot">@MunroBaggerScot</a></p>
-            <p><span className='comms'>Email:</span><a href="mailto:munrobagger.scot@gmail.com">munrobagger.scot@gmail.com</a></p>
+            <p><span className='comms'>Email:</span><a href="mailto:team@munrobagger.scot">munrobagger.scot@gmail.com</a></p>
           </div>
         </DialogContent>
         <DialogActions>
