@@ -84,7 +84,7 @@ var getScript = function(source, callback) {
 };
 
 var logger = function() {
-  if (true) {
+  if (false) {
     const date = new Date();
     const ms = date.getMilliseconds();
     const time = date.toTimeString().split(" ")[0] + ":" + ms;
