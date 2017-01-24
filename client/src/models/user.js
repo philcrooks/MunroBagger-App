@@ -2,7 +2,7 @@ let UserMountain = require('./user_mountain');
 let ApiRequest = require('./api_request');
 const logger = require('../utility').logger;
 
-const baseURL = "http://www.munrobagger.scot/";
+const baseURL = "https://www.munrobagger.scot/";
 // const baseURL = "http://localhost:3000/"
 // const baseURL = "http://192.168.1.124:3000/";
 const baggedRoute = "bagged_munros";
@@ -78,10 +78,10 @@ User.prototype.register = function(email, password, onCompleted) {
   } };
   return apiRequest.makePostRequest(url, params, null, true, function(status, result) {
     let success = (status === 201);
-    if(success) {
-      this._jwtoken = result.auth_token;
-      this._saveToken(this._jwtoken);
-    }
+    // if(success) {
+    //   this._jwtoken = result.auth_token;
+    //   this._saveToken(this._jwtoken);
+    // }
     onCompleted(success, this._getMessage(status, 'register'));
   }.bind(this));
 }
