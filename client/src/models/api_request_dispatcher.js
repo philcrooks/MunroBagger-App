@@ -1,5 +1,5 @@
 const logger = require('../utility').logger;
-const timeoutDuration = 20000; // ms
+const timeoutDuration = 15000; // ms
 
 const ApiRequestDispatcher = function() {
 	this._queue = [];
