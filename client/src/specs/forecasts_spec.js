@@ -51,6 +51,10 @@ describe("Forecasts", function(){
 				}
 			]
   	});
+
+  	assert.strictEqual(forecasts.dataDate, "2017-02-05T17:00:00Z");
+	  assert.strictEqual(forecasts.day.length, 3);
+
   	// Only checking fields that are displayed
   	assert.deepStrictEqual(forecasts.day[0].wind, { direction: "ESE", speed: "13", gusting: "27" });
 	  assert.deepStrictEqual(forecasts.day[0].temperature, { max: "-1", feelsLike: "-7" });
@@ -66,7 +70,5 @@ describe("Forecasts", function(){
 	  assert.deepStrictEqual(forecasts.day[2].temperature, { max: "-2", feelsLike: "-6" });
 	  assert.strictEqual(forecasts.day[2].description, "Light snow");
 	  assert.strictEqual(forecasts.day[2].visibility, "4 - 10km");
-
-	  assert.strictEqual(forecasts.dataDate, "2017-02-05T17:00:00Z");
   })
 })
