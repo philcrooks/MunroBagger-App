@@ -15,9 +15,6 @@ var winddir = require('./forecast_info').winddir;
 // U: "1"     Max Solar UV Index'
 
 var Forecast = function(options){
-  // this._timeStamp = options.dt;
-  // this._dateTime = options.dt_txt;
-  this._date = options.value;
   this._wind = { direction: options.D, speed: options.S, gusting: options.Gn };
   this._humidity = options.Hn;
   this._pofp = options.PPd;
@@ -27,7 +24,6 @@ var Forecast = function(options){
   this._visibility = visibility[(options.V)];
   this._UVIndex = { index: Number(options.U), text: UVIndexText[Number(options.U)] };
 
-  Object.defineProperty(this, "date", { get: function() { return this._date; } });
   Object.defineProperty(this, "wind", { get: function() { return this._wind; } });
   Object.defineProperty(this, "humidity", { get: function() { return this._humidity; } });
   Object.defineProperty(this, "pofp", { get: function() { return this._pofp; } });
