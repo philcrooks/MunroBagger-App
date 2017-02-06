@@ -20,6 +20,26 @@ var Mountains = function(){
   } });
 };
 
+Mountains.prototype.fetchForecasts = function(onCompleted) {
+  const url = baseURL + "forecasts";
+  const apiRequest = new ApiRequest();
+  apiRequest.makeGetRequest(url, null, false, function(status, receivedForecasts) {
+    this._updateForecasts(receivedForecasts);
+    this._saveToStore(this._mountains);
+    onCompleted(receivedForecasts);
+  }.bind(this))
+}
+
+Mountains.prototype._fetchMountains = function(onCompleted) {
+  const url = baseURL + "munros";
+  const apiRequest = new ApiRequest();
+  apiRequest.makeGetRequest(url, null, false, function(status, receivedMtns) {
+    this._saveToStore(receivedMtns);
+    mountains = this._makeMountains(receivedMtns);
+    onCompleted(mountains);
+  }.bind(this))  
+}
+
 Mountains.prototype.all = function(onCompleted) {
   let mountains = [];
   if (this._mountains) {
@@ -41,25 +61,9 @@ Mountains.prototype.all = function(onCompleted) {
   else {
     // Don't have cached mountains so need to download them
     logger("Retrieving Mountains from Internet")
-    const url = baseURL + "munros";
-    const apiRequest = new ApiRequest();
-    apiRequest.makeGetRequest(url, null, false, function(status, receivedMtns) {
-      this._saveToStore(receivedMtns);
-      mountains = this._makeMountains(receivedMtns);
-      onCompleted(mountains);
-    }.bind(this))
+    this._fetchMountains(onCompleted);
   }
 };
-
-Mountains.prototype.fetchForecasts = function(onCompleted) {
-  const url = baseURL + "forecasts";
-  const apiRequest = new ApiRequest();
-  apiRequest.makeGetRequest(url, null, false, function(status, receivedForecasts) {
-    this._updateForecasts(receivedForecasts);
-    this._saveToStore(this._mountains);
-    onCompleted(receivedForecasts);
-  }.bind(this))
-}
 
 Mountains.prototype._makeMountains = function(receivedMtns) {
   const mtns = [];
