@@ -1,3 +1,5 @@
+"use strict"
+
 var GridRef = require ("./grid_ref");
 var Forecasts = require("./forecasts");
 

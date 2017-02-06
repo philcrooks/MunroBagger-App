@@ -1,3 +1,5 @@
+"use strict"
+
 const Forecast = require("./forecast");
 
 const Forecasts = function(forecasts){
