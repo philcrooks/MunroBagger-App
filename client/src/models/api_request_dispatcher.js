@@ -4,9 +4,13 @@ const timeoutDuration = 15000; // ms
 const ApiRequestDispatcher = function() {
 	this._queue = [];
 	this._id = 0;
-	document.addEventListener("online", this._online.bind(this), false);
-	document.addEventListener("pause", this._onPause.bind(this), false);
-  document.addEventListener("resume", this._onResume.bind(this), false);
+	if (typeof document !== "undefined") {
+		// document won't exist when running tests outside a browser
+		document.addEventListener("online", this._online.bind(this), false);
+		document.addEventListener("pause", this._onPause.bind(this), false);
+		document.addEventListener("resume", this._onResume.bind(this), false);	
+	}
+
 };
 
 ApiRequestDispatcher.prototype.dispatch = function(request) {

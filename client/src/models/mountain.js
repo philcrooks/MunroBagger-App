@@ -1,3 +1,5 @@
+"use strict"
+
 var GridRef = require ("./grid_ref");
 var Forecasts = require("./forecasts");
 
@@ -11,7 +13,7 @@ var Mountain = function(options){
   this._meaning = options.meaning;
   this._region = options.region;
   this._weatherId = options.weatherId;
-  this._forecasts = new Forecasts(options.forecast.data);
+  this._forecasts = new Forecasts(options.forecast);
 
   Object.defineProperty(this, "id", { get: function(){ return this._id; } });
   Object.defineProperty(this, "name", { get: function(){ return this._name; } });
@@ -23,8 +25,8 @@ var Mountain = function(options){
   Object.defineProperty(this, "forecasts", { get: function(){ return this._forecasts; } });
 };
 
-Mountain.prototype.updateForecast = function(forecast) {
-  this._forecasts = new Forecasts(forecast.data);
+Mountain.prototype.updateForecast = function(forecasts) {
+  this._forecasts = new Forecasts(forecasts);
 };
 
 module.exports = Mountain;

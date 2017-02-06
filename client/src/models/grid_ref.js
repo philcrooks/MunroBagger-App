@@ -1,3 +1,5 @@
+"use strict"
+
 const baseGrids = require('./grid_base');
 
 const GridRef = function(options){

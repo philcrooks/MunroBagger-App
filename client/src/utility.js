@@ -84,7 +84,7 @@ var getScript = function(source, callback) {
 };
 
 var logger = function() {
-  if (true) {
+  if (process.env.NODE_ENV === 'development') {
     const date = new Date();
     const ms = date.getMilliseconds();
     const time = date.toTimeString().split(" ")[0] + ":" + ms;

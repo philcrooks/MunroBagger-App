@@ -1,3 +1,5 @@
+"use strict"
+
 var visibility = require('./forecast_info').visibility;
 var weatherText = require('./forecast_info').significantWeather;
 var UVIndexText = require('./forecast_info').UVIndex;
