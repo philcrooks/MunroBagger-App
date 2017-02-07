@@ -3,9 +3,8 @@
 let UserMountain = require('./user_mountain');
 let ApiRequest = require('./api_request');
 const logger = require('../utility').logger;
-if (typeof localStorage === "undefined" || localStorage === null) {
-  const LocalStorage = require('node-localstorage').LocalStorage;
-  var localStorage = new LocalStorage('./scratch');
+if (process.env.NODE_ENV === 'test') {
+  var localStorage = require("../utility").localStorage;
 }
 
 const baseURL = "https://www.munrobagger.scot/";
@@ -280,12 +279,6 @@ User.prototype._removeToken = function() {
 User.prototype._retrieveToken = function() {
   logger("Retrieving token from store")
   return localStorage.getItem(tokenKey);
-}
-
-User.prototype._clearData = function() {
-  // The is to clear data prior to testing
-  localStorage.removeItem(tokenKey);
-  this._jwtoken = null;
 }
 
 module.exports = User;

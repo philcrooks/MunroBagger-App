@@ -1,14 +1,14 @@
+process.env.NODE_ENV = 'test';
+
 const User = require("../models/user");
 const UserMountain = require("../models/user_mountain");
-const LocalStorage = require('node-localstorage').LocalStorage;
+const localStorage = require("../utility").localStorage;
 const assert = require("assert");
 const sinon = require("sinon");
 
-process.env.NODE_ENV = 'test';
 const email = "email@email.com";
 const password = "password";
 const token = "JsonWebToken";
-const localStorage = new LocalStorage('./scratch');
 
 describe("User", function(){
 
@@ -16,7 +16,6 @@ describe("User", function(){
 
   before(function() {
   	user = new User();
-  	user._clearData();
   })
 
   it ( 'Has no security token when first created', function() {

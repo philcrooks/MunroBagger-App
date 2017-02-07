@@ -1,3 +1,5 @@
+"use strict"
+
 var mountainSearch = function(mountains, mountainId) {
   var mId = Number(mountainId);
 
@@ -93,6 +95,27 @@ var logger = function() {
   }
 };
 
+// This is used for testing only
+// Very simple implementation with no persistance
+var localStorage = {
+  _storage: {},
+
+  getItem: function(sKey) {
+    if(!sKey || !this._storage[sKey]) return null;
+    return this._storage[sKey];
+  },
+
+  setItem: function (sKey, sValue) {
+    if(!sKey) return;
+    this._storage[sKey] = sValue;
+  },
+
+  removeItem: function (sKey) {
+    if(!sKey) return;
+    delete this._storage[sKey];
+  }
+}
+
 module.exports = {
   mountainSearch: mountainSearch,
   upCase: upCase,
@@ -103,5 +126,6 @@ module.exports = {
   getBrowserWidth: getBrowserWidth,
   getBrowserHeight: getBrowserHeight,
   getScript: getScript,
-  logger: logger
+  logger: logger,
+  localStorage: localStorage
 };

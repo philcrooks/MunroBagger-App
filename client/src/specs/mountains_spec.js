@@ -1,8 +1,9 @@
+process.env.NODE_ENV = 'test';
+
 const Mountains = require("../models/mountains");
 const stubData = require("./stub_data")
 const sinon = require("sinon");
 const assert = require("assert");
-process.env.NODE_ENV = 'test';
 
 describe("Mountains", function(){
 
@@ -10,7 +11,6 @@ describe("Mountains", function(){
 
   before(function(){
     mountains = new Mountains();
-    mountains._clearData();
   })
 
   it ( 'Contains no mountains when first initialised', function() {

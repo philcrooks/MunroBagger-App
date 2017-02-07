@@ -3,9 +3,8 @@
 const Mountain = require('./mountain');
 const ApiRequest = require('./api_request');
 const logger = require('../utility').logger;
-if (typeof localStorage === "undefined" || localStorage === null) {
-  const LocalStorage = require('node-localstorage').LocalStorage;
-  var localStorage = new LocalStorage('./scratch');
+if (process.env.NODE_ENV === 'test') {
+  var localStorage = require("../utility").localStorage;
 }
 
 const baseURL = "https://www.munrobagger.scot/";
@@ -137,16 +136,6 @@ Mountains.prototype._needUpdate = function() {
   let updatedAt = parseInt(localStorage.getItem(updatedKey), 10);
   logger("Mountains last updated", Math.round((Date.now() - updatedAt) / 600) / 100, "minutes ago");
   return (Date.now() > this._nextUpdate);
-}
-
-Mountains.prototype._clearData = function() {
-  // The is to clear data prior to testing
-  logger("Clearing the store")
-  localStorage.removeItem(updatedKey);
-  localStorage.removeItem(refreshKey);
-  localStorage.removeItem(mountainKey);
-  this._mountains = null;
-  this._nextUpdate = parseInt(null);
 }
 
 module.exports = Mountains;
