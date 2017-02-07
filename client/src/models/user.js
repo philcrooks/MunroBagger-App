@@ -176,7 +176,7 @@ User.prototype.saveUserMountain = function(mountain, onCompleted) {
   if (mountain._originId && !mountain.bagged) {
     // This mountain has been in the database so was bagged once but not now
     // This is a delete request
-    this._requestDeleteBagged(idRoute, function(status) {
+    return this._requestDeleteBagged(idRoute, function(status) {
       let success = (status === 204);
       if (success) {
         mountain._dirty = false;
