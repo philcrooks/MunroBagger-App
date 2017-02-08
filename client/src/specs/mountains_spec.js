@@ -29,11 +29,11 @@ describe("Mountains", function(){
   	mountains._fetchFromNetwork.restore();
 		assert.strictEqual(mountains._mountains.length, 5);
 		assert.strictEqual(isNaN(mountains._nextUpdate), false);
-		assert.strictEqual(mountains._mountains[0].id, 1);
-		assert.strictEqual(mountains._mountains[1].id, 2);
-		assert.strictEqual(mountains._mountains[2].id, 3);
-		assert.strictEqual(mountains._mountains[3].id, 4);
-		assert.strictEqual(mountains._mountains[4].id, 5);
+		assert.strictEqual(mountains._mountains[0].smcId, "M240");
+		assert.strictEqual(mountains._mountains[1].smcId, "M144");
+		assert.strictEqual(mountains._mountains[2].smcId, "M251");
+		assert.strictEqual(mountains._mountains[3].smcId, "M033");
+		assert.strictEqual(mountains._mountains[4].smcId, "M274");
 		assert.strictEqual(stub.callCount, 1);
   })
 

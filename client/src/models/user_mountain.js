@@ -33,5 +33,4 @@ UserMountain.prototype.restore = function(backup) {
   this._dirty = backup.dirty;
 }
 
-
 module.exports = UserMountain;
