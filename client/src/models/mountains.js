@@ -5,7 +5,6 @@ const ApiRequest = require('./api_request');
 const logger = require('../utility').logger;
 const localStorage = (process.env.NODE_ENV === 'test') ? require("../utility").localStorage : window.localStorage;
 
-
 const baseURL = "https://www.munrobagger.scot/";
 // const baseURL = "http://localhost:3000/";
 // const baseURL = "http://192.168.1.124:3000/";

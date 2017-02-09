@@ -73,25 +73,49 @@ describe("Mountain", function(){
     });
   })
 
-  it ( 'Contains all values', function() {
-  	// public variables
-    assert.strictEqual(mountain.id, 1)
+  it ( 'Contains id', function() {
+    assert.strictEqual(mountain.id, 1);
+  });
+
+  it ( 'Contains name', function() {
 	  assert.strictEqual(mountain.name, "A' Bhuidheanach Bheag");
+  });
+
+  it ( 'Contains height', function() {
 	  assert.strictEqual(mountain.height, 936);
+  });
+
+  it ( 'Contains gtidRef', function() {
 	  assert.strictEqual(mountain.gridRef.toString(), "NN660776");
+  });
+
+  it ( 'Contains latLng', function() {
 	  assert.deepStrictEqual(mountain.latLng, { lat: 56.870399, lng: -4.198839 });
+  });
+
+  it ( 'Contains meaning', function() {
 	  assert.strictEqual(mountain.meaning, "The little yellow place");
+  });
+
+  it ( 'Contains region', function() {
 	  assert.strictEqual(mountain.region, "Loch Ericht to Drumochter");
+  });
+
+  it ( 'Contains forecasts', function() {
 	  assert.strictEqual(mountain.forecasts.day.length, 3);
 	  assert.strictEqual(mountain.forecasts.dataDate, "2017-02-05T17:00:00Z");
 	  assert.deepStrictEqual(mountain.forecasts.day[0].wind, { direction: "ESE", speed: "13", gusting: "27" });
 	 	assert.deepStrictEqual(mountain.forecasts.day[1].wind, { direction: "SE", speed: "40", gusting: "51" });
 	  assert.deepStrictEqual(mountain.forecasts.day[2].wind, { direction: "SSE", speed: "9", gusting: "11" });
+  });
 
-	  // private variables 
+  it ( 'Contains SMC Id', function() {
 	  assert.strictEqual(mountain._smcId, "M240");
+  });
+
+  it ( 'Contains Weather Id', function() {
 	  assert.strictEqual(mountain._weatherId, "350001");
-  })
+  });
 
   it ( 'Can update the weather', function() {
   	mountain.updateForecast({
