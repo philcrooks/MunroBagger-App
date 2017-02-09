@@ -28,7 +28,7 @@ describe("Forecast", function(){
 	  assert.deepStrictEqual(forecast.UVIndex, { index: 1, text: "Low exposure. No protection required. You can safely stay outside."});
   })
 
-    it ( 'Handles weather code of "NA"', function() {
+  it ( 'Handles weather code of "NA"', function() {
   	forecast = new Forecast({
   		D: "ESE",
 			Gn: "27",

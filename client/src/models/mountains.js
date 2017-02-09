@@ -3,9 +3,8 @@
 const Mountain = require('./mountain');
 const ApiRequest = require('./api_request');
 const logger = require('../utility').logger;
-if (process.env.NODE_ENV === 'test') {
-  var localStorage = require("../utility").localStorage;
-}
+const localStorage = (process.env.NODE_ENV === 'test') ? require("../utility").localStorage : window.localStorage;
+
 
 const baseURL = "https://www.munrobagger.scot/";
 // const baseURL = "http://localhost:3000/";
