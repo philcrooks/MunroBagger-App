@@ -1,7 +1,7 @@
 process.env.NODE_ENV = 'test';
 
 const Mountains = require("../models/mountains");
-const stubData = require("./stub_data")
+const stubData = require("./stub_data");
 const sinon = require("sinon");
 const assert = require("assert");
 
