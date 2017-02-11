@@ -6,10 +6,21 @@ var MountainsView = function() {
   this._mountainsModel = new Mountains();
   this.mountains = null;
   this._user = null;
+  this._forecastDate = {
+    _min: null,
+    _max: null,
+    _ave: 0,
+    get min() { return this._min; },
+    get max() { return this._max; },
+    get ave() {
+      let sDate = new Date(this._ave).toISOString();
+      return sDate.split(".")[0] + "Z";
+    }
+  }
 
   Object.defineProperty(this, "nextUpdate", { get: function(){ return this._mountainsModel.nextUpdate; } });
   Object.defineProperty(this, "updateInterval", { get: function(){ return this._mountainsModel.updateInterval; } });
-
+  Object.defineProperty(this, "forecastDate", { get: function(){ return this._forecastDate; } });
 }
 
 MountainsView.prototype.all = function(onCompleted) {
@@ -29,7 +40,13 @@ MountainsView.prototype.updateForecasts = function(onCompleted) {
     if (forecasts) {
       for (let i = 0; i < this.mountains.length; i++) {
         this.mountains[i].detail.updateForecast(forecasts[i]);
+        if (!this._forecastDate._min || this._forecastDate._min > this.mountains[i].detail.forecasts.dataDate)
+          this._forecastDate._min = this.mountains[i].detail.forecasts.dataDate;
+        if (!this._forecastDate._max || this._forecastDate._max < this.mountains[i].detail.forecasts.dataDate)
+          this._forecastDate._max = this.mountains[i].detail.forecasts.dataDate;
+        this._forecastDate._ave += new Date(this.mountains[i].detail.forecasts.dataDate).getTime();
       };
+      this._forecastDate._ave = this._forecastDate._ave / this.mountains.length;
     };
     onCompleted();
   }.bind(this));

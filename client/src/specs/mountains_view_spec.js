@@ -17,12 +17,18 @@ describe("MountainsView", function(){
   before(function(){
     localStorage.clear();
   	mountainsView = new MountainsView();
+    let stub_forecasts = stubData.forecasts();
+    stub_forecasts[0].data.dataDate = "2017-02-05T17:00:00Z";
+    stub_forecasts[1].data.dataDate = "2017-02-05T21:00:00Z";
+    stub_forecasts[2].data.dataDate = "2017-02-06T01:00:00Z";
+    stub_forecasts[3].data.dataDate = "2017-02-06T05:00:00Z";
+    stub_forecasts[4].data.dataDate = "2017-02-06T09:00:00Z";
   	modelStub = sinon.stub(mountainsView._mountainsModel, "_fetchFromNetwork");
   	modelStub.withArgs("munros").yields(stubData.munros());
   	modelStub.withArgs("forecasts")
   		.onFirstCall().yields(null)
-  		.onSecondCall().yields(stubData.forecasts().slice(0, 3))
-  		.onThirdCall().yields(stubData.forecasts());
+  		.onSecondCall().yields(stub_forecasts.slice(0, 3))
+  		.onThirdCall().yields(stub_forecasts);
   	user = {
   		baggedList: [
   			new UserMountain({id:  4, munro_id: 1, climbed_on: null}),
@@ -89,12 +95,24 @@ describe("MountainsView", function(){
 
 	  it ( 'Will update forecasts', function() {
 	  	mountainsView.updateForecasts(function(){});
-	    assert.strictEqual(mountainsView.mountains[0].detail.forecasts.dataDate, "2017-02-06T13:00:00Z");
-      assert.strictEqual(mountainsView.mountains[1].detail.forecasts.dataDate, "2017-02-06T13:00:00Z");
-      assert.strictEqual(mountainsView.mountains[2].detail.forecasts.dataDate, "2017-02-06T13:00:00Z");
-      assert.strictEqual(mountainsView.mountains[3].detail.forecasts.dataDate, "2017-02-06T13:00:00Z");
-      assert.strictEqual(mountainsView.mountains[4].detail.forecasts.dataDate, "2017-02-06T13:00:00Z");
-	  })  	
+	    assert.strictEqual(mountainsView.mountains[0].detail.forecasts.dataDate, "2017-02-05T17:00:00Z");
+      assert.strictEqual(mountainsView.mountains[1].detail.forecasts.dataDate, "2017-02-05T21:00:00Z");
+      assert.strictEqual(mountainsView.mountains[2].detail.forecasts.dataDate, "2017-02-06T01:00:00Z");
+      assert.strictEqual(mountainsView.mountains[3].detail.forecasts.dataDate, "2017-02-06T05:00:00Z");
+      assert.strictEqual(mountainsView.mountains[4].detail.forecasts.dataDate, "2017-02-06T09:00:00Z");
+	  })
+
+    it ( 'Creates forecastDate.max', function() {
+      assert.strictEqual(mountainsView.forecastDate.max, "2017-02-06T09:00:00Z");
+    })
+
+    it ( 'Creates forecastDate.min', function() {
+      assert.strictEqual(mountainsView.forecastDate.min, "2017-02-05T17:00:00Z");
+    })
+
+    it ( 'Creates forecastDate.ave', function() {
+      assert.strictEqual(mountainsView.forecastDate.ave, "2017-02-06T01:00:00Z");
+    })  
   })
 
 })
