@@ -8,30 +8,37 @@ var MountainsView = function() {
   this._mountainsModel = new Mountains();
   this.mountains = null;
   this._user = null;
-  this._forecastDate = {
+  this._forecastDates = {
     _min: null,
     _max: null,
-    _ave: 0,
+    _total: 0,
+    _count: 0,
     get min() { return this._min; },
     get max() { return this._max; },
     get ave() {
-      let sDate = new Date(this._ave).toISOString();
+      let sDate = new Date(this._total / this._count).toISOString();
       return sDate.split(".")[0] + "Z";
     },
-    get aligned() {
-      return (this._min && this._min === this._max);
+    get aligned() { return (this._min && this._min === this._max); },
+    reset: function() { this._min = this._max = null; this._total = this._count = 0 },
+    add: function(sDate) {
+      this._count += 1;
+      this._total += new Date(sDate).getTime();
+      if (!this._min || this._min > sDate) this._min = sDate;
+      if (!this._max || this._max < sDate) this._max = sDate;
     }
   }
 
   Object.defineProperty(this, "nextUpdate", { get: function(){ return this._mountainsModel.nextUpdate; } });
   Object.defineProperty(this, "updateInterval", { get: function(){ return this._mountainsModel.updateInterval; } });
-  Object.defineProperty(this, "forecastDate", { get: function(){ return this._forecastDate; } });
+  Object.defineProperty(this, "forecastDates", { get: function(){ return this._forecastDates; } });
 }
 
 MountainsView.prototype.all = function(onCompleted) {
   this._mountainsModel.all(function(mtns){
     this.mountains = mtns.map(function(mtn) {
-      var mv = new MountainView(mtn);
+      this._forecastDates.add(mtn.forecasts.dataDate);
+      const mv = new MountainView(mtn);
       mv.createStatus = this.newBaggedRecord.bind(this);
       mv.saveStatus = this.saveBaggedRecord.bind(this);
       return mv;
@@ -43,15 +50,11 @@ MountainsView.prototype.all = function(onCompleted) {
 MountainsView.prototype.updateForecasts = function(onCompleted) {
   this._mountainsModel.fetchForecasts(function(forecasts){
     if (forecasts) {
+      this._forecastDates.reset();
       for (let i = 0; i < this.mountains.length; i++) {
         this.mountains[i].detail.updateForecast(forecasts[i]);
-        if (!this._forecastDate._min || this._forecastDate._min > this.mountains[i].detail.forecasts.dataDate)
-          this._forecastDate._min = this.mountains[i].detail.forecasts.dataDate;
-        if (!this._forecastDate._max || this._forecastDate._max < this.mountains[i].detail.forecasts.dataDate)
-          this._forecastDate._max = this.mountains[i].detail.forecasts.dataDate;
-        this._forecastDate._ave += new Date(this.mountains[i].detail.forecasts.dataDate).getTime();
+        this._forecastDates.add(this.mountains[i].detail.forecasts.dataDate);
       };
-      this._forecastDate._ave = this._forecastDate._ave / this.mountains.length;
     };
     onCompleted();
   }.bind(this));

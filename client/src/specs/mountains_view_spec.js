@@ -102,20 +102,20 @@ describe("MountainsView", function(){
       assert.strictEqual(mountainsView.mountains[4].detail.forecasts.dataDate, "2017-02-06T09:00:00Z");
 	  })
 
-    it ( 'Creates forecastDate.max', function() {
-      assert.strictEqual(mountainsView.forecastDate.max, "2017-02-06T09:00:00Z");
+    it ( 'Creates forecastDates.max', function() {
+      assert.strictEqual(mountainsView.forecastDates.max, "2017-02-06T09:00:00Z");
     })
 
-    it ( 'Creates forecastDate.min', function() {
-      assert.strictEqual(mountainsView.forecastDate.min, "2017-02-05T17:00:00Z");
+    it ( 'Creates forecastDates.min', function() {
+      assert.strictEqual(mountainsView.forecastDates.min, "2017-02-05T17:00:00Z");
     })
 
-    it ( 'Creates forecastDate.ave', function() {
-      assert.strictEqual(mountainsView.forecastDate.ave, "2017-02-06T01:00:00Z");
+    it ( 'Creates forecastDates.ave', function() {
+      assert.strictEqual(mountainsView.forecastDates.ave, "2017-02-06T01:00:00Z");
     })
 
-    it ( 'Calculates forecastDate.aligned', function() {
-      assert.strictEqual(mountainsView.forecastDate.aligned, false);
+    it ( 'Calculates forecastDates.aligned', function() {
+      assert.strictEqual(mountainsView.forecastDates.aligned, false);
     })
   })
 
