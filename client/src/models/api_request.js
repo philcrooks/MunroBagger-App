@@ -1,3 +1,5 @@
+"use strict"
+
 const logger = require('../utility').logger;
 const dispatcher = require('./api_request_dispatcher');
 

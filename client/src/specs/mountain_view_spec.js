@@ -139,7 +139,7 @@ describe("MountainView", function(){
   	});
 
   	it ( 'Calls external function to save data', function() {
-      let result = mountainView.save();
+      const result = mountainView.save();
       assert.strictEqual(fn.callCount, 1);
   		assert.strictEqual(result, stub_return);
   	});

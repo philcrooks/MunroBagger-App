@@ -1,3 +1,5 @@
+"use strict"
+
 var Mountains = require('../models/mountains');
 var MountainView = require('./mountain_view');
 var search = require('../utility').mountainSearch;

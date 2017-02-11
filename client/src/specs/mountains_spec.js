@@ -1,3 +1,5 @@
+"use strict"
+
 process.env.NODE_ENV = 'test';
 
 const Mountains = require("../models/mountains");
@@ -25,7 +27,7 @@ describe("Mountains", function(){
 
   it ( 'Fetches mountains when none in localStorage', function() {
   	// stub out the call to the Internet
-  	let stub = sinon.stub(mountains, "_fetchFromNetwork");
+  	const stub = sinon.stub(mountains, "_fetchFromNetwork");
   	stub.withArgs("munros").yields(stubData.munros());
   	mountains.all(function() {});
   	mountains._fetchFromNetwork.restore();
@@ -44,8 +46,8 @@ describe("Mountains", function(){
   })
 
   it ( 'Won\'t update forecasts when mismatch with mountains', function() {
-  	let nextUpdate = mountains.nextUpdate;
-  	let stub = sinon.stub(mountains, "_fetchFromNetwork");
+  	const nextUpdate = mountains.nextUpdate;
+  	const stub = sinon.stub(mountains, "_fetchFromNetwork");
   	stub.withArgs("forecasts").yields(stubData.forecasts().slice(0, 3));
   	mountains.all(function() {});
   	mountains._fetchFromNetwork.restore();
@@ -56,9 +58,9 @@ describe("Mountains", function(){
   })
 
   it ( 'Fetches new forecasts when current forecasts out of date', function() {
-  	let nextUpdate = mountains.nextUpdate;
-  	let timeNow = new Date().toISOString();
-  	let stub_forecasts = stubData.forecasts();
+  	const nextUpdate = mountains.nextUpdate;
+  	const timeNow = new Date().toISOString();
+  	const stub_forecasts = stubData.forecasts();
   	for (let i = 0; i < stub_forecasts.length; i++) {
   		stub_forecasts[i].updated_at = timeNow;
   	}

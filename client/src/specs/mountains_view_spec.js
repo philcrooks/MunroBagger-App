@@ -17,7 +17,7 @@ describe("MountainsView", function(){
   before(function(){
     localStorage.clear();
   	mountainsView = new MountainsView();
-    let stub_forecasts = stubData.forecasts();
+    const stub_forecasts = stubData.forecasts();
     stub_forecasts[0].data.dataDate = "2017-02-05T17:00:00Z";
     stub_forecasts[1].data.dataDate = "2017-02-05T21:00:00Z";
     stub_forecasts[2].data.dataDate = "2017-02-06T01:00:00Z";

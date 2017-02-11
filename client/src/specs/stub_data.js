@@ -1,3 +1,5 @@
+"use strict"
+
 const test_munros = [
 	{
 		id: 1,
