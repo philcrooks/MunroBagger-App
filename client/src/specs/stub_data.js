@@ -1,4 +1,4 @@
-const stub_munros = [
+const test_munros = [
 	{
 		id: 1,
 		smcId: "M240",
@@ -111,7 +111,7 @@ const stub_munros = [
 	}
 ];
 
-const stub_forecasts = [
+const test_forecasts = [
 	{
 		id: 1,
 		munro_id: 1,
@@ -184,4 +184,15 @@ const stub_forecasts = [
 	}
 ];
 
-module.exports = { munros: stub_munros, forecasts: stub_forecasts };
+let json_munros = JSON.stringify(test_munros);
+let json_forecasts = JSON.stringify(test_forecasts);
+
+const from_json_munros = function() {
+	return JSON.parse(json_munros);
+}
+
+const from_json_forecasts = function() {
+	return JSON.parse(json_forecasts);
+}
+
+module.exports = { munros: from_json_munros, forecasts: from_json_forecasts };

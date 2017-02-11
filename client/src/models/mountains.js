@@ -36,7 +36,7 @@ Mountains.prototype.fetchForecasts = function(onCompleted) {
     if (this._updateForecasts(rxForecasts))
       this._saveToStore(this._mountains);
     else
-      rxForecasts = [];
+      rxForecasts = null;
     onCompleted(rxForecasts);
   }.bind(this))
 }

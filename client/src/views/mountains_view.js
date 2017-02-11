@@ -25,14 +25,12 @@ MountainsView.prototype.all = function(onCompleted) {
 }
 
 MountainsView.prototype.updateForecasts = function(onCompleted) {
-  console.log("Updating forecasts")
   this._mountainsModel.fetchForecasts(function(forecasts){
+    console.log("forecasts", forecasts)
     if (forecasts) {
-      let length = this.mountains.length;
-      if ((this.mountains[0].id === forecasts[0].munro_id) && (length === forecasts.length)) {
-        for (let i = 0; i < length; i++) {
-          this.mountains[i].detail.updateForecast(forecasts[i]);
-        };
+      console.log("Updating forecasts")
+      for (let i = 0; i < this.mountains.length; i++) {
+        this.mountains[i].detail.updateForecast(forecasts[i]);
       };
     };
     onCompleted();
@@ -40,7 +38,7 @@ MountainsView.prototype.updateForecasts = function(onCompleted) {
 }
 
 MountainsView.prototype._clearMountains = function() {
-  for (let i = 0; i < this.mountains; i++) {
+  for (let i = 0; i < this.mountains.length; i++) {
     this.mountains[i].status = null;
   }
 }

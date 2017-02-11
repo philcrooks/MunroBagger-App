@@ -113,6 +113,10 @@ var localStorage = {
   removeItem: function (sKey) {
     if(!sKey) return;
     delete this._storage[sKey];
+  },
+
+  clear: function() {
+    this._storage = {};
   }
 }
 
