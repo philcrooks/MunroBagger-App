@@ -26,9 +26,7 @@ MountainsView.prototype.all = function(onCompleted) {
 
 MountainsView.prototype.updateForecasts = function(onCompleted) {
   this._mountainsModel.fetchForecasts(function(forecasts){
-    console.log("forecasts", forecasts)
     if (forecasts) {
-      console.log("Updating forecasts")
       for (let i = 0; i < this.mountains.length; i++) {
         this.mountains[i].detail.updateForecast(forecasts[i]);
       };

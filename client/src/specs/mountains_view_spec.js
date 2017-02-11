@@ -90,6 +90,10 @@ describe("MountainsView", function(){
 	  it ( 'Will update forecasts', function() {
 	  	mountainsView.updateForecasts(function(){});
 	    assert.strictEqual(mountainsView.mountains[0].detail.forecasts.dataDate, "2017-02-06T13:00:00Z");
+      assert.strictEqual(mountainsView.mountains[1].detail.forecasts.dataDate, "2017-02-06T13:00:00Z");
+      assert.strictEqual(mountainsView.mountains[2].detail.forecasts.dataDate, "2017-02-06T13:00:00Z");
+      assert.strictEqual(mountainsView.mountains[3].detail.forecasts.dataDate, "2017-02-06T13:00:00Z");
+      assert.strictEqual(mountainsView.mountains[4].detail.forecasts.dataDate, "2017-02-06T13:00:00Z");
 	  })  	
   })
 
