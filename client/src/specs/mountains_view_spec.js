@@ -112,7 +112,11 @@ describe("MountainsView", function(){
 
     it ( 'Creates forecastDate.ave', function() {
       assert.strictEqual(mountainsView.forecastDate.ave, "2017-02-06T01:00:00Z");
-    })  
+    })
+
+    it ( 'Calculates forecastDate.aligned', function() {
+      assert.strictEqual(mountainsView.forecastDate.aligned, false);
+    })
   })
 
 })

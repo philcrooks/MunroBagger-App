@@ -15,6 +15,9 @@ var MountainsView = function() {
     get ave() {
       let sDate = new Date(this._ave).toISOString();
       return sDate.split(".")[0] + "Z";
+    },
+    get aligned() {
+      return (this._min && this._min === this._max);
     }
   }
 
