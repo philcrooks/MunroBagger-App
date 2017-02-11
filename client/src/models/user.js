@@ -99,7 +99,7 @@ User.prototype.login = function(email, password, onCompleted) {
 }
 
 User.prototype.logout = function(onCompleted) {
-  return this._requestLogout("sessions", function(status) {
+  return this._requestLogout("sessions", this._jwtoken, function(status) {
     let success = (status === 204);
     if (success) {
       this._mountains = [];
@@ -124,14 +124,14 @@ User.prototype.changePassword = function(password, onCompleted) {
   const params = { user: {
     password: password
   } };
-  return this._requestChangePassword("users/update", params, function(status, result) {
+  return this._requestChangePassword("users/update", params, this._jwtoken, function(status, result) {
     let success = (status === 200);
     onCompleted(success, this._getMessage(status, 'changePassword'));
   }.bind(this));
 }
 
 User.prototype.getInfo = function(timeout, onCompleted) {
-  return this._requestGetInfo(timeout, baggedRoute, function(status, mountains) {
+  return this._requestGetInfo(timeout, baggedRoute, this._jwtoken, function(status, mountains) {
     let success = (status === 200);
     if (success) {
       for (let i = 0; i < mountains.length; i++) {
@@ -156,7 +156,7 @@ User.prototype.saveUserMountain = function(mountain, onCompleted) {
 
   if (!mountain._originId && mountain.bagged) {
     // Mountain has not been in the database before so should be a create request
-    return this._requestSaveBagged(baggedRoute, forExport, function(status, savedMtn) {
+    return this._requestSaveBagged(baggedRoute, forExport, this._jwtoken, function(status, savedMtn) {
       let success = (status === 201);
       if (success) {
         mountain._dirty = false;
@@ -173,7 +173,7 @@ User.prototype.saveUserMountain = function(mountain, onCompleted) {
   if (mountain._originId && !mountain.bagged) {
     // This mountain has been in the database so was bagged once but not now
     // This is a delete request
-    return this._requestDeleteBagged(idRoute, function(status) {
+    return this._requestDeleteBagged(idRoute, this._jwtoken, function(status) {
       let success = (status === 204);
       if (success) {
         mountain._dirty = false;
@@ -184,7 +184,7 @@ User.prototype.saveUserMountain = function(mountain, onCompleted) {
   }
 
   if (mountain._originId && mountain.bagged) {
-    return this._requestUpdateBagged(idRoute, forExport, function(status) {
+    return this._requestUpdateBagged(idRoute, forExport, this._jwtoken, function(status) {
       let success = (status === 201);
       if (success) {
         mountain._dirty = false;
@@ -213,10 +213,10 @@ User.prototype._requestLogin = function(route, params, onCompleted) {
   return apiRequest.makePostRequest(url, params, null, true, onCompleted);
 }
 
-User.prototype._requestLogout = function(route, onCompleted) {
+User.prototype._requestLogout = function(route, token, onCompleted) {
   const url = baseURL + route;
   const apiRequest = new ApiRequest();
-  return apiRequest.makeDeleteRequest(url, null, this._jwtoken, true, onCompleted);
+  return apiRequest.makeDeleteRequest(url, null, token, true, onCompleted);
 }
 
 User.prototype._requestResetPassword = function(route, params, onCompleted) {
@@ -225,35 +225,35 @@ User.prototype._requestResetPassword = function(route, params, onCompleted) {
   return apiRequest.makePutRequest(url, params, null, true, onCompleted);
 }
 
-User.prototype._requestChangePassword = function(route, params, onCompleted) {
+User.prototype._requestChangePassword = function(route, params, token, onCompleted) {
   const url = baseURL + route;
   const apiRequest = new ApiRequest();
-  return apiRequest.makePutRequest(url, params, this._jwtoken, true, onCompleted);  
+  return apiRequest.makePutRequest(url, params, token, true, onCompleted);  
 }
 
-User.prototype._requestGetInfo = function(timeout, route, onCompleted) {
+User.prototype._requestGetInfo = function(timeout, route, token, onCompleted) {
   timeout = (timeout) ? true : false;
   const url = baseURL + route;
   const apiRequest = new ApiRequest();
-  return apiRequest.makeGetRequest(url, this._jwtoken, timeout, onCompleted);
+  return apiRequest.makeGetRequest(url, token, timeout, onCompleted);
 }
 
-User.prototype._requestSaveBagged = function(route, params, onCompleted) {
+User.prototype._requestSaveBagged = function(route, params, token, onCompleted) {
   let url = baseURL + route;
   const apiRequest = new ApiRequest();
-  return apiRequest.makePostRequest(url, params, this._jwtoken, true, onCompleted);
+  return apiRequest.makePostRequest(url, params, token, true, onCompleted);
 }
 
-User.prototype._requestDeleteBagged = function(route, onCompleted) {
+User.prototype._requestDeleteBagged = function(route, token, onCompleted) {
   let url = baseURL + route;
   const apiRequest = new ApiRequest();
-  return apiRequest.makeDeleteRequest(url, null, this._jwtoken, true, onCompleted);
+  return apiRequest.makeDeleteRequest(url, null, token, true, onCompleted);
 }
 
-User.prototype._requestUpdateBagged = function(route, params, onCompleted) {
+User.prototype._requestUpdateBagged = function(route, params, token, onCompleted) {
   let url = baseURL + route;
   const apiRequest = new ApiRequest();
-  return apiRequest.makePutRequest(url, params, this._jwtoken, true, onCompleted);
+  return apiRequest.makePutRequest(url, params, token, true, onCompleted);
 }
 
 User.prototype._saveToken = function(token) {

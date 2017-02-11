@@ -9,12 +9,17 @@ const assert = require("assert");
 describe("MountainsView", function(){
 
   var mouintainsView;
+  var modelStub;
 
   before(function(){
   	mountainsView = new MountainsView();
-  	let modelStub = sinon.stub(mountainsView._mountainsModel, "_fetchFromNetwork");
+  	modelStub = sinon.stub(mountainsView._mountainsModel, "_fetchFromNetwork");
   	modelStub.withArgs("munros").yields(stubData.munros);
+  	modelStub.withArgs("forecasts").yields(stubData.forecasts);
   	mountainsView.all(function(){});
+  })
+
+  after(function(){
   	modelStub.restore();
   })
 
