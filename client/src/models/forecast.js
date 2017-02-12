@@ -21,10 +21,11 @@ var Forecast = function(options){
   this._humidity = options.Hn;
   this._pofp = options.PPd;
   this._temperature = { max: options.Dm, feelsLike: options.FDm };
-  this._code = (options.W === "NA") ? -1 : Number(options.W);
+  this._code = (!options.W || options.W === "NA") ? -1 : Number(options.W);
   this._description = (this._code === -1) ? "Not available" : weatherText[this._code];
   this._visibility = visibility[(options.V)];
-  this._UVIndex = { index: Number(options.U), text: UVIndexText[Number(options.U)] };
+  this._UVIndex = (options.U) ? { index: Number(options.U), text: UVIndexText[Number(options.U)] } : { index: -1, text: "Not available" };
+  this._date = options.$
 
   Object.defineProperty(this, "wind", { get: function() { return this._wind; } });
   Object.defineProperty(this, "humidity", { get: function() { return this._humidity; } });
@@ -34,6 +35,7 @@ var Forecast = function(options){
   Object.defineProperty(this, "code", { get: function() { return this._code; } });
   Object.defineProperty(this, "visibility", { get: function(){ return this._visibility; } });
   Object.defineProperty(this, "UVIndex", { get: function(){ return this._UVIndex; } });
+  Object.defineProperty(this, "date", { get: function(){ return this._date; } });
 
 };
 
