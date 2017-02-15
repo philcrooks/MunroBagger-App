@@ -23,11 +23,11 @@ const localStorage = {
   }
 }
 
-const Connection = { NONE: 0, UNKNOWN: 1 };
-const connection = { type: Connection.UNKNOWN };
+const network = {
+  online: true
+};
 
 module.exports = {
   localStorage: localStorage,
-  Connection: Connection,
-  connection: connection
+  network: network
 }

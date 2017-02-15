@@ -95,6 +95,10 @@ const logger = function() {
   }
 };
 
+const network = {
+  get online() { return(navigator.connection.type !== Connection.NONE) }
+};
+
 module.exports = {
   mountainSearch: mountainSearch,
   upCase: upCase,
@@ -105,5 +109,6 @@ module.exports = {
   getBrowserWidth: getBrowserWidth,
   getBrowserHeight: getBrowserHeight,
   getScript: getScript,
-  logger: logger
+  logger: logger,
+  network: network
 };

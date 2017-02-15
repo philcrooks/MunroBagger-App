@@ -1,12 +1,8 @@
 "use strict"
 
 const logger = require('../utility').logger;
+const network = (process.env.NODE_ENV === 'test') ? require('../stubs').network : require('../utility').network;
 const timeoutDuration = 15000; // ms
-
-const connection = (process.env.NODE_ENV) ? require('../stubs').connection : navigator.connection;
-// if (process.env.NODE_ENV === 'test') {
-// 	var Connection = require('../stubs').Connection;
-// }
 
 const ApiRequestDispatcher = function() {
 	this._queue = [];
@@ -21,7 +17,7 @@ const ApiRequestDispatcher = function() {
 };
 
 ApiRequestDispatcher.prototype.dispatch = function(request) {
-	if (connection.type === Connection.NONE) {
+	if (!network.online) {
 		request._id = this._nextId();
 		if (request.timeout) request._startTimeout(timeoutDuration, this._onTimeout.bind(this));
 		this._enqueue(request);
@@ -54,7 +50,7 @@ ApiRequestDispatcher.prototype._dequeue = function(request) {
 ApiRequestDispatcher.prototype._online = function() {
 	logger("Online event received - sending", this._queue.length, "request(s)");
 	while (this._queue.length > 0) {
-		if (connection.type !== Connection.NONE) {
+		if (network.online) {
 			let request = this._queue.shift();
 			logger("Sending request:", request.id);
 			request._stopTimeout();
