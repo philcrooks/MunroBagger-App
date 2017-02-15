@@ -67,7 +67,7 @@ const getBrowserHeight = function(){
 };
 
 const getScript = function(source, callback) {
-  const script = document.createElement('script');
+  let script = document.createElement('script');
   script.async = 1;
 
   const prior = document.getElementsByTagName('script')[0];

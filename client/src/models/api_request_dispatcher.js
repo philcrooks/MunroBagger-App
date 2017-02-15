@@ -4,9 +4,9 @@ const logger = require('../utility').logger;
 const timeoutDuration = 15000; // ms
 
 const connection = (process.env.NODE_ENV) ? require('../stubs').connection : navigator.connection;
-if (process.env.NODE_ENV === 'test') {
-	var Connection = { NONE: 0, UNKNOWN: 1 };
-}
+// if (process.env.NODE_ENV === 'test') {
+// 	var Connection = require('../stubs').Connection;
+// }
 
 const ApiRequestDispatcher = function() {
 	this._queue = [];

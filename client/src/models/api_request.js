@@ -2,7 +2,6 @@
 
 const logger = require('../utility').logger;
 const dispatcher = require('./api_request_dispatcher');
-const XMLHttpRequest = (process.env.NODE_ENV === 'test') ? require('xmlhttprequest').XMLHttpRequest : window.XMLHttpRequest;
 
 let ApiRequest = function() {
   this._request = new XMLHttpRequest();
