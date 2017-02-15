@@ -32,7 +32,9 @@ Mountains.prototype._fetchFromNetwork = function(resource, onCompleted) {
 }
 
 Mountains.prototype.fetchForecasts = function(onCompleted) {
+  logger("Requesting forecasts from server")
   this._fetchFromNetwork("forecasts", function(rxForecasts) {
+    logger("Forecasts received from network")
     if (this._updateForecasts(rxForecasts))
       this._saveToStore(this._mountains);
     else
@@ -42,7 +44,9 @@ Mountains.prototype.fetchForecasts = function(onCompleted) {
 }
 
 Mountains.prototype.fetchMountains = function(onCompleted) {
+  logger("Requesting mountains from server")
   this._fetchFromNetwork("munros", function(rxMountains) {
+    logger("Mountains received from network")
     this._mountains = rxMountains;
     this._saveToStore(rxMountains);
     onCompleted(rxMountains);
@@ -55,21 +59,18 @@ Mountains.prototype.all = function(onCompleted) {
     // Have already downloaded the mountains
     if (this._needUpdate()) {
       // The forecasts are probably out of date and should be refreshed
-      logger("Updating Forecasts")
       this.fetchForecasts(function(){
         mountains = this._makeMountains(this._mountains);
         onCompleted(mountains);
       }.bind(this));
     }
     else {
-      logger("Using mountains as they are")
       mountains = this._makeMountains(this._mountains);
       onCompleted(mountains);
     }
   }
   else {
     // Don't have cached mountains so need to download them
-    logger("Retrieving Mountains from Internet")
     this.fetchMountains(function(receivedMtns) {
       mountains = this._makeMountains(this._mountains);
       onCompleted(mountains)
@@ -112,7 +113,7 @@ Mountains.prototype._getTimestamp = function(mountains) {
 
 Mountains.prototype._saveToStore = function(mountains) {
   if (mountains) {
-    logger("Saving Mountains")
+    logger("Saving mountains to store")
     const timeStamp = this._getTimestamp(mountains);  // UTC time
     // Next update will be approx two hours from the last one
     this._nextUpdate = timeStamp + ((2.05 + (Math.random() / 4)) * 60 * 60 * 1000);
@@ -132,7 +133,7 @@ Mountains.prototype._retrieveFromStore = function() {
 
 Mountains.prototype._needUpdate = function() {
   let updatedAt = parseInt(localStorage.getItem(updatedKey), 10);
-  logger("Mountains last updated", Math.round((Date.now() - updatedAt) / 600) / 100, "minutes ago");
+  logger("Mountain forecasts last updated", Math.round((Date.now() - updatedAt) / 600) / 100, "minutes ago");
   return (Date.now() > this._nextUpdate);
 }
 

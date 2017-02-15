@@ -58,7 +58,7 @@ const UI = React.createClass({
     let mtnsView = new MountainsView();
     mtnsView.all(function() {
       logger("Mountains loaded.")
-      logger("Setting timeout for", Math.round(mtnsView.updateInterval / 600) / 100, "minutes");
+      logger("Setting forecast timeout for", Math.round(mtnsView.updateInterval / 600) / 100, "minutes");
 
       const baseDate = new Date(mtnsView.forecastDates.ave.split("T")[0]);
       // Allow for a change in date

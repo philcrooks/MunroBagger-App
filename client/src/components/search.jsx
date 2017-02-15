@@ -125,7 +125,6 @@ const Search = React.createClass({
   		searchWidth = (this.props.availableWidth > 200) ? 200 : this.props.availableWidth;
   	}
   	let searchHeight = this.props.availableHeight - 60;
-  	logger("searchHeight", searchHeight, "classes", resultClasses);
 
   	return (
   		<div className="search">

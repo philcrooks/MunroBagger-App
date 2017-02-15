@@ -9,12 +9,11 @@ const Map = React.createClass({
 
 	componentDidMount: function() {
 		if (navigator.connection.type === Connection.NONE) {
-			logger("offline - adding listener for Google API")
+			logger("Offline - adding listener for Google API")
 			// callback when online
 			document.addEventListener("online", this.loadMap, false);
 		}
 		else {
-			logger("online")
 			this.loadMap();
 		}
 	},
@@ -24,9 +23,9 @@ const Map = React.createClass({
 	},
 
 	loadMap: function(){
-		logger("Loading map using key", mapKey);
+		logger("Loading Google Maps API");
 		getScript("https://maps.googleapis.com/maps/api/js?key=" + mapKey, function() {
-			logger("API loaded")
+			logger("Google Maps API loaded")
 			document.removeEventListener("online", this.loadMap);
 			const node = ReactDOM.findDOMNode(this.refs.map);
 	  	const mapObj = new MapObject(node);
