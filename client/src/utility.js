@@ -1,12 +1,12 @@
 "use strict"
 
-var mountainSearch = function(mountains, mountainId) {
-  var mId = Number(mountainId);
+const mountainSearch = function(mountains, mountainId) {
+  const mId = Number(mountainId);
 
-  var binarySearch = function(first, last) {
-    var mid = first + Math.floor((last - first) / 2);
-    var mountain = mountains[mid];
-    var numberId = Number(mountain.id);
+  const binarySearch = function(first, last) {
+    const mid = first + Math.floor((last - first) / 2);
+    const mountain = mountains[mid];
+    const numberId = Number(mountain.id);
     if (mId === numberId) return mountains[mid];
     if (first === last) return undefined;
     if (mId < numberId)
@@ -19,39 +19,39 @@ var mountainSearch = function(mountains, mountainId) {
   return binarySearch(0, mountains.length-1);
 };
 
-var upCase = function(string){
-   var splitString = string.toLowerCase().split(' ');
-   for (var i = 0; i < splitString.length; i++) {
+const upCase = function(string){
+   let splitString = string.toLowerCase().split(' ');
+   for (let i = 0; i < splitString.length; i++) {
        splitString[i] = splitString[i].charAt(0).toUpperCase() + splitString[i].substring(1);
    }
    return splitString.join(' ');
 };
 
-var passwordOK = function(password) {
+const passwordOK = function(password) {
   if (password.length < 8) return false;
   if (!password.match(/[A-Z]/)) return false;
   if (!password.match(/\d+/)) return false;
   return true;
 };
 
-var emailOK = function(email) {
-  var filter=/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
+const emailOK = function(email) {
+  const filter=/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
   return filter.test(email);
 }
 
-var compassBearing = function(direction) {
+const compassBearing = function(direction) {
   const directions = { N: "North", E: "East", S: "South", W: "West" }
   if (direction.length == 1) return directions[direction]
   return direction;
 };
 
-var dayOfWeek = function(dayNum, shortForm) {
+const dayOfWeek = function(dayNum, shortForm) {
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   if (shortForm) return days[dayNum].substring(0, 3);
   return days[dayNum];
 };
 
-var getBrowserWidth = function(){
+const getBrowserWidth = function(){
   if (self.innerWidth) return self.innerWidth;
   if (document.documentElement && document.documentElement.clientWidth) {
     return document.documentElement.clientWidth;
@@ -59,18 +59,18 @@ var getBrowserWidth = function(){
   if (document.body) return document.body.clientWidth;
 };
 
-var getBrowserHeight = function(){
-  var body = document.body;
-  var html = document.documentElement;
+const getBrowserHeight = function(){
+  const body = document.body;
+  const html = document.documentElement;
 
   return Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
 };
 
-var getScript = function(source, callback) {
-  var script = document.createElement('script');
+const getScript = function(source, callback) {
+  const script = document.createElement('script');
   script.async = 1;
 
-  var prior = document.getElementsByTagName('script')[0];
+  const prior = document.getElementsByTagName('script')[0];
   prior.parentNode.insertBefore(script, prior);
 
   script.onload = script.onreadystatechange = function( _, isAbort ) {
@@ -85,7 +85,7 @@ var getScript = function(source, callback) {
   script.src = source;
 };
 
-var logger = function() {
+const logger = function() {
   if (true) {
     const date = new Date();
     const ms = date.getMilliseconds();
@@ -94,31 +94,6 @@ var logger = function() {
     console.log.apply(null, [time].concat(args));
   }
 };
-
-// This is used for testing only
-// Very simple implementation with no persistance
-var localStorage = {
-  _storage: {},
-
-  getItem: function(sKey) {
-    if(!sKey || !this._storage[sKey]) return null;
-    return this._storage[sKey];
-  },
-
-  setItem: function (sKey, sValue) {
-    if(!sKey) return;
-    this._storage[sKey] = sValue;
-  },
-
-  removeItem: function (sKey) {
-    if(!sKey) return;
-    delete this._storage[sKey];
-  },
-
-  clear: function() {
-    this._storage = {};
-  }
-}
 
 module.exports = {
   mountainSearch: mountainSearch,
@@ -130,6 +105,5 @@ module.exports = {
   getBrowserWidth: getBrowserWidth,
   getBrowserHeight: getBrowserHeight,
   getScript: getScript,
-  logger: logger,
-  localStorage: localStorage
+  logger: logger
 };

@@ -1,6 +1,6 @@
 "use strict"
 
-const test_munros = [
+const testMunros = [
 	{
 		id: 1,
 		smcId: "M240",
@@ -113,7 +113,7 @@ const test_munros = [
 	}
 ];
 
-const test_forecasts = [
+const testForecasts = [
 	{
 		id: 1,
 		munro_id: 1,
@@ -186,15 +186,23 @@ const test_forecasts = [
 	}
 ];
 
-let json_munros = JSON.stringify(test_munros);
-let json_forecasts = JSON.stringify(test_forecasts);
+let jsonMunros = JSON.stringify(testMunros);
+let jsonForecasts = JSON.stringify(testForecasts);
 
-const from_json_munros = function() {
-	return JSON.parse(json_munros);
+const fromJsonMunros = function() {
+	return JSON.parse(jsonMunros);
 }
 
-const from_json_forecasts = function() {
-	return JSON.parse(json_forecasts);
+const fromJsonForecasts = function() {
+	return JSON.parse(jsonForecasts);
 }
 
-module.exports = { munros: from_json_munros, forecasts: from_json_forecasts };
+const toJsonMunros = function() {
+	return JSON.stringify(testMunros);
+}
+
+const toJsonForecasts = function() {
+	return JSON.stringify(testForecasts);
+}
+
+module.exports = { munros: fromJsonMunros, forecasts: fromJsonForecasts, jsonMunros: toJsonMunros, jsonForecasts: toJsonForecasts };

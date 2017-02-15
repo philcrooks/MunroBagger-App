@@ -44,6 +44,7 @@
     "mocha": "^3.2.0",
     "sinon": "^1.17.7",
     "style-loader": "^0.13.1",
-    "webpack": "^1.13.3"
+    "webpack": "^1.13.3",
+    "xmlhttprequest": "^1.8.0"
   }
 }

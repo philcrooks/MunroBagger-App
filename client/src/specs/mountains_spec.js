@@ -3,7 +3,7 @@
 process.env.NODE_ENV = 'test';
 
 const Mountains = require("../models/mountains");
-const localStorage = require("../utility").localStorage;
+const localStorage = require("../stubs").localStorage;
 const stubData = require("./stub_data");
 const sinon = require("sinon");
 const assert = require("assert");

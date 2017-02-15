@@ -2,7 +2,7 @@ process.env.NODE_ENV = 'test';
 
 const User = require("../models/user");
 const UserMountain = require("../models/user_mountain");
-const localStorage = require("../utility").localStorage;
+const localStorage = require("../stubs").localStorage;
 const assert = require("assert");
 const sinon = require("sinon");
 

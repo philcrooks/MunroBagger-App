@@ -3,6 +3,11 @@
 const logger = require('../utility').logger;
 const timeoutDuration = 15000; // ms
 
+const connection = (process.env.NODE_ENV) ? require('../stubs').connection : navigator.connection;
+if (process.env.NODE_ENV === 'test') {
+	var Connection = { NONE: 0, UNKNOWN: 1 };
+}
+
 const ApiRequestDispatcher = function() {
 	this._queue = [];
 	this._id = 0;
@@ -16,7 +21,7 @@ const ApiRequestDispatcher = function() {
 };
 
 ApiRequestDispatcher.prototype.dispatch = function(request) {
-	if (navigator.connection.type === Connection.NONE) {
+	if (connection.type === Connection.NONE) {
 		request._id = this._nextId();
 		if (request.timeout) request._startTimeout(timeoutDuration, this._onTimeout.bind(this));
 		this._enqueue(request);
@@ -49,7 +54,7 @@ ApiRequestDispatcher.prototype._dequeue = function(request) {
 ApiRequestDispatcher.prototype._online = function() {
 	logger("Online event received - sending", this._queue.length, "request(s)");
 	while (this._queue.length > 0) {
-		if (navigator.connection.type !== Connection.NONE) {
+		if (connection.type !== Connection.NONE) {
 			let request = this._queue.shift();
 			logger("Sending request:", request.id);
 			request._stopTimeout();
