@@ -2,6 +2,7 @@
 
 const logger = require('../utility').logger;
 const dispatcher = require('./api_request_dispatcher');
+const XMLHttpRequest = (process.env.NODE_ENV === 'test') ? require('../stubs').XMLHttpRequest : window.XMLHttpRequest;
 
 let ApiRequest = function() {
   this._request = new XMLHttpRequest();
@@ -50,7 +51,7 @@ ApiRequest.prototype._stopTimeout = function() {
 };
 
 ApiRequest.prototype.makeGetRequest = function(url, jwtoken, timeout, callback) {
-  return this._makeRequest("GET", url, [200], callback, jwtoken, timeout)
+  return this._makeRequest("GET", url, [200], callback, jwtoken, null, timeout)
 };
 
 ApiRequest.prototype.makePostRequest = function(url, content, jwtoken, timeout, callback) {
