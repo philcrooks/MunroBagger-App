@@ -29,14 +29,14 @@ const network = {
 
 const XMLHttpRequest = function() {
   // Request
-  this.verb = null;
-  this.url = null;
-  this.onload = null;
+  this.verb = undefined;
+  this.url = undefined;
+  this.onload = undefined;
   this.headers = {};
-  this.content = null;
+  this.content = undefined;
   // Response
-  this.status = null;
-  this.responseText = null;
+  this.status = undefined;
+  this.responseText = undefined;
 }
 
 XMLHttpRequest.prototype.open = function(verb, url) {
@@ -78,7 +78,7 @@ const HttpServer = {
       });
       if (respondWith) {
         request.status = respondWith.response[0];
-        request.responseText = respondWith.response[1];
+        if (respondWith.response[1]) request.responseText = respondWith.response[1];
         if (request.onload) request.onload();
       }
     }
