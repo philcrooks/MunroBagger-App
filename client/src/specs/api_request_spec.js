@@ -20,20 +20,25 @@ describe("API Request", function() {
       apiRequest = new ApiRequest();
     });
 
-    it("Makes a GET Request", function () {
+    it("Create a GET Request", function () {
       const url = baseURL + "munros";
-      const json = stubData.jsonMunros();
 
-      server.respondWith("GET", url, [200, json]);
-
-      var callback = sinon.spy();
-
-      apiRequest.makeGetRequest(url, token, true, callback);
+      apiRequest.makeGetRequest(url, token, true, function(){});
 
       assert.strictEqual(server.requests[0].verb, "GET");
       assert.strictEqual(server.requests[0].url, url);
       assert.strictEqual(server.requests[0].content, null);
       assert.deepStrictEqual(server.requests[0].headers, { Authorization: 'Bearer JsonWebToken' });
+    });
+
+    it("Make a GET Request", function () {
+      const url = baseURL + "munros";
+      const json = stubData.jsonMunros();
+      const callback = sinon.spy();
+
+      server.respondWith("GET", url, [200, json]);
+
+      apiRequest.makeGetRequest(url, token, true, callback);
 
       server.respond(); // Process all requests so far
 
