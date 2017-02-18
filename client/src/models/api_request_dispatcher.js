@@ -30,10 +30,8 @@ ApiRequestDispatcher.prototype.dispatch = function(request) {
 };
 
 ApiRequestDispatcher.prototype._enqueue = function(request) {
-	logger("Adding a request to the dispatcher queue");
 	request._status = "waiting";
 	this._queue.push(request);
-	logger("Dispatcher queue:", this._queueToString());
 };
 
 ApiRequestDispatcher.prototype._dequeue = function(request) {
@@ -52,7 +50,6 @@ ApiRequestDispatcher.prototype._online = function() {
 	while (this._queue.length > 0) {
 		if (network.online) {
 			let request = this._queue.shift();
-			logger("Sending request:", request.id);
 			request._stopTimeout();
 			request._status = "sent";
 			request._send();
@@ -79,7 +76,7 @@ ApiRequestDispatcher.prototype._onPause = function() {
 };
 
 ApiRequestDispatcher.prototype._onResume = function() {
-	logger("resume event - restarting timeouts");
+	logger("Resume event - restarting timeouts");
 	// Restart all the timeouts
 	for (let i = 0; i < this._queue.length; i++) {
 		if (this._queue[i].timeout) this._queue[i]._startTimeout(timeoutDuration, this._onTimeout.bind(this));

@@ -15,7 +15,7 @@ describe("API Dispatcher", function() {
 
   var apiRequest;
 
-  describe ("Queue", function() {
+  describe ("Queue without timeouts", function() {
     const munros = stubData.jsonMunros();
     const forecasts = stubData.jsonForecasts();
     const user = JSON.stringify({ id: 11, email: 'email@email.com' });
@@ -53,6 +53,7 @@ describe("API Dispatcher", function() {
       server.respond();
 
       assert.strictEqual(callback.callCount, 3);
+
       let call = callback.getCall(0);
       assert.strictEqual(call.args[0], 200);
       assert.deepStrictEqual(call.args[1], JSON.parse(munros));
