@@ -2,7 +2,7 @@
 
 const logger = require('../utility').logger;
 const network = (process.env.NODE_ENV === 'test') ? require('../stubs').network : require('../utility').network;
-const timeoutDuration = 15000; // ms
+const timeoutDuration = (process.env.NODE_ENV === 'test') ? 0 : 15000; // ms
 
 const ApiRequestDispatcher = function() {
 	this._queue = [];

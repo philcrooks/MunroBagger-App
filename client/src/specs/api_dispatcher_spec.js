@@ -65,4 +65,32 @@ describe("API Dispatcher", function() {
       assert.deepStrictEqual(call.args[1], JSON.parse(user));
     });
   });
+
+  describe ("Queue with timeouts", function() {
+    const munros = stubData.jsonMunros();
+    const forecasts = stubData.jsonForecasts();
+    const user = JSON.stringify({ id: 11, email: 'email@email.com' });
+    const callback = sinon.spy();
+
+    before(function() {
+      server.initialize();
+      network.online = false;
+    });
+
+    it("Expires request after timeout", function () {
+      const user_params = { user: { email: 'email@email.com', password: 'password' } };
+      const callback = sinon.spy();
+
+      server.respondWith("POST", baseURL + "users", [201, user]);
+
+      new ApiRequest().makePostRequest(baseURL + "users", user_params, null, true, callback);
+
+      assert.strictEqual(dispatcher._queue.length, 0);
+      assert.strictEqual(server.requests.length, 0);
+      assert.strictEqual(callback.callCount, 1);
+      const call = callback.getCall(0);
+      assert.strictEqual(call.args[0], 600);
+      assert.strictEqual(call.args[1], null);
+    });
+  });
 });
