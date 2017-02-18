@@ -42,7 +42,7 @@ ApiRequest.prototype._send = function() {
 };
 
 ApiRequest.prototype._startTimeout = function(duration, callback) {
-  if (this._timeout) this._timeoutID = window.setTimeout(callback, duration, this);
+  if (this._timeout) this._timeoutID = setTimeout(callback, duration, this);
 };
 
 ApiRequest.prototype._stopTimeout = function() {
