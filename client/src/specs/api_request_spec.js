@@ -3,6 +3,7 @@ process.env.NODE_ENV = 'test';
 const sinon = require('sinon');
 const assert = require("assert");
 const ApiRequest = require('../models/api_request');
+const network = require('../stubs').network;
 const server = require('../stubs').HttpServer;
 const stubData = require("./stub_data");
 const baseURL = "https://www.munrobagger.scot/";
@@ -18,6 +19,7 @@ describe("API Request", function() {
     beforeEach(function() {
       server.initialize();
       apiRequest = new ApiRequest();
+      network.online = true;
     });
 
     it("Create a GET Request", function () {
