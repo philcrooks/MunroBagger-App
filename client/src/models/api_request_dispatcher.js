@@ -2,7 +2,7 @@
 
 const logger = require('../utility').logger;
 const network = (process.env.NODE_ENV === 'test') ? require('../stubs').network : require('../utility').network;
-const timeoutDuration = (process.env.NODE_ENV === 'test') ? 0 : 15000; // ms
+const timeoutDuration = (process.env.NODE_ENV === 'test') ? 100 : 15000; // ms
 
 const ApiRequestDispatcher = function() {
 	this._queue = [];
@@ -30,43 +30,43 @@ ApiRequestDispatcher.prototype.dispatch = function(request) {
 };
 
 ApiRequestDispatcher.prototype._enqueue = function(request) {
+	logger("Adding request with id", request.id, "to the dispatcher queue.");
 	request._status = "waiting";
 	this._queue.push(request);
 };
 
 ApiRequestDispatcher.prototype._dequeue = function(request) {
-	logger("Removing a request from the dispatcher queue:", request.id);
+	logger("Removing request with id", request.id, "from the dispatcher queue.");
 	for (let i = 0; i < this._queue.length; i++) {
 		if (this._queue[i].id === request.id) {
 			this._queue.splice(i, 1);
 			break;
 		}
 	}
-	logger("Dispatcher queue:", this._queueToString());
 };
 
 ApiRequestDispatcher.prototype._online = function() {
-	logger("Online event received - sending", this._queue.length, "request(s)");
+	logger("Online event received.");
 	while (this._queue.length > 0) {
 		if (network.online) {
 			let request = this._queue.shift();
 			request._stopTimeout();
+			logger("Sending request with id", request.id + ".");
 			request._status = "sent";
 			request._send();
 		}
 	}
-	logger("Dispatcher queue:", this._queueToString());
 };
 
 ApiRequestDispatcher.prototype._onTimeout = function(request) {
-	logger("Timeout - ending request:", request.id);
+	logger("Timeout, ending request with id", request.id + ".");
 	this._dequeue(request);
 	request._status = "terminated";
 	request.callback(600, null);
 };
 
 ApiRequestDispatcher.prototype._onPause = function() {
-	logger("Pause event - cancelling timeouts");
+	logger("Pause event, cancelling timeouts.");
 	// Cancel all the timeouts
 	for (let i = 0; i < this._queue.length; i++) {
 		if (this._queue[i].timeout) {
@@ -76,7 +76,7 @@ ApiRequestDispatcher.prototype._onPause = function() {
 };
 
 ApiRequestDispatcher.prototype._onResume = function() {
-	logger("Resume event - restarting timeouts");
+	logger("Resume event, restarting timeouts.");
 	// Restart all the timeouts
 	for (let i = 0; i < this._queue.length; i++) {
 		if (this._queue[i].timeout) this._queue[i]._startTimeout(timeoutDuration, this._onTimeout.bind(this));
