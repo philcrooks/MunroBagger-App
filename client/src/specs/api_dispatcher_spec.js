@@ -194,12 +194,12 @@ describe("API Dispatcher", function() {
       server.respondWith("GET", baseURL + "forecasts", [200, forecasts]);
       server.respondWith("POST", baseURL + "users", [201, user]);
 
-      new ApiRequest().makeGetRequest(baseURL + "munros", null, false, callback);
       new ApiRequest().makePostRequest(baseURL + "users", user_params, null, true, function() {
         status = arguments[0];
         response = arguments[1];
         done();
       });
+      new ApiRequest().makeGetRequest(baseURL + "munros", null, false, callback);
       new ApiRequest().makeGetRequest(baseURL + "forecasts", null, false, callback);
       setTimeout(function(){
         dispatcher._onPause();
