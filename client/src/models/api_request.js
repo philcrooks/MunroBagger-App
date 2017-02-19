@@ -46,7 +46,7 @@ ApiRequest.prototype._startTimeout = function(duration, callback) {
 };
 
 ApiRequest.prototype._stopTimeout = function() {
-  if (this._timeoutID) window.clearTimeout(this._timeoutID);
+  if (this._timeoutID) clearTimeout(this._timeoutID);
   this._timeoutID = null;
 };
 
