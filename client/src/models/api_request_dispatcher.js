@@ -17,21 +17,14 @@ const ApiRequestDispatcher = function() {
 };
 
 ApiRequestDispatcher.prototype.dispatch = function(request) {
+	request._id = this._nextId();
+	
 	request._request.timeout = timeoutDuration;
 	request._request.ontimeout = function() {
-		if (request.timeout) {
-			request._status = "timeout";
-			request.callback(600, null);	
-		}
-		else {
-			if (network.online)
-				request._send();
-			else
-				this._enqueue(request);
-		}
+		this._onTransmitTimeout(request);
 	}.bind(this);
+
 	if (!network.online) {
-		request._id = this._nextId();
 		if (request.timeout) request._startTimeout(timeoutDuration, this._onTimeout.bind(this));
 		this._enqueue(request);
 	}
@@ -68,6 +61,20 @@ ApiRequestDispatcher.prototype._online = function() {
 			request._status = "sent";
 			request._send();
 		}
+	}
+};
+
+ApiRequestDispatcher.prototype._onTransmitTimeout = function(request) {
+	logger("Transmission time out for message with id", request.id +".");
+	if (request.timeout) {
+		request._status = "timeout";
+		request.callback(600, null);	
+	}
+	else {
+		if (network.online)
+			request._send();
+		else
+			this._enqueue(request);
 	}
 };
 
