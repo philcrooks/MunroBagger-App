@@ -37,6 +37,7 @@ const XMLHttpRequest = function() {
   this.headers = {};
   this.content = undefined;
   this.loseRequest = false; // Set this to prevent the request reaching the server
+  this.sendCount = 0;
   // Response
   this.status = undefined;
   this.responseText = undefined;
@@ -53,7 +54,9 @@ XMLHttpRequest.prototype.setRequestHeader = function(name, value) {
 
 XMLHttpRequest.prototype.send = function(content = null) {
   this.content = content;
+  this.sendCount += 1;
   if (this.loseRequest) {
+    this.loseRequest = false; // Don't lose the resend (if there is one)
     if ((this.timeout > 0) && (this.ontimeout)) {
       setTimeout(this.ontimeout, this.timeout);
     }
@@ -76,22 +79,30 @@ const HttpServer = {
     this.responses = [];
   },
   receive: function(request) {
-    this.requests.push(request);
+    const respondWith = this._findResponse(request);
+    if (respondWith && (respondWith.auto))
+      this._makeResponse(request, respondWith);
+    else
+      this.requests.push(request);
   },
-  respondWith: function(verb, url, response) {
-    this.responses.push({verb: verb, url: url, response: response})
+  respondWith: function(verb, url, response, auto) {
+    this.responses.push({verb: verb, url: url, response: response, auto: auto})
   },
   respond: function() {
     for (let request of this.requests) {
-      const respondWith = this.responses.find(function(item) {
-        return ((item.verb === request.verb) && (item.url === request.url))
-      });
-      if (respondWith) {
-        request.status = respondWith.response[0];
-        if (respondWith.response[1]) request.responseText = respondWith.response[1];
-        if (request.onload) request.onload();
-      }
+      const respondWith = this._findResponse(request);
+      if (respondWith) this._makeResponse(request, respondWith);
     }
+  },
+  _findResponse: function(request) {
+    return this.responses.find(function(item) {
+      return ((item.verb === request.verb) && (item.url === request.url))
+    });
+  },
+  _makeResponse: function(request, respondWith) {
+    request.status = respondWith.response[0];
+    if (respondWith.response[1]) request.responseText = respondWith.response[1];
+    if (request.onload) request.onload();
   }
 }
 

@@ -9,6 +9,10 @@ const network = require('../stubs').network;
 const stubData = require("./stub_data");
 const baseURL = "https://www.munrobagger.scot/";
 const token = "JsonWebToken";
+const munros = stubData.jsonMunros();
+const forecasts = stubData.jsonForecasts();
+const user = JSON.stringify({ id: 11, email: 'email@email.com' });
+const user_params = { user: { email: 'email@email.com', password: 'password' } };
 
 
 describe("API Dispatcher", function() {
@@ -16,9 +20,6 @@ describe("API Dispatcher", function() {
   var apiRequest;
 
   describe ("Queue without timeouts", function() {
-    const munros = stubData.jsonMunros();
-    const forecasts = stubData.jsonForecasts();
-    const user = JSON.stringify({ id: 11, email: 'email@email.com' });
     const callback = sinon.spy();
 
     before(function() {
@@ -67,10 +68,6 @@ describe("API Dispatcher", function() {
   });
 
   describe ("Queue with timeouts", function() {
-    const munros = stubData.jsonMunros();
-    const forecasts = stubData.jsonForecasts();
-    const user = JSON.stringify({ id: 11, email: 'email@email.com' });
-    const user_params = { user: { email: 'email@email.com', password: 'password' } };
     const callback = sinon.spy();
     let status = undefined;
     let response = undefined;
@@ -122,10 +119,6 @@ describe("API Dispatcher", function() {
   });
 
   describe ("Queue with timeout and pause", function() {
-    const munros = stubData.jsonMunros();
-    const forecasts = stubData.jsonForecasts();
-    const user = JSON.stringify({ id: 11, email: 'email@email.com' });
-    const user_params = { user: { email: 'email@email.com', password: 'password' } };
     const callback = sinon.spy();
 
     before(function(done) {
@@ -180,11 +173,9 @@ describe("API Dispatcher", function() {
   });
 
   describe ("Queue with timeout, pause & resume", function() {
-    const munros = stubData.jsonMunros();
-    const forecasts = stubData.jsonForecasts();
-    const user = JSON.stringify({ id: 11, email: 'email@email.com' });
-    const user_params = { user: { email: 'email@email.com', password: 'password' } };
     const callback = sinon.spy();
+    let status = undefined;
+    let response = undefined;
 
     before(function(done) {
       server.initialize();
@@ -239,11 +230,10 @@ describe("API Dispatcher", function() {
   });
 
   describe ("Message times out after sending", function() {
-    const munros = stubData.jsonMunros();
-    const forecasts = stubData.jsonForecasts();
-    const user = JSON.stringify({ id: 11, email: 'email@email.com' });
-    const user_params = { user: { email: 'email@email.com', password: 'password' } };
     const callback = sinon.spy();
+    let status = undefined;
+    let response = undefined;
+    const request = new ApiRequest();
 
     before(function(done) {
       server.initialize();
@@ -253,7 +243,6 @@ describe("API Dispatcher", function() {
       server.respondWith("GET", baseURL + "forecasts", [200, forecasts]);
       server.respondWith("POST", baseURL + "users", [201, user]);
 
-      let request = new ApiRequest();
       request._request.loseRequest = true; // a feature of the test stub
       request.makePostRequest(baseURL + "users", user_params, null, true, function() {
         status = arguments[0];
@@ -273,6 +262,7 @@ describe("API Dispatcher", function() {
     });
 
     it("Returns network timeout error", function () {
+      assert.strictEqual(request._request.sendCount, 1);
       assert.strictEqual(status, 600);
       assert.strictEqual(response, null);
     });
@@ -288,6 +278,39 @@ describe("API Dispatcher", function() {
       call = callback.getCall(1);
       assert.strictEqual(call.args[0], 200);
       assert.deepStrictEqual(call.args[1], JSON.parse(forecasts));
+    });
+  });
+
+  describe ("Message times out but is automatically resent", function() {
+    const callback = sinon.spy();
+    let status = undefined;
+    let response = undefined;
+    const request = new ApiRequest();
+
+    before(function(done) {
+      server.initialize();
+      network.online = true;
+
+      server.respondWith("GET", baseURL + "munros", [200, munros], true); // auto respond i.e. don't wait
+      request._request.loseRequest = true; // a feature of the test stub - only loses first request
+      request.makeGetRequest(baseURL + "munros", null, false, function() {
+        status = arguments[0];
+        response = arguments[1];
+        done();
+      });
+    });
+
+    it("Sends the message", function () {
+      assert.strictEqual(dispatcher._queue.length, 0);
+    });
+
+    it("Resends the message", function () {
+      assert.strictEqual(request._request.sendCount, 2);
+    });
+
+    it("Returns the correct data", function () {
+      assert.strictEqual(status, 200);
+      assert.deepStrictEqual(response, JSON.parse(munros));
     });
   });
 

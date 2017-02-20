@@ -17,13 +17,19 @@ const ApiRequestDispatcher = function() {
 };
 
 ApiRequestDispatcher.prototype.dispatch = function(request) {
-	if (request.timeout) {
-		request._request.timeout = timeoutDuration;
-		request._request.ontimeout = function() {
+	request._request.timeout = timeoutDuration;
+	request._request.ontimeout = function() {
+		if (request.timeout) {
 			request._status = "timeout";
 			request.callback(600, null);	
 		}
-	}
+		else {
+			if (network.online)
+				request._send();
+			else
+				this._enqueue(request);
+		}
+	}.bind(this);
 	if (!network.online) {
 		request._id = this._nextId();
 		if (request.timeout) request._startTimeout(timeoutDuration, this._onTimeout.bind(this));
