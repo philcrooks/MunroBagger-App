@@ -314,4 +314,50 @@ describe("API Dispatcher", function() {
     });
   });
 
+  describe ("Message times out & netwok is offline so requeued", function() {
+    const callback = sinon.spy();
+    const request = new ApiRequest();
+
+    before(function(done) {
+      server.initialize();
+      network.online = true;
+
+      server.respondWith("GET", baseURL + "munros", [200, munros]);
+      request._request.loseRequest = true; // a feature of the test stub - only loses first request
+      request.makeGetRequest(baseURL + "munros", null, false, callback);
+      setTimeout(function(){
+        network.online = false;
+        setTimeout(function(){
+          // wait for request to complete
+          done();
+        }, 100) // For test network timeout is 100ms
+      }, 50)
+    });
+
+    it("Sent the message", function () {
+      assert.strictEqual(request._request.sendCount, 1);
+    });
+
+    it("Requeues the message", function () {
+      assert.strictEqual(dispatcher._queue.length, 1);
+    });
+
+    it("Empties the queue", function () {
+      network.online = true;
+      dispatcher._online();
+
+      assert.strictEqual(dispatcher._queue.length, 0);
+      assert.strictEqual(server.requests.length, 1);
+    });
+
+    it("Returns the correct data", function () {
+      server.respond();
+
+      assert.strictEqual(callback.callCount, 1);
+
+      let call = callback.getCall(0);
+      assert.strictEqual(call.args[0], 200);
+      assert.deepStrictEqual(call.args[1], JSON.parse(munros));
+    });
+  });
 });

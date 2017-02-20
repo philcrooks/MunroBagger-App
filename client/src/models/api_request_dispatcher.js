@@ -13,12 +13,11 @@ const ApiRequestDispatcher = function() {
 		document.addEventListener("pause", this._onPause.bind(this), false);
 		document.addEventListener("resume", this._onResume.bind(this), false);	
 	}
-
 };
 
 ApiRequestDispatcher.prototype.dispatch = function(request) {
 	request._id = this._nextId();
-	
+
 	request._request.timeout = timeoutDuration;
 	request._request.ontimeout = function() {
 		this._onTransmitTimeout(request);
@@ -65,7 +64,7 @@ ApiRequestDispatcher.prototype._online = function() {
 };
 
 ApiRequestDispatcher.prototype._onTransmitTimeout = function(request) {
-	logger("Transmission time out for message with id", request.id +".");
+	logger("Transmission timeout for request with id", request.id +".");
 	if (request.timeout) {
 		request._status = "timeout";
 		request.callback(600, null);	
