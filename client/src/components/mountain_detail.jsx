@@ -60,6 +60,7 @@ const MountDetail = React.createClass({
   },
 
   formatDirection: function(direction) {
+    if (!direction) return null;
     const directions = { N: "North", E: "East", S: "South", W: "West" }
     if (direction.length == 1) return directions[direction]
     return direction
@@ -133,8 +134,11 @@ const MountDetail = React.createClass({
       name = newName;
     }
 
-    let classes = (this.state.visible) ? "mountain is-visible" : "mountain";
-    let spinner = (this.state.busy) ? <div className='spinner-container'><Spinner singleColor /></div> : null;
+    const classes = (this.state.visible) ? "mountain is-visible" : "mountain";
+    const spinner = (this.state.busy) ? <div className='spinner-container'><Spinner singleColor /></div> : null;
+    const unavailable = "Not available";
+    const queries = "???";
+
 
     return (
       <div className={classes}>
@@ -153,17 +157,17 @@ const MountDetail = React.createClass({
           <div className="cond-title">Conditions for {this.formatDay()}</div>
           <div className="flex-grid">
             <div className="grid-item">Weather:</div>
-            <div className="grid-item">{forecast.description}</div>
+            <div className="grid-item">{(forecast.description) ? forecast.description : unavailable}</div>
             <div className="grid-item">Visibility:</div>
-            <div className="grid-item">{forecast.visibility}</div>
+            <div className="grid-item">{(forecast.visibility) ? forecast.visibility : unavailable}</div>
             <div className="grid-item">Temperature:</div>
-            <div className="grid-item">High of {forecast.temperature.max}&deg;C</div>
+            <div className="grid-item">High of {(forecast.temperature.max) ? forecast.temperature.max : queries}&deg;C</div>
             <div className="grid-item"></div>
-            <div className="grid-item">Feels like {forecast.temperature.feelsLike}&deg;C</div>
+            <div className="grid-item">Feels like {(forecast.temperature.feelsLike) ? forecast.temperature.feelsLike : queries}&deg;C</div>
             <div className="grid-item">Wind:</div>
-            <div className="grid-item">{forecast.wind.speed}mph {this.formatDirection(forecast.wind.direction)}</div>
+            <div className="grid-item">{(forecast.wind.speed) ? forecast.wind.speed : queries}mph {(forecast.wind.direction) ? this.formatDirection(forecast.wind.direction) : queries}</div>
             <div className="grid-item"></div>
-            <div className="grid-item">Gusts of {forecast.wind.gusting}mph</div>
+            <div className="grid-item">Gusts of {(forecast.wind.gusting) ? forecast.wind.gusting : queries}mph</div>
           </div>
           <Checkbox
             label="Bagged"

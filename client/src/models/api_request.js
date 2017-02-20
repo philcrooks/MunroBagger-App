@@ -1,5 +1,8 @@
+"use strict"
+
 const logger = require('../utility').logger;
 const dispatcher = require('./api_request_dispatcher');
+const XMLHttpRequest = (process.env.NODE_ENV === 'test') ? require('../stubs').XMLHttpRequest : window.XMLHttpRequest;
 
 let ApiRequest = function() {
   this._request = new XMLHttpRequest();
@@ -39,16 +42,16 @@ ApiRequest.prototype._send = function() {
 };
 
 ApiRequest.prototype._startTimeout = function(duration, callback) {
-  if (this._timeout) this._timeoutID = window.setTimeout(callback, duration, this);
+  if (this._timeout) this._timeoutID = setTimeout(callback, duration, this);
 };
 
 ApiRequest.prototype._stopTimeout = function() {
-  if (this._timeoutID) window.clearTimeout(this._timeoutID);
+  if (this._timeoutID) clearTimeout(this._timeoutID);
   this._timeoutID = null;
 };
 
 ApiRequest.prototype.makeGetRequest = function(url, jwtoken, timeout, callback) {
-  return this._makeRequest("GET", url, [200], callback, jwtoken, timeout)
+  return this._makeRequest("GET", url, [200], callback, jwtoken, null, timeout)
 };
 
 ApiRequest.prototype.makePostRequest = function(url, content, jwtoken, timeout, callback) {

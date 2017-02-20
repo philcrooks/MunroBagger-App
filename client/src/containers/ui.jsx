@@ -12,6 +12,7 @@ const ResetPassword = require('../components/user/reset_password');
 const ChangePassword = require('../components/user/change_password');
 const About = require('../components/about');
 const Search = require('../components/search');
+const Forecasts = require('../components/forecasts');
 
 const MountainsView = require('../views/mountains_view');
 const User = require('../models/user');
@@ -58,9 +59,9 @@ const UI = React.createClass({
     let mtnsView = new MountainsView();
     mtnsView.all(function() {
       logger("Mountains loaded.")
-      logger("Setting timeout for", Math.round(mtnsView.updateInterval / 600) / 100, "minutes");
+      logger("Setting forecast timeout for", Math.round(mtnsView.updateInterval / 600) / 100, "minutes");
 
-      const baseDate = new Date(mtnsView.mountains[0].detail.forecasts.dataDate.split("T")[0]);
+      const baseDate = new Date(mtnsView.forecastDates.ave.split("T")[0]);
       // Allow for a change in date
       if (!this.state.baseDate || (baseDate.getTime() !== this.state.baseDate.getTime())) this.logAndSetState({baseDate: baseDate});
       this.timeoutID = window.setTimeout(this.onTimeout, mtnsView.updateInterval);
@@ -82,8 +83,7 @@ const UI = React.createClass({
     this.mountainViews.updateForecasts(function(){
       logger("Forecasts received");
       logger("Setting timeout for", Math.round(this.mountainViews.updateInterval / 600) / 100, "minutes");
-      const mtns = this.mountainViews.mountains;
-      const baseDate = new Date(mtns[0].detail.forecasts.dataDate.split("T")[0]);
+      const baseDate = new Date(this.mountainViews.forecastDates.ave.split("T")[0]);
       if (baseDate.getTime() !== this.state.baseDate.getTime()) this.logAndSetState({baseDate: baseDate});
       this.timeoutID = window.setTimeout(this.onTimeout, this.mountainViews.updateInterval);
       // Change the forecast without changing the forecast dayNum
@@ -164,6 +164,10 @@ const UI = React.createClass({
 
   setPasswordForm: function() {
     this.logAndSetState({action: "resetPassword"})
+  },
+
+  setForecastsForm: function() {
+    this.logAndSetState({action: "forecasts"})
   },
 
   setAboutForm: function() {
@@ -284,6 +288,7 @@ const UI = React.createClass({
           <MenuItem onClick={this.requestLogout}>Logout</MenuItem>
           <MenuItem onClick={this.setSignUpForm}>Register</MenuItem>
           <MenuItem onClick={this.setChangePasswordForm}>Change Password</MenuItem>
+          <MenuItem onClick={this.setForecastsForm}>Forecasts</MenuItem>
           <MenuItem onClick={this.setAboutForm}>About</MenuItem>
         </Menu>
       );
@@ -294,6 +299,7 @@ const UI = React.createClass({
           <MenuItem onClick={this.setLoginForm}>Login</MenuItem>
           <MenuItem onClick={this.setSignUpForm}>Register</MenuItem>
           <MenuItem onClick={this.setPasswordForm}>Reset Password</MenuItem>
+          <MenuItem onClick={this.setForecastsForm}>Forecasts</MenuItem>
           <MenuItem onClick={this.setAboutForm}>About</MenuItem>
         </Menu>
       );
@@ -306,6 +312,8 @@ const UI = React.createClass({
       title = "MB";
       availableWidth += 80;
     }
+
+    const forecastDates = (this.mountainViews) ? this.mountainViews.forecastDates : null;
 
     return (
       <div>
@@ -360,6 +368,10 @@ const UI = React.createClass({
             <ResetPassword
               user={this.state.user}
               willDisplay={this.selectedAction('resetPassword')}
+              onCompleted={this.onCompleted} />
+            <Forecasts
+              forecastDates={forecastDates}
+              willDisplay={this.selectedAction('forecasts')}
               onCompleted={this.onCompleted} />
             <About
               willDisplay={this.selectedAction('about')}

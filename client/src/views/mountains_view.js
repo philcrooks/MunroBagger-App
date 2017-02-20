@@ -1,3 +1,5 @@
+"use strict"
+
 var Mountains = require('../models/mountains');
 var MountainView = require('./mountain_view');
 var search = require('../utility').mountainSearch;
@@ -6,16 +8,37 @@ var MountainsView = function() {
   this._mountainsModel = new Mountains();
   this.mountains = null;
   this._user = null;
+  this._forecastDates = {
+    _min: null,
+    _max: null,
+    _total: 0,
+    _count: 0,
+    get min() { return this._min; },
+    get max() { return this._max; },
+    get ave() {
+      let sDate = (this._count > 0) ? new Date(this._total / this._count).toISOString() : null;
+      return ((sDate) ? sDate.split(".")[0] + "Z" : "");
+    },
+    get aligned() { return (this._min && this._min === this._max); },
+    reset: function() { this._min = this._max = null; this._total = this._count = 0 },
+    add: function(sDate) {
+      this._count += 1;
+      this._total += new Date(sDate).getTime();
+      if (!this._min || this._min > sDate) this._min = sDate;
+      if (!this._max || this._max < sDate) this._max = sDate;
+    }
+  }
 
   Object.defineProperty(this, "nextUpdate", { get: function(){ return this._mountainsModel.nextUpdate; } });
   Object.defineProperty(this, "updateInterval", { get: function(){ return this._mountainsModel.updateInterval; } });
-
+  Object.defineProperty(this, "forecastDates", { get: function(){ return this._forecastDates; } });
 }
 
 MountainsView.prototype.all = function(onCompleted) {
   this._mountainsModel.all(function(mtns){
     this.mountains = mtns.map(function(mtn) {
-      var mv = new MountainView(mtn);
+      this._forecastDates.add(mtn.forecasts.dataDate);
+      const mv = new MountainView(mtn);
       mv.createStatus = this.newBaggedRecord.bind(this);
       mv.saveStatus = this.saveBaggedRecord.bind(this);
       return mv;
@@ -25,14 +48,12 @@ MountainsView.prototype.all = function(onCompleted) {
 }
 
 MountainsView.prototype.updateForecasts = function(onCompleted) {
-  console.log("Updating forecasts")
   this._mountainsModel.fetchForecasts(function(forecasts){
     if (forecasts) {
-      let length = this.mountains.length;
-      if ((this.mountains[0].id === forecasts[0].munro_id) && (length === forecasts.length)) {
-        for (let i = 0; i < length; i++) {
-          this.mountains[i].detail.updateForecast(forecasts[i]);
-        };
+      this._forecastDates.reset();
+      for (let i = 0; i < this.mountains.length; i++) {
+        this.mountains[i].detail.updateForecast(forecasts[i]);
+        this._forecastDates.add(this.mountains[i].detail.forecasts.dataDate);
       };
     };
     onCompleted();
@@ -40,7 +61,7 @@ MountainsView.prototype.updateForecasts = function(onCompleted) {
 }
 
 MountainsView.prototype._clearMountains = function() {
-  for (let i = 0; i < this.mountains; i++) {
+  for (let i = 0; i < this.mountains.length; i++) {
     this.mountains[i].status = null;
   }
 }
