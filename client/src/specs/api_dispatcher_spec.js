@@ -238,4 +238,57 @@ describe("API Dispatcher", function() {
     });
   });
 
+  describe ("Message times out after sending", function() {
+    const munros = stubData.jsonMunros();
+    const forecasts = stubData.jsonForecasts();
+    const user = JSON.stringify({ id: 11, email: 'email@email.com' });
+    const user_params = { user: { email: 'email@email.com', password: 'password' } };
+    const callback = sinon.spy();
+
+    before(function(done) {
+      server.initialize();
+      network.online = true;
+
+      server.respondWith("GET", baseURL + "munros", [200, munros]);
+      server.respondWith("GET", baseURL + "forecasts", [200, forecasts]);
+      server.respondWith("POST", baseURL + "users", [201, user]);
+
+      let request = new ApiRequest();
+      request._request.loseRequest = true; // a feature of the test stub
+      request.makePostRequest(baseURL + "users", user_params, null, true, function() {
+        status = arguments[0];
+        response = arguments[1];
+        done();
+      });
+      new ApiRequest().makeGetRequest(baseURL + "munros", null, false, callback);
+      new ApiRequest().makeGetRequest(baseURL + "forecasts", null, false, callback);
+    });
+
+    it("All messages are sent", function () {
+      assert.strictEqual(dispatcher._queue.length, 0);
+    });
+
+    it("One message is lost", function () {
+      assert.strictEqual(server.requests.length, 2);
+    });
+
+    it("Returns network timeout error", function () {
+      assert.strictEqual(status, 600);
+      assert.strictEqual(response, null);
+    });
+
+    it("Correct replies received", function () {
+      server.respond();
+
+      assert.strictEqual(callback.callCount, 2);
+
+      let call = callback.getCall(0);
+      assert.strictEqual(call.args[0], 200);
+      assert.deepStrictEqual(call.args[1], JSON.parse(munros));
+      call = callback.getCall(1);
+      assert.strictEqual(call.args[0], 200);
+      assert.deepStrictEqual(call.args[1], JSON.parse(forecasts));
+    });
+  });
+
 });

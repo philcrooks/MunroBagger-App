@@ -36,7 +36,7 @@ const XMLHttpRequest = function() {
   this.timeout = 0;
   this.headers = {};
   this.content = undefined;
-  this.loseRequest = false;
+  this.loseRequest = false; // Set this to prevent the request reaching the server
   // Response
   this.status = undefined;
   this.responseText = undefined;
@@ -53,7 +53,7 @@ XMLHttpRequest.prototype.setRequestHeader = function(name, value) {
 
 XMLHttpRequest.prototype.send = function(content = null) {
   this.content = content;
-  if (loseRequest) {
+  if (this.loseRequest) {
     if ((this.timeout > 0) && (this.ontimeout)) {
       setTimeout(this.ontimeout, this.timeout);
     }

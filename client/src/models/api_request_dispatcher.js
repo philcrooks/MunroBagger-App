@@ -17,6 +17,13 @@ const ApiRequestDispatcher = function() {
 };
 
 ApiRequestDispatcher.prototype.dispatch = function(request) {
+	if (request.timeout) {
+		request._request.timeout = timeoutDuration;
+		request._request.ontimeout = function() {
+			request._status = "timeout";
+			request.callback(600, null);	
+		}
+	}
 	if (!network.online) {
 		request._id = this._nextId();
 		if (request.timeout) request._startTimeout(timeoutDuration, this._onTimeout.bind(this));
