@@ -12,6 +12,7 @@ const ResetPassword = require('../components/user/reset_password');
 const ChangePassword = require('../components/user/change_password');
 const About = require('../components/about');
 const Search = require('../components/search');
+const Forecasts = require('../components/forecasts');
 
 const MountainsView = require('../views/mountains_view');
 const User = require('../models/user');
@@ -165,6 +166,10 @@ const UI = React.createClass({
     this.logAndSetState({action: "resetPassword"})
   },
 
+  setForecastsForm: function() {
+    this.logAndSetState({action: "forecasts"})
+  },
+
   setAboutForm: function() {
     this.logAndSetState({action: "about"})
   },
@@ -283,6 +288,7 @@ const UI = React.createClass({
           <MenuItem onClick={this.requestLogout}>Logout</MenuItem>
           <MenuItem onClick={this.setSignUpForm}>Register</MenuItem>
           <MenuItem onClick={this.setChangePasswordForm}>Change Password</MenuItem>
+          <MenuItem onClick={this.setForecastsForm}>Forecasts</MenuItem>
           <MenuItem onClick={this.setAboutForm}>About</MenuItem>
         </Menu>
       );
@@ -293,6 +299,7 @@ const UI = React.createClass({
           <MenuItem onClick={this.setLoginForm}>Login</MenuItem>
           <MenuItem onClick={this.setSignUpForm}>Register</MenuItem>
           <MenuItem onClick={this.setPasswordForm}>Reset Password</MenuItem>
+          <MenuItem onClick={this.setForecastsForm}>Forecasts</MenuItem>
           <MenuItem onClick={this.setAboutForm}>About</MenuItem>
         </Menu>
       );
@@ -305,6 +312,8 @@ const UI = React.createClass({
       title = "MB";
       availableWidth += 80;
     }
+
+    const forecastDates = (this.mountainViews) ? this.mountainViews.forecastDates : null;
 
     return (
       <div>
@@ -359,6 +368,10 @@ const UI = React.createClass({
             <ResetPassword
               user={this.state.user}
               willDisplay={this.selectedAction('resetPassword')}
+              onCompleted={this.onCompleted} />
+            <Forecasts
+              forecastDates={forecastDates}
+              willDisplay={this.selectedAction('forecasts')}
               onCompleted={this.onCompleted} />
             <About
               willDisplay={this.selectedAction('about')}
