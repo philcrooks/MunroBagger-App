@@ -32,8 +32,11 @@ const XMLHttpRequest = function() {
   this.verb = undefined;
   this.url = undefined;
   this.onload = undefined;
+  this.ontimeout = undefined;
+  this.timeout = 0;
   this.headers = {};
   this.content = undefined;
+  this.loseRequest = false;
   // Response
   this.status = undefined;
   this.responseText = undefined;
@@ -50,7 +53,14 @@ XMLHttpRequest.prototype.setRequestHeader = function(name, value) {
 
 XMLHttpRequest.prototype.send = function(content = null) {
   this.content = content;
-  HttpServer.receive(this);
+  if (loseRequest) {
+    if ((this.timeout > 0) && (this.ontimeout)) {
+      setTimeout(this.ontimeout, this.timeout);
+    }
+  }
+  else {
+    HttpServer.receive(this);
+  }
 }
 
 XMLHttpRequest.prototype.willRespondWith = function(status, text) {
