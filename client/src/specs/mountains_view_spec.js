@@ -25,7 +25,7 @@ describe("MountainsView", function(){
     stub_forecasts[4].data.dataDate = "2017-02-06T09:00:00Z";
   	modelStub = sinon.stub(mountainsView._mountainsModel, "_fetchFromNetwork");
   	modelStub.withArgs("munros").yields(stubData.munros());
-  	modelStub.withArgs("forecasts")
+  	modelStub.withArgs("forecasts?time=2017-02-05T18%3A19%3A27.710Z")
   		.onFirstCall().yields(null)
   		.onSecondCall().yields(stub_forecasts.slice(0, 3))
   		.onThirdCall().yields(stub_forecasts);
