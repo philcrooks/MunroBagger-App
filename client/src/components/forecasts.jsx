@@ -59,7 +59,7 @@ const Forecasts = React.createClass({
             <p style={{padding: '0'}}>
               The forecasts used by this app are known as <a href="http://www.metoffice.gov.uk/datapoint/product/uk-daily-site-specific-forecast" target="_blank" >
               UK daily site specific forecasts</a> and are produced by the <a href="http://www.metoffice.gov.uk" target="_blank" >UK Met Office</a>.
-              Each Munro has its own forecasts which are updated every two hours or so.
+              Each Munro has its own forecasts which are updated by the Met Office every few hours, as necessary.
             </p>
             <p>
               Note that the app will always show daytime forecasts regardless of the time of day.
