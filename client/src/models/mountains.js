@@ -35,7 +35,6 @@ Mountains.prototype._fetchFromNetwork = function(resource, onCompleted) {
 Mountains.prototype.fetchForecasts = function(onCompleted) {
   logger("Requesting forecasts from server")
   let requestString = "forecasts?time=" + encodeURIComponent(new Date(this._lastUpdate).toISOString());
-  logger(requestString);
   this._fetchFromNetwork(requestString, function(rxForecasts) {
     logger("Forecasts received from network")
     if (this._updateForecasts(rxForecasts))
@@ -112,7 +111,7 @@ Mountains.prototype._getTimestamp = function(mountains) {
     if (lastUpdate < updatedAt) lastUpdate = updatedAt;
   }
   // Return a count of the milliseconds elapsed between 1 January 1970 00:00:00 UTC and the last update
-  return new Date(lastUpdate).getTime();
+  return new Date(lastUpdate).getTime(); // Round up by 1ms. Rails server uses sub-millisecond timing.
 }
 
 Mountains.prototype._saveToStore = function(mountains) {

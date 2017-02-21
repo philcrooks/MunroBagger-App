@@ -63,8 +63,8 @@ describe("MountainsView", function(){
     assert.strictEqual(mountainsView.forecastDates.min, "2017-02-05T17:00:00Z");
   })
 
-  it ( 'Creates forecastDates.ave', function() {
-    assert.strictEqual(mountainsView.forecastDates.ave, "2017-02-05T17:00:00Z");
+  it ( 'Creates forecastDates.baseDate', function() {
+    assert.strictEqual(mountainsView.forecastDates.baseDate.getTime(), new Date("2017-02-05Z").getTime());
   })
 
   it ( 'Calculates forecastDates.aligned', function() {
@@ -126,8 +126,8 @@ describe("MountainsView", function(){
       assert.strictEqual(mountainsView.forecastDates.min, "2017-02-05T17:00:00Z");
     })
 
-    it ( 'Creates forecastDates.ave', function() {
-      assert.strictEqual(mountainsView.forecastDates.ave, "2017-02-06T01:00:00Z");
+    it ( 'Creates forecastDates.baseDate', function() {
+      assert.strictEqual(mountainsView.forecastDates.baseDate.getTime(), new Date("2017-02-06Z").getTime());
     })
 
     it ( 'Calculates forecastDates.aligned', function() {

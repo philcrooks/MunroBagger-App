@@ -61,7 +61,7 @@ const UI = React.createClass({
       logger("Mountains loaded.")
       logger("Setting forecast timeout for", Math.round(mtnsView.updateInterval / 600) / 100, "minutes");
 
-      const baseDate = new Date(mtnsView.forecastDates.ave.split("T")[0]);
+      const baseDate = mtnsView.forecastDates.baseDate;
       // Allow for a change in date
       if (!this.state.baseDate || (baseDate.getTime() !== this.state.baseDate.getTime())) this.logAndSetState({baseDate: baseDate});
       this.timeoutID = window.setTimeout(this.onTimeout, mtnsView.updateInterval);
@@ -83,7 +83,7 @@ const UI = React.createClass({
     this.mountainViews.updateForecasts(function(){
       logger("Forecasts received");
       logger("Setting timeout for", Math.round(this.mountainViews.updateInterval / 600) / 100, "minutes");
-      const baseDate = new Date(this.mountainViews.forecastDates.ave.split("T")[0]);
+      const baseDate = mtnsView.forecastDates.baseDate;
       if (baseDate.getTime() !== this.state.baseDate.getTime()) this.logAndSetState({baseDate: baseDate});
       this.timeoutID = window.setTimeout(this.onTimeout, this.mountainViews.updateInterval);
       // Change the forecast without changing the forecast dayNum

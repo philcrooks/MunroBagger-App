@@ -59,6 +59,19 @@ describe("Mountains", function(){
   	assert.strictEqual(stub.callCount, 1);
   })
 
+  it ( 'Handles a 304 response with no forecasts', function() {
+    const nextUpdate = mountains.nextUpdate;
+    let stub = sinon.stub(mountains, "_fetchFromNetwork");
+    stub.withArgs("forecasts?time=2017-02-05T18%3A19%3A27.710Z").yields(null);
+    mountains.all(function() {});
+    mountains._fetchFromNetwork.restore();
+    assert.strictEqual(mountains._nextUpdate, nextUpdate);
+    assert.strictEqual(mountains._lastUpdate, new Date("2017-02-05T18:19:27.710Z").getTime());
+    assert.strictEqual(mountains.updateInterval, 0);
+    assert.strictEqual(stub.callCount, 1);
+  })
+
+
   it ( 'Fetches new forecasts when current forecasts out of date', function() {
   	const nextUpdate = mountains.nextUpdate;
   	timeNow = new Date().toISOString();
