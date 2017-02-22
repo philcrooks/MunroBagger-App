@@ -18,6 +18,7 @@ var Mountains = function(){
   this._lastUpdate = parseInt(localStorage.getItem(updatedKey), 10);
 
   Object.defineProperty(this, "nextUpdate", { get: function(){ return this._nextUpdate; } });
+  Object.defineProperty(this, "lastUpdate", { get: function(){ return this._lastUpdate; } });
   Object.defineProperty(this, "updateInterval", { get: function(){
     const now = Date.now();
     return (this._nextUpdate > now) ? this._nextUpdate - now : 0;

@@ -9,12 +9,14 @@ var MountainsView = function() {
   this.mountains = null;
   this._user = null;
   this._forecastDates = {
-    _min: null,
-    _max: null,
-    _baseDate: null,
+    _min: null, // min Met Office publish date/time 
+    _max: null, // max Met Office publish date/time
+    _baseDate: null, // first date of the three forecasts
+    _updatedBy: null, // date/time the last forecast was changed on the server
     get min() { return this._min; },
     get max() { return this._max; },
     get baseDate() { return this._baseDate; },
+    get updatedBy() { return this._updatedBy; },
     get aligned() { return (this._min && this._min === this._max); },
     reset: function() { this._min = this._max = this._baseDate = null; },
     add: function(sDate) {
@@ -31,6 +33,7 @@ var MountainsView = function() {
 MountainsView.prototype.all = function(onCompleted) {
   this._mountainsModel.all(function(mtns){
     this._forecastDates._baseDate = new Date(mtns[0].forecasts.day[0].date); // All forecasts have the same first date
+    this._forecastDates._updatedBy = new Date(this._mountainsModel.lastUpdate);
     this.mountains = mtns.map(function(mtn) {
       this._forecastDates.add(mtn.forecasts.dataDate);
       const mv = new MountainView(mtn);
@@ -50,7 +53,10 @@ MountainsView.prototype.updateForecasts = function(onCompleted) {
         this.mountains[i].detail.updateForecast(forecasts[i]);
         this._forecastDates.add(this.mountains[i].detail.forecasts.dataDate);
       };
-      this._forecastDates._baseDate = new Date(this.mountains[0].detail.forecasts.day[0].date); // All forecasts have the same first date
+      // All forecasts (should) have the same first date
+      let date = this.mountains[0].detail.forecasts.day[0].date;
+      this._forecastDates._baseDate = (date) ? new Date(date) : null;
+      this._forecastDates._updatedBy = new Date(this._mountainsModel.lastUpdate);
     };
     onCompleted(forecasts !== null);
   }.bind(this));

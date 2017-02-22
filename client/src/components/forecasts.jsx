@@ -31,7 +31,7 @@ const Forecasts = React.createClass({
 
     let info = null;
     if (this.props.forecastDates) {
-      info = "The current forecasts were published";
+      info = "The current forecasts were published by the Met Office";
       const min = this.props.forecastDates.min;
       const minDate = new Date(min);
       const minDateString = minDate.toDateString();
@@ -47,7 +47,9 @@ const Forecasts = React.createClass({
           info += " on " + minDateString + " between " + minTimeString + " and ";
         else
           info += " between " + minDateString + " at " + minTimeString + " and " + maxDateString + " at ";
-        info += maxDate.toTimeString().split('+')[0] + ".";
+        info += maxDate.toTimeString().split('+')[0] + " and uploaded to our server on ";
+        const uploaded = this.props.forecastDates.updatedBy;
+        info += uploaded.toDateString() + " at " + uploaded.toTimeString().split('+')[0] + ".";
       }
     }
 

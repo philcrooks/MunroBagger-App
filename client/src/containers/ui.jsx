@@ -28,7 +28,10 @@ const UI = React.createClass({
     this.mountainViews = null;
     this.timeoutID = -1;
 
-    let user = new User();
+    const user = new User();
+    const baseDate = new Date();
+    baseDate.setHours(0,0,0,0);
+
     return {
       busy:           true,
       dayNum:           0,
@@ -37,7 +40,7 @@ const UI = React.createClass({
       action:           null,
       user:             user,
       userLoggedIn:     false,
-      baseDate:         null,
+      baseDate:         baseDate,
       shrinkTitle:      false,
       availableWidth:   getBrowserWidth(),
       availableHeight:  getBrowserHeight()
@@ -63,7 +66,7 @@ const UI = React.createClass({
 
       const baseDate = mtnsView.forecastDates.baseDate;
       // Allow for a change in date
-      if (!this.state.baseDate || (baseDate.getTime() !== this.state.baseDate.getTime())) this.logAndSetState({baseDate: baseDate});
+      if (baseDate && (baseDate.getTime() !== this.state.baseDate.getTime())) this.logAndSetState({baseDate: baseDate});
       this.timeoutID = window.setTimeout(this.onTimeout, mtnsView.updateInterval);
       if (this.mapObj) this.putMountainsOnMap(mtnsView);
       this.mountainViews = mtnsView;
@@ -84,8 +87,8 @@ const UI = React.createClass({
       if (updated) {
         logger("Forecasts received");
         logger("Setting timeout for", Math.round(this.mountainViews.updateInterval / 600) / 100, "minutes");
-        const baseDate = this.mountainsView.forecastDates.baseDate;
-        if (baseDate.getTime() !== this.state.baseDate.getTime()) this.logAndSetState({baseDate: baseDate});
+        const baseDate = this.mountainViews.forecastDates.baseDate;
+        if (baseDate && (baseDate.getTime() !== this.state.baseDate.getTime())) this.logAndSetState({baseDate: baseDate});       
         this.timeoutID = window.setTimeout(this.onTimeout, this.mountainViews.updateInterval);
         // Change the forecast without changing the forecast dayNum
         if (this.mapObj) this.mapObj.changeForecasts(this.state.dayNum);      
@@ -277,7 +280,7 @@ const UI = React.createClass({
     if (this.state.action) logger("Action:", this.state.action)
 
     let days = ["Today", "Tomorrow", "Day After"];
-    const baseDate = (this.state.baseDate) ? this.state.baseDate : new Date();
+    const baseDate = this.state.baseDate;
     if (baseDate.toDateString() !== new Date().toDateString()) {
       const day = baseDate.getDay();
       days = [dayOfWeek(day, true), dayOfWeek((day+1)%7, true), dayOfWeek((day+2)%7, true)];

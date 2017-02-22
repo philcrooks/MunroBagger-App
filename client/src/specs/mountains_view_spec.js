@@ -67,6 +67,10 @@ describe("MountainsView", function(){
     assert.strictEqual(mountainsView.forecastDates.baseDate.getTime(), new Date("2017-02-05Z").getTime());
   })
 
+  it ( 'Creates forecastDates.updatedBy', function() {
+    assert.strictEqual(mountainsView.forecastDates.updatedBy.getTime(), new Date("2017-02-05T18:19:27.710Z").getTime());
+  })
+
   it ( 'Calculates forecastDates.aligned', function() {
     assert.strictEqual(mountainsView.forecastDates.aligned, true);
   })
@@ -128,6 +132,10 @@ describe("MountainsView", function(){
 
     it ( 'Creates forecastDates.baseDate', function() {
       assert.strictEqual(mountainsView.forecastDates.baseDate.getTime(), new Date("2017-02-06Z").getTime());
+    })
+
+    it ( 'Creates forecastDates.updatedBy', function() {
+      assert.strictEqual(mountainsView.forecastDates.updatedBy.getTime(), new Date("2017-02-06T13:14:53.120Z").getTime());
     })
 
     it ( 'Calculates forecastDates.aligned', function() {
