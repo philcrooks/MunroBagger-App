@@ -37,7 +37,7 @@ Mountains.prototype.fetchForecasts = function(onCompleted) {
   logger("Requesting forecasts from server")
   let requestString = "forecasts?time=" + encodeURIComponent(new Date(this._lastUpdate).toISOString());
   this._fetchFromNetwork(requestString, function(rxForecasts) {
-    logger("Forecasts received from network")
+    logger("Forecasts response received from server")
     if (this._updateForecasts(rxForecasts))
       this._saveToStore(this._mountains);
     else
@@ -49,7 +49,7 @@ Mountains.prototype.fetchForecasts = function(onCompleted) {
 Mountains.prototype.fetchMountains = function(onCompleted) {
   logger("Requesting mountains from server")
   this._fetchFromNetwork("munros", function(rxMountains) {
-    logger("Mountains received from network")
+    logger("Mountains response received from server")
     this._mountains = rxMountains;
     this._saveToStore(rxMountains);
     onCompleted(rxMountains);
