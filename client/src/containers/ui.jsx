@@ -93,7 +93,8 @@ const UI = React.createClass({
         logger("Forecasts received");
         timeout = this.mountainViews.updateInterval;
         const baseDate = this.mountainViews.forecastDates.baseDate;
-        if (baseDate && (baseDate.getTime() !== this.state.baseDate.getTime())) this.logAndSetState({baseDate: baseDate}); 
+        // Set the baseDate even if it hasn't changed to force the UI to redraw after an update
+        if (baseDate) this.logAndSetState({baseDate: baseDate}); 
         // Change the forecast without changing the forecast dayNum
         if (this.mapObj) this.mapObj.changeForecasts(this.state.dayNum);      
       }

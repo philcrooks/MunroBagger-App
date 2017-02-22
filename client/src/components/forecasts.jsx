@@ -8,15 +8,26 @@ const Forecasts = React.createClass({
 
   getInitialState: function() {
     return {
-      openDialog: false
+      openDialog: false,
+      min: null,
+      max: null,
+      updatedBy: null
     }
   },
 
   componentWillReceiveProps: function(nextProps) {
     if (nextProps.willDisplay) {
-      this.setState({
-        openDialog: true
-      });
+      if (nextProps.forecastDates) {
+        this.setState({
+          openDialog: true,
+          min: nextProps.forecastDates.min,
+          max: nextProps.forecastDates.max,
+          updatedBy: nextProps.forecastDates.updatedBy
+        });
+      }
+      else {
+        this.setState({ openDialog: true });        
+      }
     }
   },
 
@@ -31,8 +42,10 @@ const Forecasts = React.createClass({
 
   render: function(){
 
+    logger("Rendering Forecasts");
+
     let info = null;
-    if (this.props.forecastDates) {
+    if (this.state.min && this.state.max && this.state.updatedBy) {
       info = "The current forecasts were produced by the Met Office";
       const min = this.props.forecastDates.min;
       const minDate = new Date(min);
@@ -66,10 +79,10 @@ const Forecasts = React.createClass({
               Each Munro has its own forecasts which are updated by the Met Office every few hours, as necessary.
             </p>
             <p>
-              Note that the app will show daytime forecasts regardless of the time of day.
+              {info}
             </p>
             <p>
-              {info}
+              Note that the app will show daytime forecasts regardless of the time of day.
             </p>
           </div>
         </DialogContent>
