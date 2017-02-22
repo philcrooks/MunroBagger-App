@@ -61,13 +61,15 @@ const UI = React.createClass({
     // Get the mountain data
     let mtnsView = new MountainsView();
     mtnsView.all(function() {
-      logger("Mountains loaded.")
-      logger("Setting forecast timeout for", Math.round(mtnsView.updateInterval / 600) / 100, "minutes");
+      logger("Mountains loaded.");
+      // No point in requesting an update immediately - lower layers will have tried already so wait
+      const timeout = (mtnsView.updateInterval > 0) ? mtnsView.updateInterval : 10 * 60 * 1000;
+      logger("Setting forecast timeout for", Math.round(timeout / 600) / 100, "minutes");
+      this.timeoutID = window.setTimeout(this.onTimeout, timeout);
 
       const baseDate = mtnsView.forecastDates.baseDate;
       // Allow for a change in date
       if (baseDate && (baseDate.getTime() !== this.state.baseDate.getTime())) this.logAndSetState({baseDate: baseDate});
-      this.timeoutID = window.setTimeout(this.onTimeout, mtnsView.updateInterval);
       if (this.mapObj) this.putMountainsOnMap(mtnsView);
       this.mountainViews = mtnsView;
     }.bind(this))
