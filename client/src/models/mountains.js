@@ -112,7 +112,7 @@ Mountains.prototype._getTimestamp = function(mountains) {
     if (lastUpdate < updatedAt) lastUpdate = updatedAt;
   }
   // Return a count of the milliseconds elapsed between 1 January 1970 00:00:00 UTC and the last update
-  return new Date(lastUpdate).getTime(); // Round up by 1ms. Rails server uses sub-millisecond timing.
+  return new Date(lastUpdate).getTime();
 }
 
 Mountains.prototype._saveToStore = function(mountains) {

@@ -1,6 +1,8 @@
 const React = require('react');
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from 'react-mdl';
 const logger = require('../utility').logger;
+const dateString = require('../utility').dateString;
+const timeString = require('../utility').timeString;
 
 const Forecasts = React.createClass({
 
@@ -34,23 +36,23 @@ const Forecasts = React.createClass({
       info = "The current forecasts were published by the Met Office";
       const min = this.props.forecastDates.min;
       const minDate = new Date(min);
-      const minDateString = minDate.toDateString();
-      const minTimeString = minDate.toTimeString().split('+')[0];
+      const minDateString = dateString(minDate);
+      const minTimeString = timeString(minDate);
       if (this.props.forecastDates.aligned) {
-        info += " on " + minDateString + " at " + minTimeString + ".";
+        info += " on the " + minDateString + " at " + minTimeString;
       }
       else {
         const max = this.props.forecastDates.max;
         const maxDate = new Date(max);
-        const maxDateString = maxDate.toDateString();
+        const maxDateString = dateString(maxDate);;
         if (minDateString === maxDateString)
-          info += " on " + minDateString + " between " + minTimeString + " and ";
+          info += " on the " + minDateString + " between " + minTimeString + " and ";
         else
           info += " between " + minDateString + " at " + minTimeString + " and " + maxDateString + " at ";
-        info += maxDate.toTimeString().split('+')[0] + " and uploaded to our server on ";
-        const uploaded = this.props.forecastDates.updatedBy;
-        info += uploaded.toDateString() + " at " + uploaded.toTimeString().split('+')[0] + ".";
+        info += timeString(maxDate);
       }
+      const uploaded = this.props.forecastDates.updatedBy;
+      info += " and were uploaded to our server by " + dateString(uploaded) + " at " + timeString(uploaded) + ".";
     }
 
     return (
@@ -64,7 +66,7 @@ const Forecasts = React.createClass({
               Each Munro has its own forecasts which are updated by the Met Office every few hours, as necessary.
             </p>
             <p>
-              Note that the app will always show daytime forecasts regardless of the time of day.
+              Note that the app will show daytime forecasts regardless of the time of day.
             </p>
             <p>
               {info}
