@@ -80,14 +80,21 @@ const UI = React.createClass({
 
   updateForecasts() {
     logger("Updating the forecasts")
-    this.mountainViews.updateForecasts(function(){
-      logger("Forecasts received");
-      logger("Setting timeout for", Math.round(this.mountainViews.updateInterval / 600) / 100, "minutes");
-      const baseDate = this.mountainsView.forecastDates.baseDate;
-      if (baseDate.getTime() !== this.state.baseDate.getTime()) this.logAndSetState({baseDate: baseDate});
-      this.timeoutID = window.setTimeout(this.onTimeout, this.mountainViews.updateInterval);
-      // Change the forecast without changing the forecast dayNum
-      if (this.mapObj) this.mapObj.changeForecasts(this.state.dayNum);
+    this.mountainViews.updateForecasts(function(updated){
+      if (updated) {
+        logger("Forecasts received");
+        logger("Setting timeout for", Math.round(this.mountainViews.updateInterval / 600) / 100, "minutes");
+        const baseDate = this.mountainsView.forecastDates.baseDate;
+        if (baseDate.getTime() !== this.state.baseDate.getTime()) this.logAndSetState({baseDate: baseDate});
+        this.timeoutID = window.setTimeout(this.onTimeout, this.mountainViews.updateInterval);
+        // Change the forecast without changing the forecast dayNum
+        if (this.mapObj) this.mapObj.changeForecasts(this.state.dayNum);      
+      }
+      else {
+        logger("No forecasts received");
+        logger("Setting timeout for 10 minutes");
+        this.timeoutID = window.setTimeout(this.onTimeout, 10 * 60 * 1000);  
+      }
     }.bind(this))
   },
 

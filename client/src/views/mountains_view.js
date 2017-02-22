@@ -51,9 +51,8 @@ MountainsView.prototype.updateForecasts = function(onCompleted) {
         this._forecastDates.add(this.mountains[i].detail.forecasts.dataDate);
       };
       this._forecastDates._baseDate = new Date(this.mountains[0].detail.forecasts.day[0].date); // All forecasts have the same first date
-
     };
-    onCompleted();
+    onCompleted(forecasts !== null);
   }.bind(this));
 }
 
