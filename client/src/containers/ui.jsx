@@ -21,6 +21,8 @@ const getBrowserWidth = require('../utility').getBrowserWidth;
 const getBrowserHeight = require('../utility').getBrowserHeight;
 const logger = require('../utility').logger;
 
+const timeIncrement = 30 * 60 * 1000;
+
 const UI = React.createClass({
 
   getInitialState: function() {
@@ -63,7 +65,7 @@ const UI = React.createClass({
     mtnsView.all(function() {
       logger("Mountains loaded.");
       // No point in requesting an update immediately - lower layers will have tried already so wait
-      const timeout = (mtnsView.updateInterval > 0) ? mtnsView.updateInterval : 10 * 60 * 1000;
+      const timeout = (mtnsView.updateInterval > 0) ? mtnsView.updateInterval : timeIncrement - ((new Date().getTime() - mtnsView.nextUpdate) % timeIncrement);
       logger("Setting forecast timeout for", Math.round(timeout / 600) / 100, "minutes");
       this.timeoutID = window.setTimeout(this.onTimeout, timeout);
 
@@ -84,22 +86,23 @@ const UI = React.createClass({
   },
 
   updateForecasts() {
+    let timeout = 0;
     logger("Updating the forecasts")
     this.mountainViews.updateForecasts(function(updated){
       if (updated) {
         logger("Forecasts received");
-        logger("Setting timeout for", Math.round(this.mountainViews.updateInterval / 600) / 100, "minutes");
+        timeout = this.mountainViews.updateInterval;
         const baseDate = this.mountainViews.forecastDates.baseDate;
-        if (baseDate && (baseDate.getTime() !== this.state.baseDate.getTime())) this.logAndSetState({baseDate: baseDate});       
-        this.timeoutID = window.setTimeout(this.onTimeout, this.mountainViews.updateInterval);
+        if (baseDate && (baseDate.getTime() !== this.state.baseDate.getTime())) this.logAndSetState({baseDate: baseDate}); 
         // Change the forecast without changing the forecast dayNum
         if (this.mapObj) this.mapObj.changeForecasts(this.state.dayNum);      
       }
       else {
         logger("No forecasts received");
-        logger("Setting timeout for 10 minutes");
-        this.timeoutID = window.setTimeout(this.onTimeout, 10 * 60 * 1000);  
+        timeout = timeIncrement;
       }
+      logger("Setting timeout for", Math.round(this.mountainViews.updateInterval / 600) / 100, "minutes");
+      this.timeoutID = window.setTimeout(this.onTimeout, timeout);
     }.bind(this))
   },
 
