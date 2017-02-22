@@ -33,7 +33,7 @@ const Forecasts = React.createClass({
 
     let info = null;
     if (this.props.forecastDates) {
-      info = "The current forecasts were published by the Met Office";
+      info = "The current forecasts were produced by the Met Office";
       const min = this.props.forecastDates.min;
       const minDate = new Date(min);
       const minDateString = dateString(minDate);
