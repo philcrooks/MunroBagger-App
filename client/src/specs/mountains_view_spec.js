@@ -25,7 +25,7 @@ describe("MountainsView", function(){
     stub_forecasts[4].data.dataDate = "2017-02-06T09:00:00Z";
   	modelStub = sinon.stub(mountainsView._mountainsModel, "_fetchFromNetwork");
   	modelStub.withArgs("munros").yields(stubData.munros());
-  	modelStub.withArgs("forecasts")
+  	modelStub.withArgs("forecasts?time=2017-02-05T18%3A19%3A27.710Z")
   		.onFirstCall().yields(null)
   		.onSecondCall().yields(stub_forecasts.slice(0, 3))
   		.onThirdCall().yields(stub_forecasts);
@@ -63,8 +63,12 @@ describe("MountainsView", function(){
     assert.strictEqual(mountainsView.forecastDates.min, "2017-02-05T17:00:00Z");
   })
 
-  it ( 'Creates forecastDates.ave', function() {
-    assert.strictEqual(mountainsView.forecastDates.ave, "2017-02-05T17:00:00Z");
+  it ( 'Creates forecastDates.baseDate', function() {
+    assert.strictEqual(mountainsView.forecastDates.baseDate.getTime(), new Date("2017-02-05Z").getTime());
+  })
+
+  it ( 'Creates forecastDates.updatedBy', function() {
+    assert.strictEqual(mountainsView.forecastDates.updatedBy.getTime(), new Date("2017-02-05T18:19:27.710Z").getTime());
   })
 
   it ( 'Calculates forecastDates.aligned', function() {
@@ -126,8 +130,12 @@ describe("MountainsView", function(){
       assert.strictEqual(mountainsView.forecastDates.min, "2017-02-05T17:00:00Z");
     })
 
-    it ( 'Creates forecastDates.ave', function() {
-      assert.strictEqual(mountainsView.forecastDates.ave, "2017-02-06T01:00:00Z");
+    it ( 'Creates forecastDates.baseDate', function() {
+      assert.strictEqual(mountainsView.forecastDates.baseDate.getTime(), new Date("2017-02-06Z").getTime());
+    })
+
+    it ( 'Creates forecastDates.updatedBy', function() {
+      assert.strictEqual(mountainsView.forecastDates.updatedBy.getTime(), new Date("2017-02-06T13:14:53.120Z").getTime());
     })
 
     it ( 'Calculates forecastDates.aligned', function() {
