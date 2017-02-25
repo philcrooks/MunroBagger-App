@@ -46,7 +46,7 @@ const Forecasts = React.createClass({
 
     let info = null;
     if (this.state.min && this.state.max && this.state.updatedBy) {
-      info = "The current forecasts were produced by the Met Office";
+      info = "The current forecasts were produced by the Met Office from data collected";
       const min = this.props.forecastDates.min;
       const minDate = new Date(min);
       const minDateString = dateString(minDate);
@@ -65,7 +65,7 @@ const Forecasts = React.createClass({
         info += timeString(maxDate);
       }
       const uploaded = this.props.forecastDates.updatedBy;
-      info += " and were uploaded to our server by " + dateString(uploaded) + " at " + timeString(uploaded) + ".";
+      info += " and uploaded on " + dateString(uploaded) + " at " + timeString(uploaded) + ".";
     }
 
     return (
@@ -76,7 +76,7 @@ const Forecasts = React.createClass({
             <p style={{padding: '0'}}>
               The forecasts used by this app are known as <a href="http://www.metoffice.gov.uk/datapoint/product/uk-daily-site-specific-forecast" target="_blank" >
               UK daily site specific forecasts</a> and are produced by the <a href="http://www.metoffice.gov.uk" target="_blank" >UK Met Office</a>.
-              Each Munro has its own forecasts which are updated by the Met Office every few hours, as necessary.
+              Each Munro has its own forecasts which are updated by the Met Office every one or two hours, as necessary.
             </p>
             <p>
               {info}

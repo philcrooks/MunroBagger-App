@@ -112,15 +112,15 @@ Mountains.prototype._getTimestamp = function(mountains) {
     if (lastUpdate < updatedAt) lastUpdate = updatedAt;
   }
   // Return a count of the milliseconds elapsed between 1 January 1970 00:00:00 UTC and the last update
-  return new Date(lastUpdate).getTime();
+  return new Date(lastUpdate);
 }
 
 Mountains.prototype._saveToStore = function(mountains) {
   if (mountains) {
     logger("Saving mountains to store")
-    this._lastUpdate = this._getTimestamp(mountains);  // UTC time
-    // Next update will be approx two hours from the last one
-    this._nextUpdate = this._lastUpdate + ((2.05 + (Math.random() / 4)) * 60 * 60 * 1000);
+    let timestamp = this._getTimestamp(mountains);  // UTC time
+    this._lastUpdate = timestamp.getTime();
+    this._nextUpdate = this._updateTime(this._lastUpdate);
     logger("Forecasts updated:", new Date(this._lastUpdate).toISOString());
     logger("Refresh scheduled:", new Date(this._nextUpdate).toISOString());
     localStorage.setItem(updatedKey, this._lastUpdate.toString());
@@ -133,6 +133,19 @@ Mountains.prototype._retrieveFromStore = function() {
   let mountains = JSON.parse(localStorage.getItem(mountainKey));
   logger("Retrieving Mountains from store")
   return mountains;
+}
+
+Mountains.prototype._updateTime = function(lastUpdate) {
+  // this._lastUpdate is the timestamp put into the forecast when the server updated it
+  // this._nextUpdate is a value calculated by this app.
+  // If the server has trouble with updates, no new forecasts will be available and this._lastUpdate will not be updated.
+  // New forecasts should be requested every hour on the hour (roughly).
+  // Our server only updates once every two hours but the Met Office server sometimes updates hourly so an hourly update makes more sense.
+
+  let update = (lastUpdate) ? new Date(lastUpdate) : new Date();
+  update.setUTCHours(update.getUTCHours() + Math.round(update.getUTCMinutes() / 60));
+  update.setUTCMinutes(0,0,0);
+  return (update.getTime() + ((2 + (Math.random() / 4)) * 60 * 60 * 1000));
 }
 
 Mountains.prototype._needUpdate = function() {
