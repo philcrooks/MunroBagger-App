@@ -46,26 +46,35 @@ const Forecasts = React.createClass({
 
     let info = null;
     if (this.state.min && this.state.max && this.state.updatedBy) {
+      const todayString = dateString(new Date());
       info = "The current forecasts were produced by the Met Office from data collected";
       const min = this.props.forecastDates.min;
       const minDate = new Date(min);
       const minDateString = dateString(minDate);
       const minTimeString = timeString(minDate);
       if (this.props.forecastDates.aligned) {
-        info += " on the " + minDateString + " at " + minTimeString;
+        info += (minDateString === todayString) ? " today" : " on the " + minDateString;
+        info += " at " + minTimeString;
       }
       else {
         const max = this.props.forecastDates.max;
         const maxDate = new Date(max);
         const maxDateString = dateString(maxDate);;
-        if (minDateString === maxDateString)
-          info += " on the " + minDateString + " between " + minTimeString + " and ";
-        else
-          info += " between " + minDateString + " at " + minTimeString + " and " + maxDateString + " at ";
+        if (minDateString === maxDateString) {
+          info += (minDateString === todayString) ? " today" : " on the " + minDateString;
+          info += " between " + minTimeString + " and ";
+        }
+        else {
+          info += " between " + minDateString + " at " + minTimeString + " and ";
+          info += (maxDateString === todayString) ? "today " : maxDateString + " at ";
+        }
         info += timeString(maxDate);
       }
       const uploaded = this.props.forecastDates.updatedBy;
-      info += " and uploaded on " + dateString(uploaded) + " at " + timeString(uploaded) + ".";
+      const uploadedDateString = dateString(uploaded);
+      info += " and uploaded ";
+      info +=  (uploadedDateString === todayString) ? "today" : "on " + uploadedDateString ;
+      info += " at " + timeString(uploaded) + ".";
     }
 
     return (
