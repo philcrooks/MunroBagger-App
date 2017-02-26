@@ -21,6 +21,8 @@ const getBrowserWidth = require('../utility').getBrowserWidth;
 const getBrowserHeight = require('../utility').getBrowserHeight;
 const logger = require('../utility').logger;
 
+const timeIncrement = 30 * 60 * 1000;
+
 const UI = React.createClass({
 
   getInitialState: function() {
@@ -28,7 +30,10 @@ const UI = React.createClass({
     this.mountainViews = null;
     this.timeoutID = -1;
 
-    let user = new User();
+    const user = new User();
+    const baseDate = new Date();
+    baseDate.setHours(0,0,0,0);
+
     return {
       busy:           true,
       dayNum:           0,
@@ -37,7 +42,7 @@ const UI = React.createClass({
       action:           null,
       user:             user,
       userLoggedIn:     false,
-      baseDate:         null,
+      baseDate:         baseDate,
       shrinkTitle:      false,
       availableWidth:   getBrowserWidth(),
       availableHeight:  getBrowserHeight()
@@ -58,13 +63,15 @@ const UI = React.createClass({
     // Get the mountain data
     let mtnsView = new MountainsView();
     mtnsView.all(function() {
-      logger("Mountains loaded.")
-      logger("Setting forecast timeout for", Math.round(mtnsView.updateInterval / 600) / 100, "minutes");
+      logger("Mountains loaded.");
+      // No point in requesting an update immediately - lower layers will have tried already so wait
+      const timeout = (mtnsView.updateInterval > 0) ? mtnsView.updateInterval : timeIncrement - ((new Date().getTime() - mtnsView.nextUpdate) % timeIncrement);
+      logger("Setting forecast timeout for", Math.round(timeout / 600) / 100, "minutes");
+      this.timeoutID = window.setTimeout(this.onTimeout, timeout);
 
-      const baseDate = new Date(mtnsView.forecastDates.ave.split("T")[0]);
+      const baseDate = mtnsView.forecastDates.baseDate;
       // Allow for a change in date
-      if (!this.state.baseDate || (baseDate.getTime() !== this.state.baseDate.getTime())) this.logAndSetState({baseDate: baseDate});
-      this.timeoutID = window.setTimeout(this.onTimeout, mtnsView.updateInterval);
+      if (baseDate && (baseDate.getTime() !== this.state.baseDate.getTime())) this.logAndSetState({baseDate: baseDate});
       if (this.mapObj) this.putMountainsOnMap(mtnsView);
       this.mountainViews = mtnsView;
     }.bind(this))
@@ -79,15 +86,24 @@ const UI = React.createClass({
   },
 
   updateForecasts() {
+    let timeout = 0;
     logger("Updating the forecasts")
-    this.mountainViews.updateForecasts(function(){
-      logger("Forecasts received");
+    this.mountainViews.updateForecasts(function(updated){
+      if (updated) {
+        logger("Forecasts received");
+        timeout = this.mountainViews.updateInterval;
+        const baseDate = this.mountainViews.forecastDates.baseDate;
+        // Set the baseDate even if it hasn't changed to force the UI to redraw after an update
+        if (baseDate) this.logAndSetState({baseDate: baseDate}); 
+        // Change the forecast without changing the forecast dayNum
+        if (this.mapObj) this.mapObj.changeForecasts(this.state.dayNum);      
+      }
+      else {
+        logger("No forecasts received");
+        timeout = timeIncrement;
+      }
       logger("Setting timeout for", Math.round(this.mountainViews.updateInterval / 600) / 100, "minutes");
-      const baseDate = new Date(this.mountainViews.forecastDates.ave.split("T")[0]);
-      if (baseDate.getTime() !== this.state.baseDate.getTime()) this.logAndSetState({baseDate: baseDate});
-      this.timeoutID = window.setTimeout(this.onTimeout, this.mountainViews.updateInterval);
-      // Change the forecast without changing the forecast dayNum
-      if (this.mapObj) this.mapObj.changeForecasts(this.state.dayNum);
+      this.timeoutID = window.setTimeout(this.onTimeout, timeout);
     }.bind(this))
   },
 
@@ -270,7 +286,7 @@ const UI = React.createClass({
     if (this.state.action) logger("Action:", this.state.action)
 
     let days = ["Today", "Tomorrow", "Day After"];
-    const baseDate = (this.state.baseDate) ? this.state.baseDate : new Date();
+    const baseDate = this.state.baseDate;
     if (baseDate.toDateString() !== new Date().toDateString()) {
       const day = baseDate.getDay();
       days = [dayOfWeek(day, true), dayOfWeek((day+1)%7, true), dayOfWeek((day+2)%7, true)];

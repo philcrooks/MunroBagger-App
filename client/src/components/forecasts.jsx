@@ -1,20 +1,33 @@
 const React = require('react');
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from 'react-mdl';
 const logger = require('../utility').logger;
+const dateString = require('../utility').dateString;
+const timeString = require('../utility').timeString;
 
 const Forecasts = React.createClass({
 
   getInitialState: function() {
     return {
-      openDialog: false
+      openDialog: false,
+      min: null,
+      max: null,
+      updatedBy: null
     }
   },
 
   componentWillReceiveProps: function(nextProps) {
     if (nextProps.willDisplay) {
-      this.setState({
-        openDialog: true
-      });
+      if (nextProps.forecastDates) {
+        this.setState({
+          openDialog: true,
+          min: nextProps.forecastDates.min,
+          max: nextProps.forecastDates.max,
+          updatedBy: nextProps.forecastDates.updatedBy
+        });
+      }
+      else {
+        this.setState({ openDialog: true });        
+      }
     }
   },
 
@@ -29,26 +42,39 @@ const Forecasts = React.createClass({
 
   render: function(){
 
+    logger("Rendering Forecasts");
+
     let info = null;
-    if (this.props.forecastDates) {
-      info = "The current forecasts were published";
+    if (this.state.min && this.state.max && this.state.updatedBy) {
+      const todayString = dateString(new Date());
+      info = "The current forecasts were produced by the Met Office from data collected";
       const min = this.props.forecastDates.min;
       const minDate = new Date(min);
-      const minDateString = minDate.toDateString();
-      const minTimeString = minDate.toTimeString().split('+')[0];
+      const minDateString = dateString(minDate);
+      const minTimeString = timeString(minDate);
       if (this.props.forecastDates.aligned) {
-        info += " on " + minDateString + " at " + minTimeString + ".";
+        info += (minDateString === todayString) ? " today" : " on the " + minDateString;
+        info += " at " + minTimeString;
       }
       else {
         const max = this.props.forecastDates.max;
         const maxDate = new Date(max);
-        const maxDateString = maxDate.toDateString();
-        if (minDateString === maxDateString)
-          info += " on " + minDateString + " between " + minTimeString + " and ";
-        else
-          info += " between " + minDateString + " at " + minTimeString + " and " + maxDateString + " at ";
-        info += maxDate.toTimeString().split('+')[0] + ".";
+        const maxDateString = dateString(maxDate);;
+        if (minDateString === maxDateString) {
+          info += (minDateString === todayString) ? " today" : " on the " + minDateString;
+          info += " between " + minTimeString + " and ";
+        }
+        else {
+          info += " between " + minDateString + " at " + minTimeString + " and ";
+          info += (maxDateString === todayString) ? "today " : maxDateString + " at ";
+        }
+        info += timeString(maxDate);
       }
+      const uploaded = this.props.forecastDates.updatedBy;
+      const uploadedDateString = dateString(uploaded);
+      info += " and uploaded ";
+      info +=  (uploadedDateString === todayString) ? "today" : "on " + uploadedDateString ;
+      info += " at " + timeString(uploaded) + ".";
     }
 
     return (
@@ -59,13 +85,13 @@ const Forecasts = React.createClass({
             <p style={{padding: '0'}}>
               The forecasts used by this app are known as <a href="http://www.metoffice.gov.uk/datapoint/product/uk-daily-site-specific-forecast" target="_blank" >
               UK daily site specific forecasts</a> and are produced by the <a href="http://www.metoffice.gov.uk" target="_blank" >UK Met Office</a>.
-              Each Munro has its own forecasts which are updated every two hours or so.
-            </p>
-            <p>
-              Note that the app will always show daytime forecasts regardless of the time of day.
+              Each Munro has its own forecasts which are updated by the Met Office every one or two hours, as necessary.
             </p>
             <p>
               {info}
+            </p>
+            <p>
+              Note that the app will show daytime forecasts regardless of the time of day.
             </p>
           </div>
         </DialogContent>

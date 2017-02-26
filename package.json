@@ -2,13 +2,13 @@
   "name": "munro_bagger",
   "version": "1.0.0",
   "description": "A JS/ReactJS/Rails website that allows the user to see all the sunny Munros in Scotland at one glance.",
-  "main": "seeds.js",
+  "main": "app.js",
   "scripts": {
     "test": "mocha ./client/src/specs/",
     "start": "node server.js",
     "bundle": "cd client && webpack -w",
     "bundle-p": "cd client && webpack -p",
-    "uglify": "cd www && uglifycss css/material.css > css/material.min.css && uglifycss css/style.css > css/style.min.css && uglifyjs js/bundle.js -c -m -o js/bundle.min.js"
+    "uglify": "cd www && uglifycss css/material.css > css/material.min.css && uglifycss css/style.css > css/style.min.css"
   },
   "author": {
     "name": "Munro Bagger Team",
@@ -24,7 +24,7 @@
     "type": "git",
     "url": "git@github.com:philcrooks/MunroBagger-App.git"
   },
-  "homepage": "http://www.munrobagger.scot",
+  "homepage": "https://play.google.com/store/apps/details?id=scot.munrobagger.app",
   "license": "ISC",
   "dependencies": {
     "react": "^15.3.2",

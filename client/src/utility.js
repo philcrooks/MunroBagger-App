@@ -89,7 +89,11 @@ var logger = function() {
   if (false) {
     const date = new Date();
     const ms = date.getMilliseconds();
-    const time = date.toTimeString().split(" ")[0] + ":" + ms;
+    let padding = "";
+    if (ms < 100) {
+      padding = (ms < 10) ? "00" : "0";
+    }
+    const time = date.toTimeString().split(" ")[0] + "." + padding + ms;
     let args = Array.from(arguments);
     console.log.apply(null, [time].concat(args));
   }
@@ -97,6 +101,37 @@ var logger = function() {
 
 const network = {
   get online() { return(navigator.connection.type !== Connection.NONE) }
+};
+
+const dateString = function(dateTime) {
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const date = dateTime.getUTCDate();
+  const lastDigit = date % 10;
+  let stringDate = "";
+  if ((lastDigit === 0) || (lastDigit >= 4) || ((date > 10) && (date < 20))) {
+    stringDate = date + "th";
+  }
+  else if (lastDigit === 1){
+    stringDate = date + "st";
+  }
+  else if (lastDigit === 2){
+    stringDate = date + "nd";
+  }
+  else {
+    stringDate = date + "rd";      
+  }
+  stringDate += " " + months[dateTime.getUTCMonth()];
+  return stringDate;
+};
+
+const timeString = function(dateTime) {
+  const hours = dateTime.getUTCHours();
+  const mins = dateTime.getUTCMinutes();
+  let stringTime = (hours >= 10) ? hours.toString() : "0" + hours.toString();
+  stringTime += ":";
+  stringTime += (mins >= 10) ? mins.toString() : "0" + mins.toString();
+  stringTime += " GMT"
+  return stringTime;
 };
 
 module.exports = {
@@ -110,5 +145,7 @@ module.exports = {
   getBrowserHeight: getBrowserHeight,
   getScript: getScript,
   logger: logger,
-  network: network
+  network: network,
+  dateString: dateString,
+  timeString: timeString
 };

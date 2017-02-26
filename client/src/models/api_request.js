@@ -63,7 +63,7 @@ ApiRequest.prototype.makePutRequest = function(url, content, jwtoken, timeout, c
 };
 
 ApiRequest.prototype.makeDeleteRequest = function(url, content, jwtoken, timeout, callback) {
-  return this._makeRequest("DELETE", url, [200, 201, 204], callback, jwtoken, content, timeout);
+  return this._makeRequest("DELETE", url, [200, 204], callback, jwtoken, content, timeout);
 };
 
 module.exports = ApiRequest;

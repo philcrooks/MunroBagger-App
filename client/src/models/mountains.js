@@ -15,8 +15,10 @@ const refreshKey = "refresh_at";
 var Mountains = function(){
   this._mountains = this._retrieveFromStore();
   this._nextUpdate = parseInt(localStorage.getItem(refreshKey), 10);
+  this._lastUpdate = parseInt(localStorage.getItem(updatedKey), 10);
 
   Object.defineProperty(this, "nextUpdate", { get: function(){ return this._nextUpdate; } });
+  Object.defineProperty(this, "lastUpdate", { get: function(){ return this._lastUpdate; } });
   Object.defineProperty(this, "updateInterval", { get: function(){
     const now = Date.now();
     return (this._nextUpdate > now) ? this._nextUpdate - now : 0;
@@ -33,8 +35,9 @@ Mountains.prototype._fetchFromNetwork = function(resource, onCompleted) {
 
 Mountains.prototype.fetchForecasts = function(onCompleted) {
   logger("Requesting forecasts from server")
-  this._fetchFromNetwork("forecasts", function(rxForecasts) {
-    logger("Forecasts received from network")
+  let requestString = "forecasts?time=" + encodeURIComponent(new Date(this._lastUpdate).toISOString());
+  this._fetchFromNetwork(requestString, function(rxForecasts) {
+    logger("Forecasts response received from server")
     if (this._updateForecasts(rxForecasts))
       this._saveToStore(this._mountains);
     else
@@ -46,7 +49,7 @@ Mountains.prototype.fetchForecasts = function(onCompleted) {
 Mountains.prototype.fetchMountains = function(onCompleted) {
   logger("Requesting mountains from server")
   this._fetchFromNetwork("munros", function(rxMountains) {
-    logger("Mountains received from network")
+    logger("Mountains response received from server")
     this._mountains = rxMountains;
     this._saveToStore(rxMountains);
     onCompleted(rxMountains);
@@ -88,17 +91,18 @@ Mountains.prototype._makeMountains = function(receivedMtns) {
 }
 
 Mountains.prototype._updateForecasts = function(forecasts) {
-  if (forecasts) {
-    let length = this._mountains.length;
-    if ((this._mountains[0].id === forecasts[0].munro_id) && (length === forecasts.length)) {
-      for (let i = 0; i < length; i++) {
+  let length = this._mountains.length;
+  let i = 0;
+  if (forecasts && forecasts.length === length) {
+    for ( ; i < length; i++) {
+      if ((this._mountains[i].id === forecasts[i].munro_id)) {
         this._mountains[i].forecast.data = forecasts[i].data;
         this._mountains[i].forecast.updated_at = forecasts[i].updated_at;
       }
-      return true;
+      else break;
     }
   }
-  return false;
+  return (i === length);
 }
 
 Mountains.prototype._getTimestamp = function(mountains) {
@@ -108,18 +112,18 @@ Mountains.prototype._getTimestamp = function(mountains) {
     if (lastUpdate < updatedAt) lastUpdate = updatedAt;
   }
   // Return a count of the milliseconds elapsed between 1 January 1970 00:00:00 UTC and the last update
-  return new Date(lastUpdate).getTime();
+  return new Date(lastUpdate);
 }
 
 Mountains.prototype._saveToStore = function(mountains) {
   if (mountains) {
     logger("Saving mountains to store")
-    const timeStamp = this._getTimestamp(mountains);  // UTC time
-    // Next update will be approx two hours from the last one
-    this._nextUpdate = timeStamp + ((2.05 + (Math.random() / 4)) * 60 * 60 * 1000);
-    logger("Forecasts updated:", new Date(timeStamp).toISOString());
+    let timestamp = this._getTimestamp(mountains);  // UTC time
+    this._lastUpdate = timestamp.getTime();
+    this._nextUpdate = this._updateTime(this._lastUpdate);
+    logger("Forecasts updated:", new Date(this._lastUpdate).toISOString());
     logger("Refresh scheduled:", new Date(this._nextUpdate).toISOString());
-    localStorage.setItem(updatedKey, timeStamp.toString());
+    localStorage.setItem(updatedKey, this._lastUpdate.toString());
     localStorage.setItem(refreshKey, this._nextUpdate.toString());
     localStorage.setItem(mountainKey, JSON.stringify(mountains));
   }
@@ -129,6 +133,19 @@ Mountains.prototype._retrieveFromStore = function() {
   let mountains = JSON.parse(localStorage.getItem(mountainKey));
   logger("Retrieving Mountains from store")
   return mountains;
+}
+
+Mountains.prototype._updateTime = function(lastUpdate) {
+  // this._lastUpdate is the timestamp put into the forecast when the server updated it
+  // this._nextUpdate is a value calculated by this app.
+  // If the server has trouble with updates, no new forecasts will be available and this._lastUpdate will not be updated.
+  // New forecasts should be requested every hour on the hour (roughly).
+  // Our server only updates once every two hours but the Met Office server sometimes updates hourly so an hourly update makes more sense.
+
+  let update = (lastUpdate) ? new Date(lastUpdate) : new Date();
+  update.setUTCHours(update.getUTCHours() + Math.round(update.getUTCMinutes() / 60));
+  update.setUTCMinutes(0,0,0);
+  return (update.getTime() + ((2 + (Math.random() / 4)) * 60 * 60 * 1000));
 }
 
 Mountains.prototype._needUpdate = function() {

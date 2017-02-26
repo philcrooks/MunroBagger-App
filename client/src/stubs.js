@@ -1,3 +1,5 @@
+"use strict"
+
 // This file is used for testing only
 
 const localStorage = {
@@ -52,7 +54,8 @@ XMLHttpRequest.prototype.setRequestHeader = function(name, value) {
   if (name) this.headers[name] = value;
 }
 
-XMLHttpRequest.prototype.send = function(content = null) {
+XMLHttpRequest.prototype.send = function(content) {
+  if (!content) content = null;
   this.content = content;
   this.sendCount += 1;
   if (this.loseRequest) {

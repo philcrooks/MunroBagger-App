@@ -11,6 +11,7 @@ const assert = require("assert");
 describe("Mountains", function(){
 
   var mountains;
+  var timeNow;
 
   before(function(){
     localStorage.clear();
@@ -22,6 +23,7 @@ describe("Mountains", function(){
   });
 
   it ( 'Has no update interval when first initialised', function() {
+    assert.strictEqual(isNaN(mountains._lastUpdate), true)
   	assert.strictEqual(isNaN(mountains._nextUpdate), true)
   });
 
@@ -48,28 +50,41 @@ describe("Mountains", function(){
   it ( 'Won\'t update forecasts when mismatch with mountains', function() {
   	const nextUpdate = mountains.nextUpdate;
   	const stub = sinon.stub(mountains, "_fetchFromNetwork");
-  	stub.withArgs("forecasts").yields(stubData.forecasts().slice(0, 3));
+  	stub.withArgs("forecasts?time=2017-02-05T18%3A19%3A27.710Z").yields(stubData.forecasts().slice(0, 3));
   	mountains.all(function() {});
   	mountains._fetchFromNetwork.restore();
   	assert.strictEqual(mountains._nextUpdate, nextUpdate);
-  	assert.strictEqual(mountains._getTimestamp(mountains._mountains), new Date("2017-02-05T18:19:27.710Z").getTime());
+  	assert.strictEqual(mountains._lastUpdate, new Date("2017-02-05T18:19:27.710Z").getTime());
   	assert.strictEqual(mountains.updateInterval, 0);
   	assert.strictEqual(stub.callCount, 1);
   })
 
+  it ( 'Handles a 304 response with no forecasts', function() {
+    const nextUpdate = mountains.nextUpdate;
+    let stub = sinon.stub(mountains, "_fetchFromNetwork");
+    stub.withArgs("forecasts?time=2017-02-05T18%3A19%3A27.710Z").yields(null);
+    mountains.all(function() {});
+    mountains._fetchFromNetwork.restore();
+    assert.strictEqual(mountains._nextUpdate, nextUpdate);
+    assert.strictEqual(mountains._lastUpdate, new Date("2017-02-05T18:19:27.710Z").getTime());
+    assert.strictEqual(mountains.updateInterval, 0);
+    assert.strictEqual(stub.callCount, 1);
+  })
+
+
   it ( 'Fetches new forecasts when current forecasts out of date', function() {
   	const nextUpdate = mountains.nextUpdate;
-  	const timeNow = new Date().toISOString();
+  	timeNow = new Date().toISOString();
   	const stub_forecasts = stubData.forecasts();
   	for (let i = 0; i < stub_forecasts.length; i++) {
   		stub_forecasts[i].updated_at = timeNow;
   	}
   	let stub = sinon.stub(mountains, "_fetchFromNetwork");
-  	stub.withArgs("forecasts").yields(stub_forecasts);
+  	stub.withArgs("forecasts?time=2017-02-05T18%3A19%3A27.710Z").yields(stub_forecasts);
   	mountains.all(function() {});
   	mountains._fetchFromNetwork.restore();
   	assert.notStrictEqual(mountains._nextUpdate, nextUpdate);
-  	assert.strictEqual(mountains._getTimestamp(mountains._mountains), new Date(timeNow).getTime());
+  	assert.strictEqual(mountains._lastUpdate, new Date(timeNow).getTime());
   	assert.strictEqual(stub.callCount, 1);
   })
 
@@ -78,8 +93,9 @@ describe("Mountains", function(){
   })
 
   it ( 'Won\'t update forecasts when up to date', function() {
-  	let stub = sinon.stub(mountains, "_fetchFromNetwork");
-  	stub.withArgs("forecasts").yields(stubData.forecasts());
+  	const stub = sinon.stub(mountains, "_fetchFromNetwork");
+    const requestString = "forecasts?time=" + encodeURIComponent(new Date(timeNow).toISOString());
+  	stub.withArgs(requestString).yields(stubData.forecasts());
   	mountains.all(function() {});
   	mountains._fetchFromNetwork.restore();
   	assert.strictEqual(stub.callCount, 0);
