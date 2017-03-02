@@ -168,6 +168,8 @@ const MountDetail = React.createClass({
             <div className="grid-item">{(forecast.wind.speed) ? forecast.wind.speed : queries}mph {(forecast.wind.direction) ? this.formatDirection(forecast.wind.direction) : queries}</div>
             <div className="grid-item"></div>
             <div className="grid-item">Gusts of {(forecast.wind.gusting) ? forecast.wind.gusting : queries}mph</div>
+            <div className="grid-item">Precipitation:</div>
+            <div className="grid-item">{(forecast.pofp) ? forecast.pofp : queries}% probability</div>            
           </div>
           <Checkbox
             label="Bagged"
