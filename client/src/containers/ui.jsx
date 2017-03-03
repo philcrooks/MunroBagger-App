@@ -100,7 +100,8 @@ const UI = React.createClass({
       }
       else {
         logger("No forecasts received");
-        timeout = timeIncrement;
+        // It may be that the forecasts haven't changed. In that case the timeout will be > 0
+        timeout = (this.mountainViews.updateInterval > 0) ? this.mountainViews.updateInterval : timeIncrement;
       }
       logger("Setting timeout for", Math.round(this.mountainViews.updateInterval / 600) / 100, "minutes");
       this.timeoutID = window.setTimeout(this.onTimeout, timeout);

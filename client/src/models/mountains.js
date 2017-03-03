@@ -29,19 +29,30 @@ Mountains.prototype._fetchFromNetwork = function(resource, onCompleted) {
   const url = baseURL + resource;
   const apiRequest = new ApiRequest();
   apiRequest.makeGetRequest(url, null, false, function(status, receivedResource) {
-    onCompleted(receivedResource);
+    // Reverse the order of the params so the status can be ignored
+    onCompleted(receivedResource, status);
   });
 }
 
 Mountains.prototype.fetchForecasts = function(onCompleted) {
   logger("Requesting forecasts from server")
   let requestString = "forecasts?time=" + encodeURIComponent(new Date(this._lastUpdate).toISOString());
-  this._fetchFromNetwork(requestString, function(rxForecasts) {
+  this._fetchFromNetwork(requestString, function(rxForecasts, status) {
     logger("Forecasts response received from server")
-    if (this._updateForecasts(rxForecasts))
-      this._saveToStore(this._mountains);
-    else
+    if (status === 200) {
+      if (this._updateForecasts(rxForecasts))
+        this._saveToStore(this._mountains);
+      else
+        rxForecasts = null;
+    }
+    else {
+      if (status === 304) {
+        // Forecasts have not been updated since the last request
+        // Set the update time for one hour in the future
+        this._nextUpdate = this._updateTime();
+      }
       rxForecasts = null;
+    }
     onCompleted(rxForecasts);
   }.bind(this))
 }
@@ -145,7 +156,7 @@ Mountains.prototype._updateTime = function(lastUpdate) {
   let update = (lastUpdate) ? new Date(lastUpdate) : new Date();
   update.setUTCHours(update.getUTCHours() + Math.round(update.getUTCMinutes() / 60));
   update.setUTCMinutes(0,0,0);
-  return (update.getTime() + ((2 + (Math.random() / 4)) * 60 * 60 * 1000));
+  return (update.getTime() + ((1 + (Math.random() / 4)) * 60 * 60 * 1000));
 }
 
 Mountains.prototype._needUpdate = function() {
