@@ -5,7 +5,7 @@ const Scotland = require('../components/map')
 // const Welcome = require('../components/welcome');
 const MountainDetail = require('../components/mountain_detail');
 const MBDrawer = require('./mb_drawer')
-const MountainSnackbar = require('../components/mountain_snackbar')
+const IntroSnackbar = require('../components/intro_snackbar')
 const Login = require('../components/user/login');
 const Registration = require('../components/user/registration');
 const ResetPassword = require('../components/user/reset_password');
@@ -128,7 +128,7 @@ const UI = React.createClass({
           loggedIn = true;
         }
         this.addPinsToMap(mtns, loggedIn);
-        this.logAndSetState({busy: false, userLoggedIn: loggedIn});
+        this.logAndSetState({busy: false, userLoggedIn: loggedIn, action: "intro"});
         if (!success && (returned.status === 600)) {
           // Offline - reissue the request without a timeout - it shoiuld succeed at some point
           this.state.user.getInfo(false, function(success, returned) {
@@ -143,7 +143,7 @@ const UI = React.createClass({
     }
     else {
       this.addPinsToMap(mtns, false);
-      this.logAndSetState({busy: false});
+      this.logAndSetState({busy: false, action: "intro"});
     }
   },
 
@@ -227,10 +227,10 @@ const UI = React.createClass({
 
   onMountainSelected: function(mtnView) {
     this.mapObj.openInfoWindowForMountain(mtnView.pin);
-    if (this.state.showingMountain)
+    // if (this.state.showingMountain)
       this.logAndSetState({focusMountain: mtnView});
-    else
-      this.logAndSetState({focusMountain: mtnView, action: 'snackbar'});
+    // else
+    //   this.logAndSetState({focusMountain: mtnView, action: 'snackbar'});
   },
 
   onInfoRequested: function(mtnView) {
@@ -367,8 +367,8 @@ const UI = React.createClass({
               dayNum={this.state.dayNum}
               baseDate={baseDate}
               userLoggedIn={this.state.userLoggedIn} />
-            <MountainSnackbar
-              willDisplay={this.selectedAction('snackbar')}
+            <IntroSnackbar
+              willDisplay={this.selectedAction('intro')}
               onCompleted={this.onCompleted}/>
             <Login
               user={this.state.user}

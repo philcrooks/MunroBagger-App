@@ -156,7 +156,10 @@ Mountains.prototype._updateTime = function(lastUpdate) {
   let update = (lastUpdate) ? new Date(lastUpdate) : new Date();
   update.setUTCHours(update.getUTCHours() + Math.round(update.getUTCMinutes() / 60));
   update.setUTCMinutes(0,0,0);
-  return (update.getTime() + ((1 + (Math.random() / 4)) * 60 * 60 * 1000));
+  let t_ms = update.getTime();
+  let t_adjust = (t_ms > Date.now()) ? 0 : 1;
+  t_adjust += (Math.random() / 4);
+  return (t_ms + (t_adjust * 60 * 60 * 1000));
 }
 
 Mountains.prototype._needUpdate = function() {
