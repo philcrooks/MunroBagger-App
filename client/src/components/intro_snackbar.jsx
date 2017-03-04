@@ -16,6 +16,7 @@ const IntroSnackbar = React.createClass({
   },
 
   handleTimeoutSnackbar: function() {
+    logger("Intro Snackbar timeout")
     this.setState({ active: false });
     this.props.onCompleted();
   },
