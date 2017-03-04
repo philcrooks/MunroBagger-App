@@ -40,7 +40,7 @@ const MountainSnackbar = React.createClass({
         onClick={this.handleClickActionSnackbar}
         onTimeout={this.handleTimeoutSnackbar}
         action="Got it">
-        Click <span className="info-icon">i</span>for more information.
+        Tap <span className="info-icon">i</span>for more information.
       </Snackbar>
     )
   }
