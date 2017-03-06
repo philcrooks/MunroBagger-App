@@ -26,9 +26,9 @@ describe("MountainsView", function(){
   	modelStub = sinon.stub(mountainsView._mountainsModel, "_fetchFromNetwork");
   	modelStub.withArgs("munros").yields(stubData.munros());
   	modelStub.withArgs("forecasts?time=2017-02-05T18%3A19%3A27.710Z")
-  		.onFirstCall().yields(null)
-  		.onSecondCall().yields(stub_forecasts.slice(0, 3))
-  		.onThirdCall().yields(stub_forecasts);
+  		.onFirstCall().yields(null, 304)
+  		.onSecondCall().yields(stub_forecasts.slice(0, 3), 200)
+  		.onThirdCall().yields(stub_forecasts, 200);
   	user = {
   		baggedList: [
   			new UserMountain({id:  4, munro_id: 1, climbed_on: null}),
