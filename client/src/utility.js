@@ -125,12 +125,11 @@ const dateString = function(dateTime) {
 };
 
 const timeString = function(dateTime) {
-  const hours = dateTime.getUTCHours();
-  const mins = dateTime.getUTCMinutes();
+  const hours = dateTime.getHours();
+  const mins = dateTime.getMinutes();
   let stringTime = (hours >= 10) ? hours.toString() : "0" + hours.toString();
   stringTime += ":";
   stringTime += (mins >= 10) ? mins.toString() : "0" + mins.toString();
-  stringTime += " GMT"
   return stringTime;
 };
 
