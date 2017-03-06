@@ -36,7 +36,7 @@ const IntroSnackbar = React.createClass({
         onTimeout={this.handleTimeoutSnackbar}
         timeout={7500}
         action="Got it">
-        Tap a mountain then <span className="info-icon">i</span>to find out more.
+        Tap a mountain then <span className="info-icon">i</span>for info.
       </Snackbar>
     )
   }
