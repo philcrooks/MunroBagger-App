@@ -155,10 +155,11 @@ Mountains.prototype._updateTime = function(lastUpdate) {
 
   let update = (lastUpdate) ? new Date(lastUpdate) : new Date();
   update.setUTCHours(update.getUTCHours() + Math.round(update.getUTCMinutes() / 60));
-  update.setUTCMinutes(0,0,0);
+  update.setUTCMinutes(0, 0, 0);
   let t_ms = update.getTime();
   let t_adjust = (t_ms > Date.now()) ? 0 : 1;
-  t_adjust += (Math.random() / 4);
+  // Retries can delay the final upload until more than  10 minutes after starting
+  t_adjust += (Math.random() / 6) + 0.08333; // five minutes past until 15 minutes past the hour
   return (t_ms + (t_adjust * 60 * 60 * 1000));
 }
 
