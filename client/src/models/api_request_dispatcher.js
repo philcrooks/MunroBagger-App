@@ -71,7 +71,7 @@ ApiRequestDispatcher.prototype._onTransmitTimeout = function(request) {
 	}
 	else {
 		if (network.online)
-			request._send();
+			request._send(); // At this point it seems that the request is no longer open so cannot be sent
 		else
 			this._enqueue(request);
 	}

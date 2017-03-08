@@ -6,34 +6,34 @@ const XMLHttpRequest = (process.env.NODE_ENV === 'test') ? require('../stubs').X
 
 let ApiRequest = function() {
   this._request = new XMLHttpRequest();
+  this._options = null;
   this._content = null;
-  this._callback = null;
-  this._timeout = false;
   this._timeoutID = null;
   this._status = 'created';
   this._id = 0;
 
-  Object.defineProperty(this, "timeout", { get: function() { return this._timeout; } });
-  Object.defineProperty(this, "callback", { get: function() { return this._callback; } });
+  Object.defineProperty(this, "timeout", { get: function() { return this._options.timeout; } });
+  Object.defineProperty(this, "callback", { get: function() { return this._options.callback; } });
   Object.defineProperty(this, "status", { get: function() { return this._status; } });
   Object.defineProperty(this, "id", { get: function() { return this._id; } });
 };
 
-ApiRequest.prototype._makeRequest = function(httpVerb, url, expected, callback, jwtoken, content, timeout) {
-  this._request.open(httpVerb, url);
+ApiRequest.prototype._makeRequest = function(options) {
+  // httpVerb, url, expected, callback, jwtoken, content, timeout) {
+  if (options) this._options = options;
+
+  this._request.open(this._options.verb, this._options.url);
   // request.withCredentials = true;
-  if (jwtoken) this._request.setRequestHeader('Authorization', 'Bearer ' + jwtoken);
-  if (content) this._request.setRequestHeader('Content-Type', 'application/json');
+  if (this._options.jwt) this._request.setRequestHeader('Authorization', 'Bearer ' + this._options.jwt);
+  if (this._options.content) this._request.setRequestHeader('Content-Type', 'application/json');
   this._request.onload = function() {
     // In the callback, 'this' is the request
-    let errorStatus = (expected.indexOf(this.status) === -1);
+    let errorStatus = (this._options.expected.indexOf(this.status) === -1);
     let content = ((this.status === 204) || errorStatus ) ? null : JSON.parse(this.responseText);
-    logger(httpVerb + " request to " + url + " returned status " + this.status)
+    logger(httpVerb + " request to " + url + " returned status " + this.status);
     callback(this.status, content);
   };
-  if (content) this._content = JSON.stringify(content);
-  this._callback = callback;
-  this._timeout = timeout;
+  if (this._options.content) this._content = JSON.stringify(this._options.content);
   return dispatcher.dispatch(this);
 };
 
@@ -51,19 +51,54 @@ ApiRequest.prototype._stopTimeout = function() {
 };
 
 ApiRequest.prototype.makeGetRequest = function(url, jwtoken, timeout, callback) {
-  return this._makeRequest("GET", url, [200], callback, jwtoken, null, timeout)
+  const options = {
+    verb: "GET",
+    url: url,
+    expected: [200],
+    jwt: jwtoken,
+    timeout: timeout,
+    callback: callback
+  };
+  return this._makeRequest(options);
 };
 
 ApiRequest.prototype.makePostRequest = function(url, content, jwtoken, timeout, callback) {
-  return this._makeRequest("POST", url, [200, 201], callback, jwtoken, content, timeout)
+  const options = {
+    verb: "POST",
+    url: url,
+    content: content,
+    expected: [200, 201],
+    jwt: jwtoken,
+    timeout: timeout,
+    callback: callback
+  };
+  return this._makeRequest(options);
 };
 
 ApiRequest.prototype.makePutRequest = function(url, content, jwtoken, timeout, callback) {
-  return this._makeRequest("PUT", url, [200, 201], callback, jwtoken, content, timeout)
+  const options = {
+    verb: "PUT",
+    url: url,
+    content: content,
+    expected: [200, 201],
+    jwt: jwtoken,
+    timeout: timeout,
+    callback: callback
+  };
+  return this._makeRequest(options);
 };
 
 ApiRequest.prototype.makeDeleteRequest = function(url, content, jwtoken, timeout, callback) {
-  return this._makeRequest("DELETE", url, [200, 204], callback, jwtoken, content, timeout);
+  const options = {
+    verb: "DELETE",
+    url: url,
+    content: content,
+    expected: [200, 204],
+    jwt: jwtoken,
+    timeout: timeout,
+    callback: callback
+  };
+  return this._makeRequest(options);
 };
 
 module.exports = ApiRequest;
