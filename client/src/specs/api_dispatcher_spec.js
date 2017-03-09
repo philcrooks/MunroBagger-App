@@ -264,7 +264,7 @@ describe("API Dispatcher", function() {
     });
 
     it("Returns network timeout error", function () {
-      assert.strictEqual(request._request.sendCount, 1);
+      assert.strictEqual(request.retries, 0);
       assert.strictEqual(status, 600);
       assert.strictEqual(response, null);
     });
@@ -307,7 +307,7 @@ describe("API Dispatcher", function() {
     });
 
     it("Resends the message", function () {
-      assert.strictEqual(request._request.sendCount, 2);
+      assert.strictEqual(request.retries, 1);
     });
 
     it("Returns the correct data", function () {
@@ -337,7 +337,7 @@ describe("API Dispatcher", function() {
     });
 
     it("Sent the message", function () {
-      assert.strictEqual(request._request.sendCount, 1);
+      assert.strictEqual(request._tries, 1);
     });
 
     it("Requeues the message", function () {

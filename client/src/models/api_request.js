@@ -11,11 +11,13 @@ let ApiRequest = function() {
   this._timeoutID = null;
   this._status = 'created';
   this._id = 0;
+  this._tries = 0;
 
   Object.defineProperty(this, "timeout", { get: function() { return this._options.timeout; } });
   Object.defineProperty(this, "callback", { get: function() { return this._options.callback; } });
   Object.defineProperty(this, "status", { get: function() { return this._status; } });
   Object.defineProperty(this, "id", { get: function() { return this._id; } });
+  Object.defineProperty(this, "retries", { get: function() { return (this._tries > 0) ? this._tries - 1 : 0; } });
 };
 
 ApiRequest.prototype._setRequest = function(options) {
@@ -47,6 +49,7 @@ ApiRequest.prototype._makeRequest = function(options) {
 };
 
 ApiRequest.prototype._send = function() {
+  this._tries += 1;
   this._request.send(this._json);
 };
 
