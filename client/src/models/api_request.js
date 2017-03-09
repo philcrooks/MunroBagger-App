@@ -7,7 +7,7 @@ const XMLHttpRequest = (process.env.NODE_ENV === 'test') ? require('../stubs').X
 let ApiRequest = function() {
   this._request = new XMLHttpRequest();
   this._options = null;
-  this._content = null;
+  this._json = null;
   this._timeoutID = null;
   this._status = 'created';
   this._id = 0;
@@ -18,31 +18,40 @@ let ApiRequest = function() {
   Object.defineProperty(this, "id", { get: function() { return this._id; } });
 };
 
-ApiRequest.prototype._makeRequest = function(options) {
-  // httpVerb, url, expected, callback, jwtoken, content, timeout) {
-  if (options) this._options = options;
+ApiRequest.prototype._setRequest = function(options) {
+  this._request.open(options.verb, options.url);
+  if (options.jwt) this._request.setRequestHeader('Authorization', 'Bearer ' + options.jwt);
+  if (options.content) this._request.setRequestHeader('Content-Type', 'application/json');
 
-  this._request.open(this._options.verb, this._options.url);
-  // request.withCredentials = true;
-  if (this._options.jwt) this._request.setRequestHeader('Authorization', 'Bearer ' + this._options.jwt);
-  if (this._options.content) this._request.setRequestHeader('Content-Type', 'application/json');
   this._request.onload = function() {
     // In the callback, 'this' is the request
-    let errorStatus = (this._options.expected.indexOf(this.status) === -1);
+    let errorStatus = (options.expected.indexOf(this.status) === -1);
     let content = ((this.status === 204) || errorStatus ) ? null : JSON.parse(this.responseText);
-    logger(httpVerb + " request to " + url + " returned status " + this.status);
-    callback(this.status, content);
+    logger( options.verb + " request to " + options.url + " returned status " + this.status);
+    options.callback(this.status, content);
   };
-  if (this._options.content) this._content = JSON.stringify(this._options.content);
+
+  if (options.content) this._json = JSON.stringify(options.content);
+};
+
+ApiRequest.prototype._resetRequest = function() {
+  this._request = new XMLHttpRequest();
+  this._setRequest(this._options);
+  return this;
+};
+
+ApiRequest.prototype._makeRequest = function(options) {
+  this._options = options;
+  this._setRequest(options);
   return dispatcher.dispatch(this);
 };
 
 ApiRequest.prototype._send = function() {
-  this._request.send(this._content);
+  this._request.send(this._json);
 };
 
 ApiRequest.prototype._startTimeout = function(duration, callback) {
-  if (this._timeout) this._timeoutID = setTimeout(callback, duration, this);
+  if (this.timeout) this._timeoutID = setTimeout(callback, duration, this);
 };
 
 ApiRequest.prototype._stopTimeout = function() {
@@ -54,6 +63,7 @@ ApiRequest.prototype.makeGetRequest = function(url, jwtoken, timeout, callback) 
   const options = {
     verb: "GET",
     url: url,
+    content: null,
     expected: [200],
     jwt: jwtoken,
     timeout: timeout,
