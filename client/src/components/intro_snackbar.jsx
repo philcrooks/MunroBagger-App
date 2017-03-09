@@ -1,10 +1,13 @@
 const React = require('react');
 import { Snackbar } from 'react-mdl';
 const logger = require('../utility').logger;
+const hideIntroKey = "hide_intro";
 
 const IntroSnackbar = React.createClass({
   getInitialState: function() {
-    return({ active: false });
+    const hideForever = (localStorage.getItem(hideIntroKey) === true.toString());
+    logger("IntroSnackbar is", (hideForever) ? "hidden" : "not hidden")
+    return({ active: false,  hideForever: hideForever});
   },
 
   shouldComponentUpdate: function(nextProps, nextState) {
@@ -12,7 +15,7 @@ const IntroSnackbar = React.createClass({
   },
 
   componentWillReceiveProps: function(nextProps) {
-    if (!this.state.active && nextProps.willDisplay) this.setState({active: true});
+    if (!this.state.active && !this.state.hideForever && nextProps.willDisplay) this.setState({active: true});
   },
 
   handleTimeoutSnackbar: function() {
@@ -22,7 +25,8 @@ const IntroSnackbar = React.createClass({
   },
 
   handleClickActionSnackbar: function() {
-    this.setState({ active: false });
+    this.setState({ active: false, hideForever: true });
+    localStorage.setItem(hideIntroKey, true.toString());
     this.props.onCompleted();
   },
 
