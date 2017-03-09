@@ -18,10 +18,7 @@ const ApiRequestDispatcher = function() {
 ApiRequestDispatcher.prototype.dispatch = function(request) {
 	request._id = this._nextId();
 
-	request._request.timeout = timeoutDuration;
-	request._request.ontimeout = function() {
-		this._onTransmitTimeout(request);
-	}.bind(this);
+	this._setTxTimeout(request);
 
 	if (!network.online) {
 		if (request.timeout) request._startTimeout(timeoutDuration, this._onTimeout.bind(this));
@@ -32,6 +29,13 @@ ApiRequestDispatcher.prototype.dispatch = function(request) {
 		request._send();
 	}
 	return request;
+};
+
+ApiRequestDispatcher.prototype._setTxTimeout = function(request) {
+	request._request.timeout = timeoutDuration;
+	request._request.ontimeout = function() {
+		this._onTxTimeout(request);
+	}.bind(this);
 };
 
 ApiRequestDispatcher.prototype._enqueue = function(request) {
@@ -63,15 +67,17 @@ ApiRequestDispatcher.prototype._online = function() {
 	}
 };
 
-ApiRequestDispatcher.prototype._onTransmitTimeout = function(request) {
+ApiRequestDispatcher.prototype._onTxTimeout = function(request) {
 	logger("Transmission timeout for request with id", request.id +".");
 	if (request.timeout) {
 		request._status = "timeout";
 		request.callback(600, null);	
 	}
 	else {
+		// Prepare the request for resending
+		this._setTxTimeout(request._resetRequest());
 		if (network.online)
-			request._send(); // At this point it seems that the request is no longer open so cannot be sent
+			request._send();
 		else
 			this._enqueue(request);
 	}
