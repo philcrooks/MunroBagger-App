@@ -18,7 +18,7 @@ const ApiRequestDispatcher = function() {
 ApiRequestDispatcher.prototype.dispatch = function(request) {
 	request._id = this._nextId();
 
-	this._setTxTimeout(request);
+	request._setTxTimeout(timeoutDuration, this._onTxTimeout.bind(this));
 
 	if (!network.online) {
 		if (request.timeout) request._startTimeout(timeoutDuration, this._onTimeout.bind(this));
@@ -29,13 +29,6 @@ ApiRequestDispatcher.prototype.dispatch = function(request) {
 		request._send();
 	}
 	return request;
-};
-
-ApiRequestDispatcher.prototype._setTxTimeout = function(request) {
-	request._request.timeout = timeoutDuration;
-	request._request.ontimeout = function() {
-		this._onTxTimeout(request);
-	}.bind(this);
 };
 
 ApiRequestDispatcher.prototype._enqueue = function(request) {
@@ -75,11 +68,11 @@ ApiRequestDispatcher.prototype._onTxTimeout = function(request) {
 	}
 	else {
 		// Prepare the request for resending
-		this._setTxTimeout(request._resetRequest());
+		request._resetRequest()._setTxTimeout(timeoutDuration, this._onTxTimeout.bind(this));
 		if (network.online)
 			request._send();
 		else
-			this._enqueue(request);
+			this._enqueue(request); // Should be put back on the queue with lowest id first
 	}
 };
 

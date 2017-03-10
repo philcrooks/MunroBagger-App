@@ -62,6 +62,13 @@ ApiRequest.prototype._stopTimeout = function() {
   this._timeoutID = null;
 };
 
+ApiRequest.prototype._setTxTimeout = function(duration, callback) {
+  this._request.timeout = duration;
+  this._request.ontimeout = function() {
+    callback(this);
+  }.bind(this);
+};
+
 ApiRequest.prototype.makeGetRequest = function(url, jwtoken, timeout, callback) {
   const options = {
     verb: "GET",
