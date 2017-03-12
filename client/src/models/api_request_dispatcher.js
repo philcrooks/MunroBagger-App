@@ -48,6 +48,8 @@ ApiRequestDispatcher.prototype._dequeue = function(request) {
 };
 
 ApiRequestDispatcher.prototype._requeue = function(request) {
+	// This method assumes that the value of the request id will always increase (which cannot happen)
+	// However, with only one request being sent out every hour or so, the assumption is safe enough
 	logger("Putting request with id", request.id, "back on the dispatcher queue.");
 	request._status = "waiting";
 	// Find the first queued request with an id greater than request id ainsert the request before it.
