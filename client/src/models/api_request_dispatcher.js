@@ -47,6 +47,19 @@ ApiRequestDispatcher.prototype._dequeue = function(request) {
 	}
 };
 
+ApiRequestDispatcher.prototype._requeue = function(request) {
+	logger("Putting request with id", request.id, "back on the dispatcher queue.");
+	request._status = "waiting";
+	// Find the first queued request with an id greater than request id ainsert the request before it.
+	const i = this._queue.findIndex(function(queued) {
+		return queued.id > request.id
+	})
+	if (i < 0)
+		this._queue.push(request);
+	else
+		this._queue.splice(i, 0, request);
+};
+
 ApiRequestDispatcher.prototype._online = function() {
 	logger("Online event received.");
 	while (this._queue.length > 0) {
@@ -72,7 +85,7 @@ ApiRequestDispatcher.prototype._onTxTimeout = function(request) {
 		if (network.online)
 			request._send();
 		else
-			this._enqueue(request); // Should be put back on the queue with lowest id first
+			this._requeue(request); // Put the request back on the queue
 	}
 };
 

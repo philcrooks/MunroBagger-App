@@ -316,7 +316,7 @@ describe("API Dispatcher", function() {
     });
   });
 
-  describe ("Message times out & netwok is offline so requeued", function() {
+  describe ("Message times out & network is offline so requeued", function() {
     const callback = sinon.spy();
     const request = new ApiRequest();
 
@@ -325,7 +325,7 @@ describe("API Dispatcher", function() {
       network.online = true;
 
       server.respondWith("GET", baseURL + "munros", [200, munros]);
-      request._request.loseRequest = true; // a feature of the test stub - only loses first request
+      request._request.loseRequest = true; // a feature of the test stub - will only lose the first request
       request.makeGetRequest(baseURL + "munros", null, false, callback);
       setTimeout(function(){
         network.online = false;
@@ -358,6 +358,79 @@ describe("API Dispatcher", function() {
       assert.strictEqual(callback.callCount, 1);
 
       let call = callback.getCall(0);
+      assert.strictEqual(call.args[0], 200);
+      assert.deepStrictEqual(call.args[1], JSON.parse(munros));
+    });
+  });
+
+  describe ("Messages time out & network is offline so requeued in the original order", function() {
+    const callback = sinon.spy();
+    const request1 = new ApiRequest();
+    const request2 = new ApiRequest();
+    const request3 = new ApiRequest();
+    let id1 = 0;
+    let id2 = 0;
+    let id3 = 0;
+
+    before(function(done) {
+      server.initialize();
+      network.online = true;
+
+      server.respondWith("GET", baseURL + "munros", [200, munros]);
+
+      request1._request.loseRequest = true; // a feature of the test stub - will only lose the first request
+      request1.makeGetRequest(baseURL + "munros", null, false, callback);
+      id1 = request1.id;
+      request2._request.loseRequest = true;
+      request2.makeGetRequest(baseURL + "munros", null, false, callback);
+      id2 = request2.id;
+      setTimeout(function(){
+        network.online = false;
+        request3.makeGetRequest(baseURL + "munros", null, false, callback);
+        id3 = request3.id;
+        setTimeout(function(){
+          // wait for sent requests to timeout
+          done();
+        }, 100) // For test network timeout is 100ms
+      }, 50)
+    });
+
+    it("Sent the messages", function () {
+      assert.strictEqual(request1._tries, 1);
+      assert.strictEqual(request2._tries, 1);
+      assert.strictEqual(request3._tries, 0);
+    });
+
+    it("Requeues the message", function () {
+      assert.strictEqual(dispatcher._queue.length, 3);
+    });
+
+    it("Messages are in the right order", function () {
+      assert.strictEqual(dispatcher._queue[0].id, id1);
+      assert.strictEqual(dispatcher._queue[1].id, id2);
+      assert.strictEqual(dispatcher._queue[2].id, id3);
+    });
+
+    it("Empties the queue", function () {
+      network.online = true;
+      dispatcher._online();
+
+      assert.strictEqual(dispatcher._queue.length, 0);
+      assert.strictEqual(server.requests.length, 3);
+    });
+
+    it("Returns the correct data", function () {
+      server.respond();
+
+      assert.strictEqual(callback.callCount, 3);
+
+      let call = callback.getCall(0);
+      assert.strictEqual(call.args[0], 200);
+      assert.deepStrictEqual(call.args[1], JSON.parse(munros));
+      call = callback.getCall(1);
+      assert.strictEqual(call.args[0], 200);
+      assert.deepStrictEqual(call.args[1], JSON.parse(munros));
+      call = callback.getCall(2);
       assert.strictEqual(call.args[0], 200);
       assert.deepStrictEqual(call.args[1], JSON.parse(munros));
     });
