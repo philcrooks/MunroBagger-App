@@ -39,7 +39,6 @@ const XMLHttpRequest = function() {
   this.headers = {};
   this.content = undefined;
   this.loseRequest = false; // Set this to prevent the request reaching the server
-  this.sendCount = 0;
   // Response
   this.status = undefined;
   this.responseText = undefined;
@@ -57,7 +56,6 @@ XMLHttpRequest.prototype.setRequestHeader = function(name, value) {
 XMLHttpRequest.prototype.send = function(content) {
   if (!content) content = null;
   this.content = content;
-  this.sendCount += 1;
   if (this.loseRequest) {
     this.loseRequest = false; // Don't lose the resend (if there is one)
     if ((this.timeout > 0) && (this.ontimeout)) {

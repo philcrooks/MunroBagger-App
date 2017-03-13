@@ -50,6 +50,27 @@ describe("API Request", function() {
       assert.deepStrictEqual(call.args[1], JSON.parse(json));
     });
 
+    it("Can reset a GET Request", function() {
+      const url = baseURL + "munros";
+      const json = stubData.jsonMunros();
+      const callback = sinon.spy();
+
+      server.respondWith("GET", url, [200, json]);
+
+      apiRequest.makeGetRequest(url, token, true, callback);
+      apiRequest._resetRequest()._send();
+
+      server.respond(); // Process all requests so far
+
+      assert.strictEqual(callback.callCount, 2);
+      let call = callback.getCall(0);
+      assert.strictEqual(call.args[0], 200);
+      assert.deepStrictEqual(call.args[1], JSON.parse(json));
+      call = callback.getCall(1);
+      assert.strictEqual(call.args[0], 200);
+      assert.deepStrictEqual(call.args[1], JSON.parse(json));
+    });
+
     it("Create a POST Request", function () {
       const url = baseURL + "users";
       const params = { user: { email: 'email@email.com', password: 'password' } };
@@ -76,6 +97,28 @@ describe("API Request", function() {
 
       assert.strictEqual(callback.callCount, 1);
       const call = callback.getCall(0);
+      assert.strictEqual(call.args[0], 201);
+      assert.deepStrictEqual(call.args[1], JSON.parse(json));
+    });
+
+    it("Can reset a POST Request", function () {
+      const url = baseURL + "users";
+      const params = { user: { email: 'email@email.com', password: 'password' } };
+      const json = JSON.stringify({ id: 11, email: 'email@email.com' });
+      const callback = sinon.spy();
+
+      server.respondWith("POST", url, [201, json]);
+
+      apiRequest.makePostRequest(url, params, null, true, callback);
+      apiRequest._resetRequest()._send();
+
+      server.respond(); // Process all requests so far
+
+      assert.strictEqual(callback.callCount, 2);
+      let call = callback.getCall(0);
+      assert.strictEqual(call.args[0], 201);
+      assert.deepStrictEqual(call.args[1], JSON.parse(json));
+      call = callback.getCall(1);
       assert.strictEqual(call.args[0], 201);
       assert.deepStrictEqual(call.args[1], JSON.parse(json));
     });
@@ -111,6 +154,30 @@ describe("API Request", function() {
       assert.deepStrictEqual(call.args[1], JSON.parse(json));
     });
 
+    it("Can reset a PUT Request", function () {
+      const url = baseURL + "bagged_munros/5";
+      const params = { munro_id: 24, climbed_on: undefined }
+      const json = JSON.stringify({ munro_id: 24, climbed_on: null });
+      const callback = sinon.spy();
+
+      server.respondWith("PUT", url, [201, json]);
+
+      apiRequest.makePutRequest(url, params, token, true, callback);
+      apiRequest._resetRequest()._send();
+
+      server.respond();
+
+      assert.strictEqual(callback.callCount, 2);
+      let call = callback.getCall(0);
+      assert.strictEqual(call.args.length, 2);
+      assert.strictEqual(call.args[0], 201);
+      assert.deepStrictEqual(call.args[1], JSON.parse(json));
+      call = callback.getCall(1);
+      assert.strictEqual(call.args.length, 2);
+      assert.strictEqual(call.args[0], 201);
+      assert.deepStrictEqual(call.args[1], JSON.parse(json));
+    });
+
     it("Create a DELETE Request", function () {
       const url = baseURL + "sessions";
 
@@ -134,6 +201,28 @@ describe("API Request", function() {
 
       assert.strictEqual(callback.callCount, 1);
       const call = callback.getCall(0);
+      assert.strictEqual(call.args.length, 2);
+      assert.strictEqual(call.args[0], 204);
+      assert.strictEqual(call.args[1], null);
+    });
+
+    it("Can reset a DELETE Request", function () {
+      const url = baseURL + "sessions";
+      const callback = sinon.spy();
+
+      server.respondWith("DELETE", url, [204]);
+
+      apiRequest.makeDeleteRequest(url, null, token, true, callback);
+      apiRequest._resetRequest()._send();
+
+      server.respond(); // Process all requests so far
+
+      assert.strictEqual(callback.callCount, 2);
+      let call = callback.getCall(0);
+      assert.strictEqual(call.args.length, 2);
+      assert.strictEqual(call.args[0], 204);
+      assert.strictEqual(call.args[1], null);
+      call = callback.getCall(1);
       assert.strictEqual(call.args.length, 2);
       assert.strictEqual(call.args[0], 204);
       assert.strictEqual(call.args[1], null);

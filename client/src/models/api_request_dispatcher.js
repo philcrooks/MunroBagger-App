@@ -18,10 +18,7 @@ const ApiRequestDispatcher = function() {
 ApiRequestDispatcher.prototype.dispatch = function(request) {
 	request._id = this._nextId();
 
-	request._request.timeout = timeoutDuration;
-	request._request.ontimeout = function() {
-		this._onTransmitTimeout(request);
-	}.bind(this);
+	request._setTxTimeout(timeoutDuration, this._onTxTimeout.bind(this));
 
 	if (!network.online) {
 		if (request.timeout) request._startTimeout(timeoutDuration, this._onTimeout.bind(this));
@@ -50,6 +47,21 @@ ApiRequestDispatcher.prototype._dequeue = function(request) {
 	}
 };
 
+ApiRequestDispatcher.prototype._requeue = function(request) {
+	// This method assumes that the value of the request id will always increase (which cannot happen)
+	// However, with only one request being sent out every hour or so, the assumption is safe enough
+	logger("Putting request with id", request.id, "back on the dispatcher queue.");
+	request._status = "waiting";
+	// Find the first queued request with an id greater than request id ainsert the request before it.
+	const i = this._queue.findIndex(function(queued) {
+		return queued.id > request.id
+	})
+	if (i < 0)
+		this._queue.push(request);
+	else
+		this._queue.splice(i, 0, request);
+};
+
 ApiRequestDispatcher.prototype._online = function() {
 	logger("Online event received.");
 	while (this._queue.length > 0) {
@@ -63,17 +75,19 @@ ApiRequestDispatcher.prototype._online = function() {
 	}
 };
 
-ApiRequestDispatcher.prototype._onTransmitTimeout = function(request) {
+ApiRequestDispatcher.prototype._onTxTimeout = function(request) {
 	logger("Transmission timeout for request with id", request.id +".");
 	if (request.timeout) {
 		request._status = "timeout";
 		request.callback(600, null);	
 	}
 	else {
+		// Prepare the request for resending
+		request._resetRequest()._setTxTimeout(timeoutDuration, this._onTxTimeout.bind(this));
 		if (network.online)
 			request._send();
 		else
-			this._enqueue(request);
+			this._requeue(request); // Put the request back on the queue
 	}
 };
 
