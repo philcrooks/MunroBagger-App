@@ -1,3 +1,4 @@
+"use strict"
 var Pin = require('./pin');
 var getBrowserWidth = require('../utility').getBrowserWidth;
 
@@ -36,6 +37,12 @@ var MapObject = function(container) {
   this._prevFocus = null;
   this._allPins = [];
   this._preventPan();
+  Object.defineProperty(this, "satelliteView", {
+    set: function(on){
+      const typeId = (on) ? 'satellite' : 'terrain';
+      this._map.setMapTypeId(typeId)
+    }
+  });
 };
 
 MapObject.prototype._scaleZoom = function(){

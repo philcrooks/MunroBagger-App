@@ -26,7 +26,6 @@ const timeIncrement = 30 * 60 * 1000;
 const UI = React.createClass({
 
   getInitialState: function() {
-    this.mapObj = null;
     this.mountainViews = null;
     this.timeoutID = -1;
 
@@ -35,7 +34,8 @@ const UI = React.createClass({
     baseDate.setHours(0,0,0,0);
 
     return {
-      busy:           true,
+      mapObj:           null,
+      busy:             true,
       dayNum:           0,
       focusMountain:    null,
       showingMountain:  false,
@@ -72,7 +72,7 @@ const UI = React.createClass({
       const baseDate = mtnsView.forecastDates.baseDate;
       // Allow for a change in date
       if (baseDate && (baseDate.getTime() !== this.state.baseDate.getTime())) this.logAndSetState({baseDate: baseDate});
-      if (this.mapObj) this.putMountainsOnMap(mtnsView);
+      if (this.state.mapObj) this.putMountainsOnMap(mtnsView);
       this.mountainViews = mtnsView;
     }.bind(this))
   },
@@ -96,7 +96,7 @@ const UI = React.createClass({
         // Set the baseDate even if it hasn't changed to force the UI to redraw after an update
         if (baseDate) this.logAndSetState({baseDate: baseDate}); 
         // Change the forecast without changing the forecast dayNum
-        if (this.mapObj) this.mapObj.changeForecasts(this.state.dayNum);      
+        if (this.state.mapObj) this.state.mapObj.changeForecasts(this.state.dayNum);      
       }
       else {
         logger("No forecasts received");
@@ -110,7 +110,7 @@ const UI = React.createClass({
 
   addPinsToMap: function(mountains, loggedIn) {
     for (let i = 0; i < mountains.length; i++) {
-      this.mapObj.addPin(mountains[i], this.onMountainSelected, this.onInfoRequested, loggedIn);
+      this.state.mapObj.addPin(mountains[i], this.onMountainSelected, this.onInfoRequested, loggedIn);
     }
   },
 
@@ -134,7 +134,7 @@ const UI = React.createClass({
           this.state.user.getInfo(false, function(success, returned) {
             if (success) {
               mtnsView.userLogin(this.state.user);
-              this.mapObj.userLoggedIn(mtns);
+              this.state.mapObj.userLoggedIn(mtns);
               this.logAndSetState({userLoggedIn: true});
             }
           }.bind(this))
@@ -157,7 +157,7 @@ const UI = React.createClass({
     this.state.user.logout(function(success) {
       if (!success) return;
       this.mountainViews.userLogout();
-      this.mapObj.userLoggedOut();
+      this.state.mapObj.userLoggedOut();
       this.logAndSetState({userLoggedIn: false, action: null});
     }.bind(this))
   },
@@ -199,7 +199,7 @@ const UI = React.createClass({
   onLoginCompleted: function(isLoggedIn, nextAction) {
     if (isLoggedIn) {
       this.mountainViews.userLogin(this.state.user);
-      this.mapObj.userLoggedIn(this.mountainViews.mountains);
+      this.state.mapObj.userLoggedIn(this.mountainViews.mountains);
       this.logAndSetState({userLoggedIn: true, action: nextAction});
     }
     else {
@@ -214,7 +214,7 @@ const UI = React.createClass({
 
   onMapLoaded: function(mapObj) {
     logger("Map loaded");
-    this.mapObj = mapObj;
+    this.logAndSetState({mapObj: mapObj});
     
     // Now the map exists add the mountains
     if (this.mountainViews) this.putMountainsOnMap(this.mountainViews)
@@ -222,11 +222,11 @@ const UI = React.createClass({
 
   onForecastDaySelected: function(dayNum) {
     this.logAndSetState({dayNum: dayNum})
-    this.mapObj.changeForecasts(dayNum);
+    this.state.mapObj.changeForecasts(dayNum);
   },
 
   onMountainSelected: function(mtnView) {
-    this.mapObj.openInfoWindowForMountain(mtnView.pin);
+    this.state.mapObj.openInfoWindowForMountain(mtnView.pin);
     // if (this.state.showingMountain)
       this.logAndSetState({focusMountain: mtnView});
     // else
@@ -354,7 +354,7 @@ const UI = React.createClass({
             </HeaderTabs>
           </Header>
           <MBDrawer
-            map={this.mapObj}
+            map={this.state.mapObj}
             userLoggedIn={this.state.userLoggedIn} />
           <Content>
             <Scotland mapLoaded={this.onMapLoaded}/>

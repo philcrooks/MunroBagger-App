@@ -1,3 +1,5 @@
+"use strict"
+
 const React = require('react');
 import { Drawer, Textfield, List, ListItem, Navigation, Checkbox } from 'react-mdl';
 const logger = require('../utility').logger;
@@ -9,7 +11,8 @@ const MBDrawer = React.createClass({
 			{
 				map: null,
 				showClimbed: true,
-				showUnclimbed: true
+				showUnclimbed: true,
+				showSatelliteView: false
 			}
 		)
 	},
@@ -24,7 +27,8 @@ const MBDrawer = React.createClass({
     return (this.state.map != nextState.map) ||
       (this.props.userLoggedIn !== nextProps.userLoggedIn) ||
       (this.state.showClimbed !== nextState.showClimbed) ||
-      (this.state.showUnclimbed !== nextState.showUnclimbed);
+      (this.state.showUnclimbed !== nextState.showUnclimbed) ||
+      (this.state.showSatelliteView !== nextState.showSatelliteView);
 	},
 
 	climbedChange: function(event) {
@@ -47,6 +51,12 @@ const MBDrawer = React.createClass({
 	  }
   },
 
+ 	viewChange: function(event) {
+    let status = event.target.checked;
+    this.setState({showSatelliteView: status})
+    this.state.map.satelliteView = status;
+  },
+
 	render: function() {
 
 		logger("Rendering Drawer")
@@ -63,6 +73,11 @@ const MBDrawer = React.createClass({
 						checked={this.state.showUnclimbed}
 						disabled={!this.props.userLoggedIn}
 						onChange={this.unclimbedChange}/>
+					<Checkbox
+						label="Satellite View"
+						checked={this.state.showSatelliteView}
+						disabled={this.state.map === null}
+						onChange={this.viewChange}/>
 					<Checkbox
 						label="Sync. with server"
 						checked={true}
