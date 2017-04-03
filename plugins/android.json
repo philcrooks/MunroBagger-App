@@ -29,6 +29,9 @@
         },
         "cordova-plugin-appversion": {
             "PACKAGE_NAME": "scot.munrobagger.app"
+        },
+        "cordova-plugin-console": {
+            "PACKAGE_NAME": "scot.munrobagger.app"
         }
     },
     "dependent_plugins": {}
