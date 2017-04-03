@@ -1,12 +1,14 @@
 "use strict"
 
 var Mountains = require('../models/mountains');
+var Regions = require('./regions');
 var MountainView = require('./mountain_view');
 var search = require('../utility').mountainSearch;
 
 var MountainsView = function() {
   this._mountainsModel = new Mountains();
   this.mountains = null;
+  this.regions = null;
   this._user = null;
   this._forecastDates = {
     _min: null, // min Met Office publish date/time 
@@ -41,6 +43,7 @@ MountainsView.prototype.all = function(onCompleted) {
       mv.saveStatus = this.saveBaggedRecord.bind(this);
       return mv;
     }.bind(this));
+    this.regions = new Regions(this.mountains);
     onCompleted(this.mountains);
   }.bind(this));
 }
