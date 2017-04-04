@@ -3,13 +3,11 @@ const logger = require('../utility').logger;
 const Regions = function(mountains) {
 	this._regions = this._createRegions(mountains);
 
-	this._regionNames = [];
-	for (let region in this._regions) {
-		this._regionNames.push(region);
-	}
+	this._regionNames = Object.keys(this._regions);
 	this._regionNames.sort();
 
   Object.defineProperty(this, "length", { get: function(){ return this._regionNames.length; } });
+  Object.defineProperty(this, "names", { get: function(){ return this._regionNames; } });
 }
 
 Regions.prototype._createRegions = function(mountains) {

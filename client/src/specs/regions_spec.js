@@ -24,6 +24,8 @@ describe("Regions", function(){
 
 	it ('Correctly orders regions', function() {
 		assert.deepStrictEqual(regions._regionNames, ["Glen Shiel to Loch Mullardoch", "Loch Ericht to Drumochter", "Loch Maree to Loch Broom", "Speyside to Great Glen"]);
+		assert.strictEqual(regions._regionNames, regions.names);
+
 	})
 
 	it ('Correctly groups mountains', function() {
