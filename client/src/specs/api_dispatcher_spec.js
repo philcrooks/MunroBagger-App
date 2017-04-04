@@ -57,7 +57,7 @@ describe("API Dispatcher", function() {
 
       assert.strictEqual(callback.callCount, 3);
 
-      let call = callback.getCall(0);
+      var call = callback.getCall(0);
       assert.strictEqual(call.args[0], 200);
       assert.deepStrictEqual(call.args[1], JSON.parse(munros));
       call = callback.getCall(1);
